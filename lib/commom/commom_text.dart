@@ -7,7 +7,7 @@ class CommonText {
       {color = UIData.mainTextColor, textAlign = TextAlign.center, overflow = TextOverflow.ellipsis}) {
     return Text(
       text,
-      style: TextStyle(color: color, fontSize: UIData.mainTitleFontSize, fontWeight: FontWeight.bold),
+      style: TextStyle(color: color, fontSize: UIData.mainTitleFontSize),
       textAlign: textAlign,
       overflow: overflow,
     );

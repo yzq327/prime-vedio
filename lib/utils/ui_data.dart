@@ -139,7 +139,12 @@ class UIData {
 
   //images
   static const String imageDir = "assets/images";
-  static const String imageDirHome = "$imageDir/home"; //首页页面图标
+  static const String iconHomeNormal = "$imageDir/icon_home_normal.png"; //首页页面图标
+  static const String iconHomeSelected = "$imageDir/icon_home_selected.png";
+  static const String iconSearchNormal = "$imageDir/icon_search_normal.jpg"; //搜索页页面图标
+  static const String iconSearchSelected = "$imageDir/icon_search_selected.jpg";
+  static const String iconMimeNormal = "$imageDir/icon_mime_normal.jpg"; //我的页面图标
+  static const String iconMimeSelected = "$imageDir/icon_mime_normal.jpg";
 
   //*******************首页************************//
 

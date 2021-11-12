@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:primeVedio/utils/constant.dart';
 import 'package:primeVedio/utils/ui_data.dart';
-
 import 'home/home_page.dart';
 
 void main() {
@@ -9,16 +8,15 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Prime_Video',
       theme: ThemeData(
         primarySwatch: UIData.themeBgColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(title: 'Flutter Demo Home Page'),
+      home: HomePage(),
       routes: <String, WidgetBuilder>{
         Constant.home: (BuildContext context) => HomePage(),
         Constant.search: (BuildContext context) => HomePage(),
