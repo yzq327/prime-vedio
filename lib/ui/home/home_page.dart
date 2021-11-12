@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/ui/home/type_tab_bar.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +21,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+    //设置为iphoneX的尺寸，设置字体大小根据系统的“字体大小”辅助选项来进行缩放
+    ScreenUtil.instance = ScreenUtil(width: 375, height: 812, allowFontScaling: true)..init(context);
     return Scaffold(
       appBar: AppBar(
         title:
@@ -32,15 +34,18 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times11:',
+      body: Column(
+        children: [
+          TypeTabBar(),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+            CommonText.mainTitle('Prime', color: UIData.hoverThemeBgColor),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: UIData.themeBgColor,
@@ -64,13 +69,14 @@ class _HomePageState extends State<HomePage> {
   BottomNavigationBarItem _buildBottomNavigationBarItem(index) {
     return BottomNavigationBarItem(
         icon: SizedBox(
-        width: ScreenUtil.getInstance().setWidth(96),
-        height: ScreenUtil.getInstance().setWidth(96),
+        width: ScreenUtil.getInstance().setWidth(26),
+        height: ScreenUtil.getInstance().setWidth(26),
         child: _currentIndex == index
                 ? _getBottomNavigationList[index].selectedIcon
                 : _getBottomNavigationList[index].normalIcon,
         ),
-        title: Text(_getBottomNavigationList[index].title),
+        activeIcon: _currentIndex == index  ? _getBottomNavigationList[index].selectedIcon : null,
+        title:  CommonText.normalTitle(_getBottomNavigationList[index].title),
     );
   }
 }

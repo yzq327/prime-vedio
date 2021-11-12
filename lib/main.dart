@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:primeVedio/utils/constant.dart';
 import 'package:primeVedio/utils/ui_data.dart';
-import 'home/home_page.dart';
+import 'ui/home/home_page.dart';
 
 void main() {
   runApp(MyApp());
