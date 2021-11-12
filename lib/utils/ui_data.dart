@@ -6,7 +6,23 @@ class UIData {
 
   //***************************改版颜色***************************//
   static const primaryColor = Colors.white;
-  static const themeBgColor = const Color(0xFF252E39);
+  static const MaterialColor themeBgColor = const MaterialColor(
+    0xFF252E39,
+    const <int, Color>{
+      50: const Color(0xFF252E39),
+      100: const Color(0xFF252E39),
+      200: const Color(0xFF252E39),
+      300: const Color(0xFF252E39),
+      400: const Color(0xFF252E39),
+      500: const Color(0xFF252E39),
+      600: const Color(0xFF252E39),
+      700: const Color(0xFF252E39),
+      800: const Color(0xFF252E39),
+      900: const Color(0xFF252E39),
+    },
+  );
+
+  // static const themeBgColor = const Color(0xFF252E39);
   static const subThemeBgColor = const Color(0xFFA3B5B6);
   static const hoverThemeBgColor = const Color(0xFF00B9E7);
 
