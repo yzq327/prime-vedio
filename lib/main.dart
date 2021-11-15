@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: UIData.themeBgColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        highlightColor: Color.fromRGBO(0, 0, 0, 0),
+        splashColor: Color.fromRGBO(0, 0, 0, 0),
       ),
       home: HomePage(),
       routes: <String, WidgetBuilder>{
