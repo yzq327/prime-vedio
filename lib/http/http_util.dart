@@ -19,7 +19,7 @@ class HttpUtil {
     Map<String, dynamic> params,
     Function errorCallBack,
   }) async {
-    Dio dio = new Dio(HttpOptions.getInstance);
+    Dio dio = HttpOptions.dio;
     try {
       Response response;
       if (method == GET) {

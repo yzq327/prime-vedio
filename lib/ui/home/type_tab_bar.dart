@@ -21,7 +21,7 @@ class _MyTypeTabBar extends State<TypeTabBar>{
   List<VideoType> getTypeList =[];
 
   _getVideoTypeList() {
-    String url = HttpOptions.urlVideoTypeList;
+    String url = HttpOptions.baseUrl;
     HttpUtil.get(
         url,
             (data) {

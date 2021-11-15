@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:primeVedio/ui/mian_page.dart';
+import 'package:primeVedio/ui/mine/mine_page/mine_page.dart';
 import 'package:primeVedio/utils/constant.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'ui/home/home_page.dart';
@@ -18,11 +20,11 @@ class MyApp extends StatelessWidget {
         highlightColor: Color.fromRGBO(0, 0, 0, 0),
         splashColor: Color.fromRGBO(0, 0, 0, 0),
       ),
-      home: HomePage(),
+      home: MainPage(),
       routes: <String, WidgetBuilder>{
         Constant.home: (BuildContext context) => HomePage(),
         Constant.search: (BuildContext context) => HomePage(),
-        Constant.mine: (BuildContext context) => HomePage(),
+        Constant.mine: (BuildContext context) => MinePage(),
       },
     );
   }
