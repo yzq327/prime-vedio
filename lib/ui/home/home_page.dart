@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/ui/home/type_tab_bar.dart';
-import 'package:primeVedio/ui/mine/mine_page/mine_page.dart';
-import 'package:primeVedio/ui/search/search_page.dart';
-import 'package:primeVedio/utils/constant.dart';
-import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class HomePage extends StatefulWidget {
