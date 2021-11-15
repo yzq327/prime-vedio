@@ -37,6 +37,7 @@ class HttpUtil {
        LogUtils.printLog('errorMsg: $errorMsg');
        return;
      }
+      callBack(response.data);
     } on DioError catch (e) {
       LogUtils.printLog(e?.message ?? "");
     }
