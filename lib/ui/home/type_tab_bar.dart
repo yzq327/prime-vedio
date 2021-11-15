@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'package:dio/dio.dart';
 
 class _TypeItem {
   int typeId;
