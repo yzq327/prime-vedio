@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'http_options.dart';
@@ -37,7 +39,7 @@ class HttpUtil {
        LogUtils.printLog('errorMsg: $errorMsg');
        return;
      }
-      callBack(response.data);
+      callBack(json.decode(response.data));
     } on DioError catch (e) {
       LogUtils.printLog(e?.message ?? "");
     }

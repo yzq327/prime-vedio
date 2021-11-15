@@ -3,19 +3,19 @@ part of 'video_type_list_model.dart';
 
 VideoTypeListModel _$VideoTypeListModelFromJson(Map<String, dynamic> json) {
   return VideoTypeListModel(
-    (json['typeList'] as List<dynamic>)
-        .cast<Map<String, dynamic>>()
-        .map((item) => VideoType.fromJson(item))
-        .toList(),
+    (json['class'] as List)
+        ?.map((e) =>
+    e == null ? null : VideoType.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
     json['code'] as int,
     json['limit'] as String,
-    (json['list'] as List<dynamic>)
-        .cast<Map<String, dynamic>>()
-        .map((item) => VideoInfo.fromJson(item))
-        .toList(),
+    (json['list'] as List)
+        ?.map((e) =>
+    e == null ? null : VideoInfo.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
     json['msg'] as String,
     json['page'] as int,
-    json['pageCount'] as int,
+    json['pagecount'] as int,
     json['total'] as int,
   );
 }
@@ -34,8 +34,8 @@ Map<String, dynamic> _$VideoTypeListModelToJson(VideoTypeListModel instance) =>
 
 VideoType _$VideoTypeFromJson(Map<String, dynamic> json) {
   return VideoType(
-    typeId: json['typeId'] as int,
-    typeName: json['typeName'] as String,
+    typeId: json['type_id'] as int,
+    typeName: json['type_name'] as String,
   );
 }
 
