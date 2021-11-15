@@ -22,10 +22,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //设置为iphoneX的尺寸，设置字体大小根据系统的“字体大小”辅助选项来进行缩放
-    ScreenUtil.instance =
-        ScreenUtil(width: 375, height: 812, allowFontScaling: true)
-          ..init(context);
+    ScreenUtil.init(
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 812),
+        orientation: Orientation.portrait);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -76,8 +78,8 @@ class _HomePageState extends State<HomePage> {
   BottomNavigationBarItem _buildBottomNavigationBarItem(index) {
     return BottomNavigationBarItem(
       icon: SizedBox(
-          width: ScreenUtil.getInstance().setWidth(26),
-          height: ScreenUtil.getInstance().setWidth(26),
+          width: ScreenUtil().setWidth(26),
+          height: ScreenUtil().setWidth(26),
           child: Container(
               padding: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight16),
               child: Icon(_getBottomNavigationList[index].icon,

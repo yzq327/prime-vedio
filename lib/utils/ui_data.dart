@@ -50,6 +50,7 @@ class UIData {
   static double fontSize24 = ScreenUtil().setSp(24);
   static double fontSize26 = ScreenUtil().setSp(26);
   static double fontSize28 = ScreenUtil().setSp(28);
+  static double fontSize50 = ScreenUtil().setSp(50);
 
 
 
