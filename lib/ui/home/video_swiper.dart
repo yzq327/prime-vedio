@@ -19,7 +19,7 @@ class _VideoSwiperState extends State<VideoSwiper>{
 
   _getSwiperImageList() {
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET).then((value) {
-      VideoTypeListModel model  =VideoTypeListModel.fromJson(json.decode(value.data));
+      VideoTypeListModel model  =VideoTypeListModel.fromJson(value);
       if (model.typeList != null && model.typeList.length > 0) {
         setState(() {
           getImgList = model.typeList;

@@ -6,7 +6,7 @@ import 'http_options.dart';
 
 class HttpUtil {
   static const String GET = 'get';
-  static Future<Response> request(String url, String method, {Map<String, dynamic> params, Function errorCallBack}) async {
+  static Future<Map> request(String url, String method, {Map<String, dynamic> params, Function errorCallBack}) async {
     Dio dio = HttpOptions.dio;
     try {
       Response response;
@@ -26,7 +26,7 @@ class HttpUtil {
         LogUtils.printLog('errorMsg: $errorMsg');
         return null;
       }
-      return response;
+      return json.decode(response.data);
     } on DioError catch (e) {
       LogUtils.printLog(e?.message ?? "");
     }

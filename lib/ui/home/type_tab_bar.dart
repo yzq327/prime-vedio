@@ -23,7 +23,7 @@ class _MyTypeTabBar extends State<TypeTabBar>{
 
   _getVideoTypeList() {
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET).then((value) {
-      VideoTypeListModel model  =VideoTypeListModel.fromJson(json.decode(value.data));
+      VideoTypeListModel model  =VideoTypeListModel.fromJson(value);
       if (model.typeList != null && model.typeList.length > 0) {
         setState(() {
           getTypeList = model.typeList;
