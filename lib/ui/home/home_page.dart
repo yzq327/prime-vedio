@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/ui/home/type_tab_bar.dart';
+import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,15 +35,22 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           TypeTabBar(),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CommonText.mainTitle('Prime', color: UIData.hoverThemeBgColor),
+          Expanded(
+            child: ListView(
+              children: [
+                VideoSwiper(),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CommonText.mainTitle('Prime', color: UIData.hoverThemeBgColor),
+                    ],
+                  ),
+                )
               ],
             ),
-          ),
-        ],
+          )
+         ],
       ),
     );
   }
