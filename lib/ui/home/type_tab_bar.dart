@@ -21,24 +21,17 @@ class _MyTypeTabBar extends State<TypeTabBar>{
   List<VideoType> getTypeList =[];
 
   _getVideoTypeList() {
-    String url = HttpOptions.baseUrl;
-    HttpUtil.get(
-        url,
-            (data) {
-          _messageListCallBack(data);
-        },
-    );
-  }
+    HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET).then((value) {
+      VideoTypeListModel model  =VideoTypeListModel.fromJson(json.decode(value.data));
+      if (model.typeList != null && model.typeList.length > 0) {
+        setState(() {
+          getTypeList = model.typeList;
+        });
+      } else {
+        LogUtils.printLog('数据为空！');
+      }
+    });
 
-  void _messageListCallBack(data) {
-    VideoTypeListModel model = VideoTypeListModel.fromJson(data);
-    if (model.typeList != null && model.typeList.length > 0) {
-      setState(() {
-        getTypeList = model.typeList;
-      });
-    } else {
-      LogUtils.printLog('数据为空！');
-    }
   }
 
   @override

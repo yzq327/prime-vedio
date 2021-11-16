@@ -6,24 +6,11 @@ import 'http_options.dart';
 
 class HttpUtil {
   static const String GET = 'get';
-  static void get(String url, Function callBack,
-      {Map<String, dynamic> params, Function errorCallBack}) async {
-    _request(url, callBack,
-        method: GET, params: params, errorCallBack: errorCallBack);
-  }
-
-  static Future<void> _request(
-    String url,
-    Function callBack, {
-    String method,
-    Map<String, dynamic> params,
-    Function errorCallBack,
-  }) async {
+  static Future<Response> request(String url, String method, {Map<String, dynamic> params, Function errorCallBack}) async {
     Dio dio = HttpOptions.dio;
     try {
       Response response;
       if (method == GET) {
-        //GET请求
         if (params != null && params.isNotEmpty) {
           if (HttpOptions.isInDebugMode) _urlPrint(url, params: params);
           response = await dio.get(url, queryParameters: params);
@@ -35,11 +22,11 @@ class HttpUtil {
       int statusCode = response.statusCode;
       LogUtils.printLog('status:' + response.statusCode.toString());
       if (statusCode != 200) {
-       String errorMsg = '网络请求出错，状态码：' + statusCode.toString();
-       LogUtils.printLog('errorMsg: $errorMsg');
-       return;
-     }
-      callBack(json.decode(response.data));
+        String errorMsg = '网络请求出错，状态码：' + statusCode.toString();
+        LogUtils.printLog('errorMsg: $errorMsg');
+        return null;
+      }
+      return response;
     } on DioError catch (e) {
       LogUtils.printLog(e?.message ?? "");
     }
