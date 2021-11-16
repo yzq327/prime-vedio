@@ -7,8 +7,10 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_type_list_model.dart';
+import 'package:primeVedio/provider/change_notifier_provider.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'home_page.dart';
 
 class TypeTabBar extends StatefulWidget{
   _MyTypeTabBar createState()=> _MyTypeTabBar();
@@ -17,7 +19,6 @@ class TypeTabBar extends StatefulWidget{
 class _MyTypeTabBar extends State<TypeTabBar>{
   final ScrollController _tabScrollController = new ScrollController(); //tab栏横向
   final double _tabHeight = ScreenUtil().setHeight(56);
-  int currentTypeId = 1;
   List<VideoType> getTypeList =[];
 
   _getVideoTypeList() {
@@ -40,21 +41,19 @@ class _MyTypeTabBar extends State<TypeTabBar>{
     super.initState();
   }
 
-  Widget _buildTabItem (VideoType item) {
+  Widget _buildTabItem (VideoType item, CurrentTypeModel currentType) {
     return  GestureDetector(
       child: Container(
         width: UIData.spaceSizeWidth110,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: currentTypeId ==item.typeId ? UIData.hoverThemeBgColor : UIData.themeBgColor ,
+          color: currentType.currentTypeId == item.typeId ? UIData.hoverThemeBgColor : UIData.themeBgColor ,
           borderRadius: BorderRadius.all(Radius.circular(UIData.fontSize50)),
         ),
-        child: CommonText.mainTitle(item.typeName, color: currentTypeId ==item.typeId ? UIData.hoverTextColor : UIData.mainTextColor ),
+        child: CommonText.mainTitle(item.typeName, color: currentType.currentTypeId ==item.typeId ? UIData.hoverTextColor : UIData.mainTextColor ),
       ),
       onTap: () {
-        setState(() {
-          currentTypeId = item.typeId;
-        });
+        currentType.changeType(item.typeId);
       },
     );
   }
@@ -66,11 +65,17 @@ class _MyTypeTabBar extends State<TypeTabBar>{
       color: UIData.themeBgColor,
       alignment: Alignment.topLeft,
       height: _tabHeight,
-      child: ListView(
-        controller: _tabScrollController,
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        children: getTypeList.map((item) => _buildTabItem(item)).toList(),
+      child: ChangeNotifierProvider<CurrentTypeModel>(
+        data: CurrentTypeModel(1),
+        child: Builder(builder: (context) {
+          var currentType = ChangeNotifierProvider.of<CurrentTypeModel>(context);
+          return ListView(
+           controller: _tabScrollController,
+           shrinkWrap: true,
+           scrollDirection: Axis.horizontal,
+           children: getTypeList.map((item) => _buildTabItem(item, currentType)).toList(),
+         );
+        }),
       ),
     );
   }

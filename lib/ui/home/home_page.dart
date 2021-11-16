@@ -6,6 +6,15 @@ import 'package:primeVedio/ui/home/type_tab_bar.dart';
 import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
+class CurrentTypeModel extends ChangeNotifier {
+  int currentTypeId = 1;
+  CurrentTypeModel(this.currentTypeId);
+  void changeType(int value) {
+    this.currentTypeId = value;
+    notifyListeners();
+  }
+}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
