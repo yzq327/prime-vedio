@@ -8,9 +8,9 @@ import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_type_list_model.dart';
 import 'package:primeVedio/provider/change_notifier_provider.dart';
+import 'package:primeVedio/models/current_type_model.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
-import 'home_page.dart';
 
 class TypeTabBar extends StatefulWidget{
   _MyTypeTabBar createState()=> _MyTypeTabBar();
