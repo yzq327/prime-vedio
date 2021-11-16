@@ -54,7 +54,7 @@ class _VideoSwiperState extends State<VideoSwiper>{
     return Container(
       padding: EdgeInsets.fromLTRB(0,UIData.spaceSizeHeight16,0, UIData.spaceSizeHeight8),
       color: UIData.themeBgColor,
-      height: UIData.spaceSizeHeight190,
+      height: UIData.spaceSizeHeight180,
       child: null,
       // Swiper(
       //     autoplay: stateModel.bannerAutoPlay,
