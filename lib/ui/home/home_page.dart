@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/ui/home/recent_video_container.dart';
 import 'package:primeVedio/ui/home/type_tab_bar.dart';
 import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -39,13 +40,9 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               children: [
                 VideoSwiper(),
+                RecentVideoContainer(),
                 Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CommonText.mainTitle('Prime', color: UIData.hoverThemeBgColor),
-                    ],
-                  ),
+                  child: CommonText.mainTitle('没有更多啦', color: UIData.hoverThemeBgColor),
                 )
               ],
             ),

@@ -13,9 +13,6 @@ class VideoTypeListModel extends Object {
   @JsonKey(name: 'limit')
   String limit;
 
-  @JsonKey(name: 'list')
-  List<VideoInfo> list;
-
   @JsonKey(name: 'msg')
   String msg;
 
@@ -32,7 +29,6 @@ class VideoTypeListModel extends Object {
       this.typeList,
       this.code,
       this.limit,
-      this.list,
       this.msg,
       this.page,
       this.pageCount,
@@ -62,44 +58,3 @@ class VideoType extends Object {
   Map<String, dynamic> toJson() => _$VideoTypeToJson(this);
 }
 
-@JsonSerializable()
-class VideoInfo extends Object {
-  @JsonKey(name: 'type_id')
-  int typeId;
-
-  @JsonKey(name: 'type_name')
-  String typeName;
-
-  @JsonKey(name: 'vod_en')
-  String vodEn;
-
-  @JsonKey(name: 'vod_id')
-  int vodId;
-
-  @JsonKey(name: 'vod_name')
-  String vodName;
-
-  @JsonKey(name: 'vod_play_from')
-  String vodPlayFrom;
-
-  @JsonKey(name: 'vod_remarks')
-  String vodRemarks;
-
-  @JsonKey(name: 'vod_time')
-  String vodTime;
-
-  VideoInfo({
-    this.typeId,
-    this.typeName,
-    this.vodEn,
-    this.vodId,
-    this.vodName,
-    this.vodPlayFrom,
-    this.vodRemarks,
-    this.vodTime,
-  });
-
-  factory VideoInfo.fromJson(Map<String, dynamic> srcJson) => _$VideoInfoFromJson(srcJson);
-
-  Map<String, dynamic> toJson() => _$VideoInfoToJson(this);
-}
