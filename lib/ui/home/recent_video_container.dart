@@ -10,15 +10,13 @@ import 'package:primeVedio/models/video_type_list_model.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
-class TypeTabBar extends StatefulWidget{
-  _MyTypeTabBar createState()=> _MyTypeTabBar();
+class RecentVideoContainer extends StatefulWidget{
+  _RecentVideoContainerState createState()=> _RecentVideoContainerState();
 }
 
-class _MyTypeTabBar extends State<TypeTabBar>{
-  final ScrollController _tabScrollController = new ScrollController(); //tab栏横向
-  final double _tabHeight = ScreenUtil().setHeight(56);
+class _RecentVideoContainerState extends State<RecentVideoContainer>{
   int currentTypeId = 1;
-  List<VideoType> getTypeList =[];
+  List<VideoType> getVideoList =[];
 
   _getVideoTypeList() {
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET).then((value) {
