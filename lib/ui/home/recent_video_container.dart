@@ -20,9 +20,15 @@ class _RecentVideoContainerState extends State<RecentVideoContainer>{
   List<VideoInfo> getVideoList =[];
 
   _getVideoTypeList() {
-    HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET,).then((value) {
+    Map<String, Object> params = new Map();
+    params['ac'] = 'detail';
+    params['t'] = currentTypeId;
+    params['pg'] = 1;
+
+    HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET,params: params).then((value) {
       VideoListModel model  =VideoListModel.fromJson(json.decode(value.data));
       if (model.list != null && model.list.length > 0) {
+        LogUtils.printLog('数据: ${model.list[0].vodName}');
         setState(() {
           getVideoList = model.list;
         });
@@ -30,7 +36,6 @@ class _RecentVideoContainerState extends State<RecentVideoContainer>{
         LogUtils.printLog('数据为空！');
       }
     });
-
   }
 
   @override
@@ -45,7 +50,22 @@ class _RecentVideoContainerState extends State<RecentVideoContainer>{
       padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth16, vertical: UIData.spaceSizeHeight8),
       color: UIData.themeBgColor,
       alignment: Alignment.topLeft,
-      child: null,
+      child: Column(
+        children: [
+          Container(
+            width: UIData.spaceSizeWidth160,
+            alignment: Alignment.center,
+            child: Row(
+              children: [
+                // Image.asset(getVideoList[0].vodPic),
+                CommonText.normalTitle(getVideoList[0].vodName, color: UIData.mainTextColor)
+              ],
+            ),
+          ),
+
+
+        ],
+      ),
     );
   }
 }
