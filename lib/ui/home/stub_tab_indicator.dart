@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class StubTabIndicator extends Decoration {

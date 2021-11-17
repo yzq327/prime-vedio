@@ -6,7 +6,7 @@ import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_type_list_model.dart';
 import 'package:primeVedio/ui/home/recent_video_container.dart';
-import 'package:primeVedio/ui/home/sun_tab_indicator.dart';
+import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
