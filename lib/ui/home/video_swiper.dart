@@ -69,7 +69,7 @@ class _VideoSwiperState extends State<VideoSwiper>{
     return AspectRatio(
       aspectRatio: UIData.spaceSizeWidth320/UIData.spaceSizeHeight172,
       child: Container(
-        padding: EdgeInsets.fromLTRB(UIData.spaceSizeWidth16,UIData.spaceSizeHeight16,0,0),
+        padding: EdgeInsets.fromLTRB(UIData.spaceSizeWidth16,0,0,0),
         decoration: BoxDecoration(
           color: UIData.themeBgColor,
           ),

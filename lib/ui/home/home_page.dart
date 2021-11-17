@@ -81,6 +81,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       body: Column(children: [
         Container(
+          padding: EdgeInsets.only(bottom: UIData.spaceSizeHeight16),
           color: UIData.themeBgColor,
           child: TabBar(
             controller: _tabController,

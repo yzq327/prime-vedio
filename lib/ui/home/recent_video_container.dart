@@ -66,6 +66,7 @@ class _RecentVideoContainerState extends State<RecentVideoContainer> {
                           color: UIData.hoverThemeBgColor),
                     ),
                     GridView.builder(
+                     physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
