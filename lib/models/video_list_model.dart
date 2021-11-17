@@ -5,10 +5,14 @@ part 'video_list_model.g.dart';
 @JsonSerializable()
 class VideoListModel extends Object {
 
+  @JsonKey(name: 'total')
+  int total;
+
   @JsonKey(name: 'list')
   List<VideoInfo> list;
 
   VideoListModel(
+      this.total,
       this.list,
   );
 

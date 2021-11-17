@@ -60,7 +60,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       width: UIData.spaceSizeWidth110,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: (currentTabIndex +1) == item.typeId ? UIData.hoverThemeBgColor : UIData.themeBgColor ,
+        color: (currentTabIndex + 1) == item.typeId
+            ? UIData.hoverThemeBgColor
+            : UIData.themeBgColor,
         borderRadius: BorderRadius.all(Radius.circular(UIData.fontSize40)),
       ),
       child: Tab(text: item.typeName),
@@ -68,13 +70,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildTabContent(int typeId) {
-    return Column(
+    return ListView(
       children: [
-        VideoSwiper(typeId: typeId),
-        RecentVideoContainer(typeId: typeId),
-        Center(
-          child: CommonText.mainTitle('没有更多啦', color: UIData.hoverThemeBgColor),
-        )
+        Column(
+          children: [
+            VideoSwiper(typeId: typeId),
+            RecentVideoContainer(typeId: typeId)
+          ],
+        ),
       ],
     );
   }
@@ -111,18 +114,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             labelColor: UIData.hoverTextColor,
             unselectedLabelColor: UIData.primaryColor,
             indicatorWeight: UIData.fontSize8,
-            indicator:BoxDecoration(),
+            indicator: BoxDecoration(),
             tabs: getTypeList.map((e) => _buildTab(e)).toList(),
           ),
         ),
         Expanded(
-          child: Container(
-          color: UIData.themeBgColor,
-            child: TabBarView(
-              controller: _tabController,
-              children: getTypeList.map((e) => _buildTabContent(e.typeId)).toList(),
-            ),
-        ))
+          child: TabBarView(
+            controller: _tabController,
+            children:
+                getTypeList.map((e) => _buildTabContent(e.typeId)).toList(),
+          ),
+        )
       ]),
     );
   }

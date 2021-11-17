@@ -29,6 +29,7 @@ class UIData {
   static const mainTextColor = const Color(0xFFFFFFFF);
   static const hoverTextColor = const Color(0xFF0D1821);
   static const subTextColor = const Color(0xFF5A6777);
+  static const defaultImgBgColor = const Color(0xFFA3B5B6);
   static const phTextColor = const Color(0xFFC4C2C2);
 
   //***************************其余颜色***************************//
@@ -129,6 +130,7 @@ class UIData {
   static double spaceSizeHeight150 = ScreenUtil().setHeight(150);
   static double spaceSizeHeight180 = ScreenUtil().setHeight(180);
   static double spaceSizeHeight200 = ScreenUtil().setHeight(200);
+  static double spaceSizeHeight240 = ScreenUtil().setHeight(240);
   static double spaceSizeHeight400 = ScreenUtil().setHeight(400);
 
 

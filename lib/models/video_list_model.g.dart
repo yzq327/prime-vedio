@@ -3,6 +3,7 @@ part of 'video_list_model.dart';
 
 VideoListModel _$VideoListModelFromJson(Map<String, dynamic> json) {
   return VideoListModel(
+    json['total'] as int,
     (json['list'] as List)
         ?.map((e) =>
     e == null ? null : VideoInfo.fromJson(e as Map<String, dynamic>))
@@ -13,6 +14,7 @@ VideoListModel _$VideoListModelFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$VideoListModelToJson(VideoListModel instance) =>
     <String, dynamic>{
       'list': instance.list,
+      'total': instance.total,
     };
 
 
