@@ -11,6 +11,9 @@ import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class VideoSwiper extends StatefulWidget{
+  final int typeId;
+  VideoSwiper({Key key, this.typeId}) : super(key: key);
+
   _VideoSwiperState createState()=> _VideoSwiperState();
 }
 
@@ -55,7 +58,11 @@ class _VideoSwiperState extends State<VideoSwiper>{
       padding: EdgeInsets.fromLTRB(0,UIData.spaceSizeHeight16,0, UIData.spaceSizeHeight8),
       color: UIData.themeBgColor,
       height: UIData.spaceSizeHeight180,
-      child: null,
+      child: Column(
+        children: [
+          CommonText.normalTitle(widget.typeId.toString()),
+        ],
+      ),
       // Swiper(
       //     autoplay: stateModel.bannerAutoPlay,
       //     autoplayDelay: 3000,

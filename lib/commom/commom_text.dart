@@ -24,6 +24,17 @@ class CommonText {
     );
   }
 
+  //常规文本
+  static Widget normalText(text,
+      {color = UIData.mainTextColor, textAlign = TextAlign.center, overflow = TextOverflow.ellipsis}) {
+    return Text(
+      text,
+      style: TextStyle(color: color, fontSize: UIData.normalTitleFontSize, fontWeight: FontWeight.normal),
+      textAlign: textAlign,
+      overflow: overflow,
+    );
+  }
+
   //深灰色20号字
   static Widget darkGrey20Text(text,
       {maxLines, overflow = TextOverflow.ellipsis, textAlign = TextAlign.center, FontWeight fontWeight}) {

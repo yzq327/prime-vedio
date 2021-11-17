@@ -35,6 +35,7 @@ class UIData {
 
 
   //***************************字号***************************//
+  static double fontSize8 = ScreenUtil().setSp(8);
   static double fontSize9 = ScreenUtil().setSp(9);
   static double fontSize10 = ScreenUtil().setSp(10);
   static double fontSize11 = ScreenUtil().setSp(11);
@@ -93,7 +94,7 @@ class UIData {
   static double spaceSizeWidth200 = ScreenUtil().setWidth(200);
   static double spaceSizeWidth224 = ScreenUtil().setWidth(224);
   static double spaceSizeWidth283 = ScreenUtil().setWidth(283);
-  static double spaceSizeWidth343 = ScreenUtil().setWidth(343);
+  static double spaceSizeWidth350 = ScreenUtil().setWidth(350);
   static double spaceSizeWidth400 = ScreenUtil().setWidth(400);
 
   //***************************高度***************************//

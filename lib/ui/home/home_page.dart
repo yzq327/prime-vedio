@@ -5,6 +5,8 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_type_list_model.dart';
+import 'package:primeVedio/ui/home/recent_video_container.dart';
+import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -25,7 +27,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (model.typeList != null && model.typeList.length > 0) {
         setState(() {
           _tabController =
-              TabController(length: model.typeList.length, vsync: this);
+              TabController(length: model.typeList.length, vsync: this)
+                ..addListener(() {
+                  setState(() {
+                    currentTabIndex = _tabController.index;
+                  });
+                });
           getTypeList = model.typeList;
         });
       } else {
@@ -60,11 +67,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(int typeId) {
     return Column(
       children: [
-        // VideoSwiper(),
-        // RecentVideoContainer(),
+        VideoSwiper(typeId: typeId),
+        RecentVideoContainer(typeId: typeId),
         Center(
           child: CommonText.mainTitle('没有更多啦', color: UIData.hoverThemeBgColor),
         )
@@ -103,21 +110,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             labelPadding: EdgeInsets.all(0),
             labelColor: UIData.hoverTextColor,
             unselectedLabelColor: UIData.primaryColor,
+            indicatorWeight: UIData.fontSize8,
+            indicator:BoxDecoration(),
             tabs: getTypeList.map((e) => _buildTab(e)).toList(),
-            onTap: (index) {
-              setState(() {
-                currentTabIndex = index;
-              });
-            },
           ),
         ),
         Expanded(
-            child: Container(
-          color: UIData.primaryColor,
-          child: TabBarView(
-            controller: _tabController,
-            children: getTypeList.map((e) => _buildTabContent()).toList(),
-          ),
+          child: Container(
+          color: UIData.themeBgColor,
+            child: TabBarView(
+              controller: _tabController,
+              children: getTypeList.map((e) => _buildTabContent(e.typeId)).toList(),
+            ),
         ))
       ]),
     );
