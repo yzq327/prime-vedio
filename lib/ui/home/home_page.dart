@@ -5,9 +5,8 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_type_list_model.dart';
-import 'package:primeVedio/ui/home/recent_video_container.dart';
 import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
-import 'package:primeVedio/ui/home/video_swiper.dart';
+import 'package:primeVedio/ui/home/tab_content.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -61,19 +60,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTabContent(int typeId) {
-    return ListView(
-      children: [
-        Column(
-          children: [
-            VideoSwiper(typeId: typeId),
-            RecentVideoContainer(typeId: typeId)
-          ],
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(
@@ -114,7 +100,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: TabBarView(
             controller: _tabController,
             children:
-                getTypeList.map((e) => _buildTabContent(e.typeId)).toList(),
+                getTypeList.map((e) => TabContent(typeId:e.typeId)).toList(),
           ),
         )
       ]),
