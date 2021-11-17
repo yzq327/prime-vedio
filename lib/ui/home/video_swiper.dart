@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
+import 'package:primeVedio/models/video_list_model.dart';
 import 'package:primeVedio/models/video_type_list_model.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -21,17 +22,23 @@ class _VideoSwiperState extends State<VideoSwiper>{
   List getImgList =[];
 
   _getSwiperImageList() {
-    HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET).then((value) {
-      VideoTypeListModel model  =VideoTypeListModel.fromJson(value);
-      if (model.typeList != null && model.typeList.length > 0) {
+    Map<String, Object> params = new Map();
+    params['ac'] = 'detail';
+    params['t'] = widget.typeId + 1;
+    params['pg'] = 1;
+
+    HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET, params: params)
+        .then((value) {
+      VideoListModel model = VideoListModel.fromJson(value);
+      if (model.list != null && model.list.length > 0) {
+        LogUtils.printLog('数据: ${model.list[0].vodName}');
         setState(() {
-          getImgList = model.typeList;
+          getImgList = model.list;
         });
       } else {
         LogUtils.printLog('数据为空！');
       }
     });
-
   }
 
   @override

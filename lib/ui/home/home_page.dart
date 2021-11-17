@@ -55,15 +55,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _buildTab(item) {
     return Container(
-      height: UIData.spaceSizeHeight40,
       width: UIData.spaceSizeWidth110,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: (currentTabIndex + 1) == item.typeId
-            ? UIData.hoverThemeBgColor
-            : UIData.themeBgColor,
-        borderRadius: BorderRadius.all(Radius.circular(UIData.fontSize40)),
-      ),
       child: Tab(text: item.typeName),
     );
   }
@@ -112,8 +104,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             labelPadding: EdgeInsets.all(0),
             labelColor: UIData.hoverTextColor,
             unselectedLabelColor: UIData.primaryColor,
-            indicatorWeight: UIData.fontSize8,
-            indicator: BoxDecoration(),
+            indicatorWeight: 0.0,
+            indicator: StubTabIndicator(color:UIData.hoverThemeBgColor),
             tabs: getTypeList.map((e) => _buildTab(e)).toList(),
           ),
         ),
@@ -128,3 +120,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 }
+
+class StubTabIndicator extends Decoration {
+  final BoxPainter _painter;
+
+  StubTabIndicator({@required Color color}) : _painter = _StubPainter(color);
+
+  @override
+  BoxPainter createBoxPainter([onChanged]) => _painter;
+}
+
+class _StubPainter extends BoxPainter {
+  final Paint _paint;
+
+  _StubPainter(Color color)
+      : _paint = Paint()
+    ..color = color
+    ..isAntiAlias = true;
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
+    final double width = UIData.spaceSizeWidth110;
+    final double height = UIData.spaceSizeHeight40;
+    final double radius = ScreenUtil().setWidth(20);
+    final double left = offset.dx + cfg.size.width / 2 - width / 2;
+    canvas.drawRRect(
+        RRect.fromLTRBR(
+          left,
+          cfg.size.height - height,
+          left + width,
+          cfg.size.height,
+          Radius.circular(radius),
+        ),
+        _paint);
+  }
+}
+
