@@ -74,6 +74,7 @@ class _VideoSwiperState extends State<VideoSwiper>{
           color: UIData.themeBgColor,
           ),
         child:  NotificationListener(
+          //当用户用手滑动轮播的时候取消定时器，然后在轮播滑动结束后重设定时器
             onNotification: (ScrollNotification notification) {
               if (notification.depth == 0 &&
                   notification is ScrollStartNotification) {
