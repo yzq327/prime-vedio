@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   TabController _tabController;
   int currentTabIndex = 0;
 
-
   _getVideoTypeList() {
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET).then((value) {
       VideoTypeListModel model = VideoTypeListModel.fromJson(value);
