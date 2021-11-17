@@ -65,21 +65,24 @@ class _RecentVideoContainerState extends State<RecentVideoContainer> {
                       child: CommonText.mainTitle('最新发布',
                           color: UIData.hoverThemeBgColor),
                     ),
-                    Wrap(
-                      spacing: UIData.spaceSizeWidth20,
-                      runSpacing: UIData.spaceSizeHeight16,
-                      alignment: WrapAlignment.center, //沿主轴方向居中
-                      children: getVideoList
-                          .asMap()
-                          .keys
-                          .map((index) => _buildVideoInfo(index))
-                          .toList(),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.66,
+                        mainAxisSpacing: UIData.spaceSizeHeight8,
+                        crossAxisSpacing: UIData.spaceSizeWidth16,
+                      ),
+                      itemCount: getVideoList.length,
+                      itemBuilder: (BuildContext context, int index) => _buildVideoInfo(index),
                     ),
                     Container(
                         color: UIData.themeBgColor,
+                        padding: EdgeInsets.only(top: UIData.spaceSizeHeight10),
+                        height: UIData.spaceSizeHeight90,
                         width: UIData.spaceSizeWidth400,
-                        child: CommonText.mainTitle('没有更多啦',
-                            color: UIData.hoverThemeBgColor))
+                        child: CommonText.normalText('没有更多啦',
+                            color: UIData.subThemeBgColor))
                   ]
                 ),
       );
