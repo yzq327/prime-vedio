@@ -48,11 +48,10 @@ class _VideoSwiperState extends State<VideoSwiper>{
     });
   }
 
-
   _buildPageViewItemWidget(int index) {
     return  Container(
       margin: EdgeInsets.only(right: UIData.spaceSizeWidth16),
-      child: CommonImgDisplay(getImgList[index].vodPic),
+      child: CommonImgDisplay(vodPic: getImgList[index].vodPic, vodId: getImgList[index].vodId),
     );
   }
 

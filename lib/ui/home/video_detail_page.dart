@@ -2,21 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/utils/navigate.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class VideoDetailPage extends StatefulWidget {
+  final int vodId;
+
+  VideoDetailPage({this.vodId});
+
   @override
   _VideoDetailPageState createState() => _VideoDetailPageState();
 }
 
 class _VideoDetailPageState extends State<VideoDetailPage> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    VideoDetailPage videoDetailPage = NavigateOption.getParams(context);
     ScreenUtil.init(
         BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width,
@@ -35,7 +36,11 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         ),
       ),
       body: Center(
-        child: CommonText.mainTitle('Detail'),
+        child: Column(
+          children: [
+            CommonText.darkGrey20Text(videoDetailPage.vodId.toString()),
+          ],
+        ),
       )
     );
   }

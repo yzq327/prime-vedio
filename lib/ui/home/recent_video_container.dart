@@ -27,7 +27,7 @@ class _RecentVideoContainerState extends State<RecentVideoContainer> {
         Container(
           width: UIData.spaceSizeWidth160,
           height: UIData.spaceSizeHeight200,
-          child:  CommonImgDisplay(getVideoList[index].vodPic),
+          child:  CommonImgDisplay(vodPic: getVideoList[index].vodPic, vodId: getVideoList[index].vodId),
         ),
         Container(
             width: UIData.spaceSizeWidth160,
