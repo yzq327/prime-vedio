@@ -5,4 +5,6 @@ class Constant {
   static final String search = '/search';
   //我的
   static final String mine = '/mine';
+  //视频详情页
+  static final String detail = '/home/detail';
 }

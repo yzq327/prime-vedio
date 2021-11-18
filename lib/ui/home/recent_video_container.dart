@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/commom/common_img_display.dart';
 import 'package:primeVedio/models/video_list_model.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -27,14 +27,7 @@ class _RecentVideoContainerState extends State<RecentVideoContainer> {
         Container(
           width: UIData.spaceSizeWidth160,
           height: UIData.spaceSizeHeight200,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: CachedNetworkImageProvider(getVideoList[index].vodPic),
-                alignment: Alignment.topCenter,
-                fit: BoxFit.cover),
-            borderRadius: BorderRadius.all(Radius.circular(UIData.fontSize12)),
-          ),
-          child: SizedBox(),
+          child:  CommonImgDisplay(getVideoList[index].vodPic),
         ),
         Container(
             width: UIData.spaceSizeWidth160,

@@ -20,10 +20,11 @@ class _TabContentState extends State<TabContent>{
   List<VideoInfo> getVideoList = [];
 
   _getVideoTypeList() {
-    Map<String, Object> params = new Map();
-    params['ac'] = 'detail';
-    params['t'] = widget.typeId;
-    params['pg'] = 1;
+    Map<String, Object> params = {
+      'ac': 'detail',
+      't': widget.typeId,
+      'pg': 1,
+    };
 
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET, params: params)
         .then((value) {

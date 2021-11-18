@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:primeVedio/commom/common_img_display.dart';
 import 'package:primeVedio/models/video_list_model.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -53,13 +52,7 @@ class _VideoSwiperState extends State<VideoSwiper>{
   _buildPageViewItemWidget(int index) {
     return  Container(
       margin: EdgeInsets.only(right: UIData.spaceSizeWidth16),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(UIData.spaceSizeWidth12),
-        child: Image(
-            image: CachedNetworkImageProvider(getImgList[index].vodPic),
-            alignment: Alignment.topCenter,
-            fit: BoxFit.cover),
-      ),
+      child: CommonImgDisplay(getImgList[index].vodPic),
     );
   }
 
