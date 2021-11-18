@@ -24,7 +24,7 @@ class CommonImgDisplay extends StatelessWidget{
       ),
       onTap: () {
         if(vodId != null) {
-          Navigator.pushNamed(context, Routes.detail, arguments: VideoDetailPage(vodId: vodId, vodName: vodName),);
+          Navigator.pushNamed(context, Routes.detail, arguments: VideoDetailPageParams(vodId: vodId, vodName: vodName),);
         }
       },
     );

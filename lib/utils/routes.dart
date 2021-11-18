@@ -4,6 +4,8 @@ import 'package:primeVedio/ui/home/video_detail_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/mine_page.dart';
 import 'package:primeVedio/ui/search/search_page.dart';
 
+import 'navigate.dart';
+
 class Routes {
   //首页
   static final String home = '/home';
@@ -19,5 +21,5 @@ var routePath = {
   Routes.home: (BuildContext context) => HomePage(),
   Routes.search: (BuildContext context) => SearchPage(),
   Routes.mine: (BuildContext context) => MinePage(),
-  Routes.detail: (BuildContext context) => VideoDetailPage(vodId: 1),
+  Routes.detail: (BuildContext context) => VideoDetailPage(videoDetailPageParams: NavigateOption.getParams(context)),
 };

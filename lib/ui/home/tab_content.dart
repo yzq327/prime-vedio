@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_list_model.dart';
 import 'package:primeVedio/ui/home/recent_video_container.dart';
 import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/log_utils.dart';
-import 'package:primeVedio/utils/ui_data.dart';
 
 class TabContent extends StatefulWidget{
   final int typeId;
@@ -53,15 +52,7 @@ class _TabContentState extends State<TabContent>{
           children: getVideoList.length > 0 ?[
             VideoSwiper(videoList: getVideoList),
             RecentVideoContainer(videoList: getVideoList)
-          ]: [
-            Container(
-              color: UIData.themeBgColor,
-              height: UIData.spaceSizeHeight580,
-              alignment: Alignment.center,
-              child: CommonText.mainTitle('暂无数控',
-                  color: UIData.hoverThemeBgColor),
-            )
-          ],
+          ]: [CommonHintTextContain(),],
         ),
       ],
     );
