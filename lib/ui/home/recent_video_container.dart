@@ -7,7 +7,7 @@ import 'package:primeVedio/utils/ui_data.dart';
 
 class RecentVideoContainer extends StatefulWidget {
   final List<VideoInfo> videoList;
-  RecentVideoContainer({Key key, this.videoList}) : super(key: key);
+  RecentVideoContainer({Key ?key, required this.videoList}) : super(key: key);
   _RecentVideoContainerState createState() => _RecentVideoContainerState();
 }
 
@@ -27,7 +27,7 @@ class _RecentVideoContainerState extends State<RecentVideoContainer> {
         Container(
           width: UIData.spaceSizeWidth160,
           height: UIData.spaceSizeHeight200,
-          child:  CommonImgDisplay(vodPic: getVideoList[index].vodPic, vodId: getVideoList[index].vodId),
+          child: CommonImgDisplay(vodPic: getVideoList[index].vodPic, vodId: getVideoList[index].vodId, vodName: getVideoList[index].vodName),
         ),
         Container(
             width: UIData.spaceSizeWidth160,

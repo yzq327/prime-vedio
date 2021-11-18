@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 // 一个通用的InheritedWidget，保存需要跨组件共享的状态
 class InheritedProvider<T> extends InheritedWidget {
   InheritedProvider({
-     this.data,
-     Widget child,
+     required this.data,
+     required Widget child,
   }) : super(child: child);
 
   final T data;

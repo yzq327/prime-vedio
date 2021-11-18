@@ -8,8 +8,9 @@ import 'package:primeVedio/utils/ui_data.dart';
 class CommonImgDisplay extends StatelessWidget{
   final String vodPic;
   final int vodId;
+  final String vodName;
 
-  CommonImgDisplay({this.vodPic, this.vodId});
+  CommonImgDisplay({required this.vodPic, required this.vodId, required this.vodName});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class CommonImgDisplay extends StatelessWidget{
       ),
       onTap: () {
         if(vodId != null) {
-          Navigator.pushNamed(context, Routes.detail, arguments: VideoDetailPage(vodId: vodId),);
+          Navigator.pushNamed(context, Routes.detail, arguments: VideoDetailPage(vodId: vodId, vodName: vodName),);
         }
       },
     );

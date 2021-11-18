@@ -1,12 +1,16 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'video_type_list_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 VideoTypeListModel _$VideoTypeListModelFromJson(Map<String, dynamic> json) {
   return VideoTypeListModel(
     (json['class'] as List)
-        ?.map((e) =>
-    e == null ? null : VideoType.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => VideoType.fromJson(e as Map<String, dynamic>))
+        .toList(),
     json['code'] as int,
     json['limit'] as String,
     json['msg'] as String,
@@ -34,8 +38,7 @@ VideoType _$VideoTypeFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$VideoTypeToJson(VideoType instance) =>
-    <String, dynamic>{
-      'typeId': instance.typeId,
-      'typeName': instance.typeName,
+Map<String, dynamic> _$VideoTypeToJson(VideoType instance) => <String, dynamic>{
+      'type_id': instance.typeId,
+      'type_name': instance.typeName,
     };

@@ -37,7 +37,7 @@ class CommonText {
 
   //深灰色20号字
   static Widget darkGrey20Text(text,
-      {maxLines, overflow = TextOverflow.ellipsis, textAlign = TextAlign.center, FontWeight fontWeight}) {
+      {maxLines, overflow = TextOverflow.ellipsis, textAlign = TextAlign.center, FontWeight ? fontWeight}) {
     return Text(
       text,
       style: TextStyle(color: UIData.themeBgColor, fontSize: UIData.fontSize20, fontWeight: fontWeight),
@@ -57,7 +57,7 @@ class CommonText {
   }
 
 //自定义颜色16号字-
-  static Widget text16(text, {height, textAlign = TextAlign.start, color = UIData.primaryColor,FontWeight fontWeight,TextOverflow overflow = TextOverflow.ellipsis}) {
+  static Widget text16(text, {height, textAlign = TextAlign.start, color = UIData.primaryColor, FontWeight ?fontWeight,TextOverflow overflow = TextOverflow.ellipsis}) {
     return Text(
       text,
       style: TextStyle(
@@ -76,7 +76,7 @@ class CommonText {
       {height,maxLines,
         textAlign = TextAlign.start,
         color = UIData.primaryColor,
-        TextDecoration textDecoration,
+        TextDecoration ? textDecoration,
         TextOverflow overflow = TextOverflow.ellipsis}) {
     return Text(
       text,

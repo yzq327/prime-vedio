@@ -7,20 +7,20 @@ import 'package:primeVedio/utils/ui_data.dart';
 
 class VideoSwiper extends StatefulWidget{
   final List<VideoInfo> videoList;
-  VideoSwiper({Key key, this.videoList}) : super(key: key);
+  VideoSwiper({Key ? key, required this.videoList}) : super(key: key);
 
   _VideoSwiperState createState()=> _VideoSwiperState();
 }
 
 class _VideoSwiperState extends State<VideoSwiper>{
 
-  PageController _pageController;
+  late PageController _pageController;
 
   List<VideoInfo> get getImgList => widget.videoList;
 
   int currentIndex = 0;
 
-  Timer _timer;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -29,15 +29,17 @@ class _VideoSwiperState extends State<VideoSwiper>{
       initialPage: currentIndex,
     );
     if(getImgList.length > 1) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
         startTimer();
       });
     }
   }
 
   void dispose() {
-    _timer?.cancel();
     super.dispose();
+    if(getImgList.length > 1) {
+      _timer.cancel();
+    }
   }
 
   void startTimer() {
@@ -51,7 +53,7 @@ class _VideoSwiperState extends State<VideoSwiper>{
   _buildPageViewItemWidget(int index) {
     return  Container(
       margin: EdgeInsets.only(right: UIData.spaceSizeWidth16),
-      child: CommonImgDisplay(vodPic: getImgList[index].vodPic, vodId: getImgList[index].vodId),
+      child: CommonImgDisplay(vodPic: getImgList[index].vodPic, vodId: getImgList[index].vodId, vodName: getImgList[index].vodName,),
     );
   }
 

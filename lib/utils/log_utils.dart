@@ -9,7 +9,7 @@ class LogUtils {
 //   @param logContent  打印文本
 //   @param showLength  规定每段显示的长度（AndroidStudio控制台打印log的最大信息量大小为4k）
 //   @param tag         打印log的标记
-  static void printLog(String logContent, {int showLength = 500, String tag}) {
+  static void printLog(String logContent, {int showLength = 500, String ? tag}) {
     if (HttpOptions.isInDebugMode) {
       if (logContent.length > showLength) {
         String show = logContent.substring(0, showLength);

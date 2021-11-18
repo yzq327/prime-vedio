@@ -4,10 +4,10 @@ import 'package:primeVedio/utils/ui_data.dart';
 class StubTabIndicator extends Decoration {
   final BoxPainter _painter;
 
-  StubTabIndicator({@required Color color}) : _painter = _StubPainter(color);
+  StubTabIndicator({required Color color}) : _painter = _StubPainter(color);
 
   @override
-  BoxPainter createBoxPainter([onChanged]) => _painter;
+  BoxPainter createBoxPainter([ VoidCallback ? onChanged ]) => _painter;
 }
 
 class _StubPainter extends BoxPainter {
@@ -23,13 +23,13 @@ class _StubPainter extends BoxPainter {
     final double width = UIData.spaceSizeWidth110;
     final double height = UIData.spaceSizeHeight40;
     final double radius = UIData.spaceSizeWidth20;
-    final double left = offset.dx + cfg.size.width / 2 - width / 2;
+    final double left = offset.dx + cfg.size!.width / 2 - width / 2;
     canvas.drawRRect(
         RRect.fromLTRBR(
           left,
-          cfg.size.height - height,
+          cfg.size!.height - height,
           left + width,
-          cfg.size.height,
+          cfg.size!.height,
           Radius.circular(radius),
         ),
         _paint);

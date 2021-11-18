@@ -5,8 +5,8 @@ import 'change_notifier_provider.dart';
 
 class Consumer<T> extends StatelessWidget {
   Consumer({
-    Key key,
-    this.builder,
+    required Key key,
+    required this.builder,
   }) : super(key: key);
 
   final Widget Function(BuildContext context, T value) builder;

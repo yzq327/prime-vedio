@@ -3,9 +3,9 @@ import 'inherited_provider.dart';
 
 class ChangeNotifierProvider<T extends ChangeNotifier> extends StatefulWidget {
   ChangeNotifierProvider({
-    Key key,
-    this.data,
-    this.child,
+    required Key key,
+    required this.data,
+    required this.child,
   });
 
   final Widget child;
@@ -17,7 +17,7 @@ class ChangeNotifierProvider<T extends ChangeNotifier> extends StatefulWidget {
         ? context.dependOnInheritedWidgetOfExactType<InheritedProvider<T>>()
         : context.getElementForInheritedWidgetOfExactType<InheritedProvider<T>>()?.widget
     as InheritedProvider<T>;
-    return provider.data;
+    return provider!.data;
   }
 
   @override

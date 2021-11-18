@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<VideoType> getTypeList = [];
-  TabController _tabController;
+  late TabController _tabController;
   int currentTabIndex = 0;
 
   _getVideoTypeList() {

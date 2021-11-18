@@ -35,9 +35,9 @@ class VideoInfo extends Object {
 
 
   VideoInfo({
-    this.vodId,
-    this.vodName,
-    this.vodPic,
+    required this.vodId,
+    required this.vodName,
+    required this.vodPic,
   });
 
   factory VideoInfo.fromJson(Map<String, dynamic> srcJson) => _$VideoInfoFromJson(srcJson);

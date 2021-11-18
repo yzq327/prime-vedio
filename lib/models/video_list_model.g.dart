@@ -1,22 +1,25 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'video_list_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 VideoListModel _$VideoListModelFromJson(Map<String, dynamic> json) {
   return VideoListModel(
     json['total'] as int,
-    (json['list'] as List)
-        ?.map((e) =>
-    e == null ? null : VideoInfo.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['list'] as List<dynamic>)
+        .map((e) => VideoInfo.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
 Map<String, dynamic> _$VideoListModelToJson(VideoListModel instance) =>
     <String, dynamic>{
-      'list': instance.list,
       'total': instance.total,
+      'list': instance.list,
     };
-
 
 VideoInfo _$VideoInfoFromJson(Map<String, dynamic> json) {
   return VideoInfo(
@@ -26,9 +29,8 @@ VideoInfo _$VideoInfoFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$VideoInfoToJson(VideoInfo instance) =>
-    <String, dynamic>{
-      'vodId': instance.vodId,
-      'vodName': instance.vodName,
-      'vodPic': instance.vodPic,
+Map<String, dynamic> _$VideoInfoToJson(VideoInfo instance) => <String, dynamic>{
+      'vod_id': instance.vodId,
+      'vod_name': instance.vodName,
+      'vod_pic': instance.vodPic,
     };

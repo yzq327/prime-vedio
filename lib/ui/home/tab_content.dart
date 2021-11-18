@@ -11,7 +11,7 @@ import 'package:primeVedio/utils/ui_data.dart';
 
 class TabContent extends StatefulWidget{
   final int typeId;
-  TabContent({Key key, this.typeId}) : super(key: key);
+  TabContent({ Key? key, required this.typeId}) : super(key: key);
 
   _TabContentState createState()=> _TabContentState();
 }
@@ -30,7 +30,6 @@ class _TabContentState extends State<TabContent>{
         .then((value) {
       VideoListModel model = VideoListModel.fromJson(value);
       if (model.list != null && model.list.length > 0) {
-        LogUtils.printLog('数据: ${model.list[0].vodName}');
         setState(() {
           getVideoList = model.list;
         });

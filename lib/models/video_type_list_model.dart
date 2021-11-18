@@ -49,8 +49,8 @@ class VideoType extends Object {
   String typeName;
 
   VideoType({
-    this.typeId,
-    this.typeName,
+    required this.typeId,
+    required this.typeName,
   });
 
   factory VideoType.fromJson(Map<String, dynamic> srcJson) => _$VideoTypeFromJson(srcJson);

@@ -19,5 +19,5 @@ var routePath = {
   Routes.home: (BuildContext context) => HomePage(),
   Routes.search: (BuildContext context) => SearchPage(),
   Routes.mine: (BuildContext context) => MinePage(),
-  Routes.detail: (BuildContext context) => VideoDetailPage(),
+  Routes.detail: (BuildContext context) => VideoDetailPage(vodId: 1),
 };
