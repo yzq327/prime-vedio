@@ -70,13 +70,6 @@ class _RecentVideoContainerState extends State<RecentVideoContainer> {
                       itemCount: getVideoList.length,
                       itemBuilder: (BuildContext context, int index) => _buildVideoInfo(index),
                     ),
-                    Container(
-                        color: UIData.themeBgColor,
-                        padding: EdgeInsets.only(top: UIData.spaceSizeHeight10),
-                        height: UIData.spaceSizeHeight90,
-                        width: UIData.spaceSizeWidth400,
-                        child: CommonText.normalText('没有更多啦',
-                            color: UIData.subThemeBgColor))
                   ]
                 ),
       );

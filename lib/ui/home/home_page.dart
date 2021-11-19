@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         designSize: Size(375, 812),
         orientation: Orientation.portrait);
     return Scaffold(
+      backgroundColor: UIData.themeBgColor,
       appBar: AppBar(
         elevation: 0,
         title: Row(

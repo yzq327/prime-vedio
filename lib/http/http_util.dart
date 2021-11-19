@@ -9,6 +9,7 @@ class HttpUtil {
   static Future request(String url, String method, {Map<String, dynamic> ? params, Function ? errorCallBack}) async {
     Dio dio = HttpOptions.dio;
     Response response;
+    if (HttpOptions.isInDebugMode) _urlPrint(url, params: params);
     try {
       if (method == GET) {
         if (params != null && params.isNotEmpty) {
@@ -28,7 +29,6 @@ class HttpUtil {
     } on DioError catch (e) {
       LogUtils.printLog(e.message);
     }
-    if (HttpOptions.isInDebugMode) _urlPrint(url, params: params);
   }
 
   static void _urlPrint(String url,
