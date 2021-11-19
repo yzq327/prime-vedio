@@ -116,7 +116,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                               ),
                             ),
                             Container(
-                              height: UIData.spaceSizeHeight580,
+                              height: UIData.spaceSizeHeight700,
                               child: TabBarView(
                                   controller: _tabController,
                                   children: [
