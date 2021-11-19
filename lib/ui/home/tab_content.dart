@@ -23,6 +23,7 @@ class _TabContentState extends State<TabContent> {
 
   int total = 0;
   int currentPage = 1;
+  bool _enablePullUp = true;
 
   RefreshController _refreshController = RefreshController();
 
@@ -40,8 +41,14 @@ class _TabContentState extends State<TabContent> {
         setState(() {
           total = model.total;
           getVideoList = getVideoList..addAll(model.list);
+          if (getVideoList.length == total) {
+            _enablePullUp = false;
+          }
         });
       } else {
+        setState(() {
+          _enablePullUp = false;
+        });
         LogUtils.printLog('数据为空！');
       }
     });
@@ -54,22 +61,19 @@ class _TabContentState extends State<TabContent> {
   }
 
   void _onRefresh() async {
-    if (getVideoList.length < total) {
-      setState(() {
-        currentPage = currentPage + 1;
-      });
-      _getVideoTypeList();
-    } else {
-      await Future.delayed(Duration(milliseconds: 1000));
-    }
+    setState(() {
+      currentPage = 1;
+      getVideoList = [];
+    });
+    await _getVideoTypeList();
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
-    await Future.delayed(Duration(milliseconds: 1000));
-    if(mounted)
-      setState(() {
-      });
+    setState(() {
+      currentPage = currentPage + 1;
+    });
+    await _getVideoTypeList();
     _refreshController.loadComplete();
   }
 
@@ -94,45 +98,63 @@ class _TabContentState extends State<TabContent> {
           body = CommonText.normalText(text, color: UIData.subThemeBgColor);
         }
         return Container(
-          color: UIData.primaryColor,
           height: UIData.spaceSizeHeight60,
-          child: Center(child: body),
+          child: body,
         );
       },
     );
+  }
+
+  Widget _buildHeaderContent() {
+    return WaterDropHeader(
+        refresh: CircularProgressIndicator(
+            strokeWidth: 2.0, color: UIData.hoverThemeBgColor),
+        waterDropColor: UIData.hoverThemeBgColor,
+        complete: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Icon(
+              Icons.done,
+              color: Colors.grey,
+            ),
+            Container(
+              width: 15.0,
+            ),
+            CommonText.normalText('加载完成!', color: UIData.subThemeBgColor)
+          ],
+        ),
+        idleIcon: Icon(
+          Icons.autorenew,
+          size: 20,
+          color: Colors.white,
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return SmartRefresher(
       enablePullDown: true,
-      enablePullUp: true,
-      header: WaterDropHeader(
-          refresh: CircularProgressIndicator(
-              strokeWidth: 2.0, color: UIData.hoverThemeBgColor),
-          waterDropColor: UIData.hoverThemeBgColor,
-          idleIcon: Icon(
-            Icons.autorenew,
-            size: 20,
-            color: Colors.white,
-          )),
+      enablePullUp: _enablePullUp,
+      header: _buildHeaderContent(),
       footer: _buildFooterContent(),
       controller: _refreshController,
       onRefresh: _onRefresh,
       onLoading: _onLoading,
       child: ListView(
-        children: [
-          Column(
-            children: getVideoList.length > 0
-                ? [
-                    VideoSwiper(videoList: getVideoList),
-                    RecentVideoContainer(videoList: getVideoList)
-                  ]
-                : [
-                    CommonHintTextContain(),
-                  ],
-          ),
-        ],
+        children: getVideoList.length > 0
+            ? [
+                VideoSwiper(videoList: getVideoList),
+                RecentVideoContainer(videoList: getVideoList),
+                Container(
+                  height: UIData.spaceSizeHeight60,
+                  alignment: Alignment.center,
+                  child: CommonText.normalText(_enablePullUp ? '' : '没有更多数据了!',
+                      color: UIData.subThemeBgColor),
+                )
+              ]
+            : [
+                CommonHintTextContain(),
+              ],
       ),
     );
   }

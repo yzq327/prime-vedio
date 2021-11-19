@@ -1,20 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
-import 'package:primeVedio/commom/common_hint_text_contain.dart';
-import 'package:primeVedio/http/http_options.dart';
-import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_detail_list_model.dart';
-import 'package:primeVedio/models/video_list_model.dart';
-import 'package:primeVedio/ui/home/recent_video_container.dart';
-import 'package:primeVedio/ui/home/video_swiper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
-import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class VideoInfoContent extends StatefulWidget {
   final VideoDetail? getVideoDetail;
-  VideoInfoContent({Key? key, this.getVideoDetail}) : super(key: key);
+  final TabController tabController;
+  VideoInfoContent({Key? key, this.getVideoDetail, required this.tabController}) : super(key: key);
 
   _VideoInfoContentState createState() => _VideoInfoContentState();
 }
@@ -32,8 +26,8 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      physics: NeverScrollableScrollPhysics(),
-      // shrinkWrap: true,
+      // physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,20 +69,6 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
                 ),
               ),
             ),
-            // ListView(
-            //   scrollDirection: Axis.horizontal,
-            //   children: [
-            //     Container(
-            //       width: UIData.spaceSizeWidth100,
-            //       height: UIData.spaceSizeHeight48,
-            //       decoration: BoxDecoration(
-            //         color: UIData.primaryColor,
-            //         borderRadius: BorderRadius.circular(UIData.spaceSizeWidth8),
-            //       ),
-            //       child: CommonText.mainTitle('第1集'),
-            //     ),
-            //   ],
-            // ),
             SizedBox(height: UIData.spaceSizeHeight18),
             Padding(
               padding:

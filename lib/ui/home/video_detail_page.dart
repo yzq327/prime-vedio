@@ -86,55 +86,34 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                           fit: BoxFit.cover),
                     ),
                   ),
-                  Expanded(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.topLeft,
-                              width: 400,
-                              margin: EdgeInsets.symmetric(
-                                  vertical: UIData.spaceSizeHeight24),
-                              child: TabBar(
-                                controller: _tabController,
-                                // padding: EdgeInsets.symmetric(horizontal: 0),
-                                labelStyle:
-                                    TextStyle(fontSize: UIData.fontSize20),
-                                unselectedLabelStyle:
-                                    TextStyle(fontSize: UIData.fontSize20),
-                                isScrollable: true,
-                                labelPadding:
-                                    EdgeInsets.symmetric(horizontal: 50),
-                                labelColor: UIData.hoverTextColor,
-                                unselectedLabelColor: UIData.primaryColor,
-                                indicatorWeight: 0.0,
-                                indicator: StubTabIndicator(
-                                    color: UIData.hoverThemeBgColor),
-                                tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
-                              ),
-                            ),
-                            Container(
-                              height: UIData.spaceSizeHeight700,
-                              child: TabBarView(
-                                  controller: _tabController,
-                                  children: [
-                                    VideoInfoContent(getVideoDetail: getVideoDetail),
-                                    ListView(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      children: [
-                                        CommonHintTextContain(),
-                                        CommonHintTextContain(),
-                                      ],
-                                    ),
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      ],
+                  Container(
+                    alignment: Alignment.topLeft,
+                    width: 400,
+                    margin: EdgeInsets.symmetric(
+                        vertical: UIData.spaceSizeHeight24),
+                    child: TabBar(
+                      controller: _tabController,
+                      labelStyle:
+                      TextStyle(fontSize: UIData.fontSize20),
+                      unselectedLabelStyle:
+                      TextStyle(fontSize: UIData.fontSize20),
+                      isScrollable: true,
+                      labelPadding:
+                      EdgeInsets.symmetric(horizontal: 50),
+                      labelColor: UIData.hoverTextColor,
+                      unselectedLabelColor: UIData.primaryColor,
+                      indicatorWeight: 0.0,
+                      indicator: StubTabIndicator(
+                          color: UIData.hoverThemeBgColor),
+                      tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
                     ),
                   ),
+                  Expanded(child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        VideoInfoContent(getVideoDetail: getVideoDetail, tabController: _tabController!,),
+                        VideoInfoContent(getVideoDetail: getVideoDetail, tabController: _tabController!),
+                      ])),
                 ],
               ));
   }
