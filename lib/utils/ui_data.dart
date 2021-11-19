@@ -31,6 +31,9 @@ class UIData {
   static const subTextColor = const Color(0xFF5A6777);
   static const defaultImgBgColor = const Color(0xFFA3B5B6);
   static const phTextColor = const Color(0xFFC4C2C2);
+  static const darkWhiteColor = const Color(0xFFF6F7F9);
+  static const blackColor = const Color(0xFF000000);
+  static const darkBlueColor = const Color(0xFF09647A);
 
   //***************************其余颜色***************************//
 
@@ -119,6 +122,7 @@ class UIData {
   static double spaceSizeHeight32 = ScreenUtil().setHeight(32);
   static double spaceSizeHeight34 = ScreenUtil().setHeight(34);
   static double spaceSizeHeight40 = ScreenUtil().setHeight(40);
+  static double spaceSizeHeight44 = ScreenUtil().setHeight(44);
   static double spaceSizeHeight48 = ScreenUtil().setHeight(48);
   static double spaceSizeHeight50 = ScreenUtil().setHeight(50);
   static double spaceSizeHeight60 = ScreenUtil().setHeight(60);
