@@ -162,10 +162,11 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                     child: TabBar(
                       controller: _tabController,
                       labelStyle: TextStyle(fontSize: UIData.fontSize20),
+                      padding: EdgeInsets.only(left: UIData.spaceSizeWidth50,),
                       unselectedLabelStyle:
                           TextStyle(fontSize: UIData.fontSize20),
                       isScrollable: true,
-                      labelPadding: EdgeInsets.symmetric(horizontal: 50),
+                      labelPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
                       labelColor: UIData.hoverTextColor,
                       unselectedLabelColor: UIData.primaryColor,
                       indicatorWeight: 0.0,
