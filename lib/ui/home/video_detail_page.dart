@@ -128,6 +128,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                     VideoInfoContent(
                       getVideoDetail: getVideoDetail,
                       tabController: _tabController!,
+                      urlInfo: urlInfo,
+                      chewieController: urlInfo!.length > 0 ?  _chewieController : null,
                     ),
                     VideoInfoContent(
                         getVideoDetail: getVideoDetail,
