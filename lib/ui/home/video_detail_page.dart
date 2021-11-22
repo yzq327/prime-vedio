@@ -31,9 +31,22 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     with TickerProviderStateMixin {
   VideoDetail? getVideoDetail;
   TabController? _tabController;
-  late ChewieController _chewieController;
+  VideoPlayerController? _videoPlayerController;
   List? urlInfo = [];
+  bool isPlaying = false;
 
+  void _playWithIndex(int index) {
+    _videoPlayerController?.dispose();
+    _videoPlayerController = VideoPlayerController.network(urlInfo![index][1])
+      ..initialize()
+      ..addListener(() {
+        print('position: ${_videoPlayerController?.value.position.inSeconds}');
+        print('duration: ${_videoPlayerController?.value.duration.inSeconds}');
+        setState(() {});
+      })
+      ..setVolume(1)
+      ..play();
+  }
 
   void _getVideoDetailList() {
     Map<String, Object> params = {
@@ -49,15 +62,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           String vodPlayUrl = model.list[0].vodPlayUrl;
           if (vodPlayUrl.isNotEmpty) {
             urlInfo = vodPlayUrl.split('#').map((e) => e.split('\$')).toList();
-            VideoPlayerController _videoPlayerController =
-                VideoPlayerController.network(urlInfo![0][1]);
-            _chewieController = ChewieController(
-              videoPlayerController: _videoPlayerController,
-              aspectRatio: 3 / 2,
-              autoInitialize: true,
-              autoPlay: true,
-              looping: true,
-            );
+            _playWithIndex(0);
           }
         });
       } else {
@@ -76,9 +81,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   void dispose() {
     _tabController!.dispose();
-    if(urlInfo!.length > 0) {
-      _chewieController.dispose();
-    }
+    _videoPlayerController?.dispose();
     super.dispose();
   }
 
@@ -90,7 +93,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           elevation: 0,
           title: CommonText.mainTitle(widget.videoDetailPageParams.vodName),
         ),
-        body: getVideoDetail == null
+        body: getVideoDetail == null || _videoPlayerController == null
             ? CommonHintTextContain(text: '数据加载中...')
             : Column(
                 children: [
@@ -99,7 +102,36 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                     height: UIData.spaceSizeHeight228,
                     width: double.infinity,
                     child: urlInfo!.isNotEmpty
-                        ? Chewie(controller: _chewieController)
+                        ? Stack(
+                            children: [
+                              AspectRatio(
+                                aspectRatio:
+                                    _videoPlayerController!.value.aspectRatio,
+                                child: VideoPlayer(_videoPlayerController!),
+                              ),
+                              Positioned.fill(
+                                child: Center(
+                                  child: (_videoPlayerController
+                                              ?.value.isPlaying ??
+                                          false)
+                                      ? IconButton(
+                                      iconSize: UIData.spaceSizeWidth50,
+                                          icon: Icon(Icons.pause),
+                                          onPressed: () {
+                                            _videoPlayerController?.pause();
+                                          },
+                                        )
+                                      : IconButton(
+                                    iconSize: UIData.spaceSizeWidth50,
+                                          icon: Icon(Icons.play_arrow),
+                                          onPressed: () {
+                                            _videoPlayerController?.play();
+                                          },
+                                        ),
+                                ),
+                              )
+                            ],
+                          )
                         : CommonText.mainTitle('暂无视频资源，尽情期待',
                             color: UIData.hoverThemeBgColor),
                   ),
@@ -129,11 +161,14 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                       getVideoDetail: getVideoDetail,
                       tabController: _tabController!,
                       urlInfo: urlInfo,
-                      chewieController: urlInfo!.length > 0 ?  _chewieController : null,
+                      videoPlayerController:
+                      urlInfo!.length > 0 ? _videoPlayerController : null,
+                      onChanged: _playWithIndex,
                     ),
                     VideoInfoContent(
                         getVideoDetail: getVideoDetail,
-                        tabController: _tabController!),
+                        tabController: _tabController!,
+                        onChanged: _playWithIndex),
                   ])),
                 ],
               ));

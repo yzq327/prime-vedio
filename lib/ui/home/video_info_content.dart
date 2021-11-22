@@ -10,13 +10,15 @@ import 'package:video_player/video_player.dart';
 class VideoInfoContent extends StatefulWidget {
   final VideoDetail? getVideoDetail;
   final TabController tabController;
-  late ChewieController? chewieController;
+  late VideoPlayerController? videoPlayerController;
+  final ValueChanged<int> onChanged;
   List? urlInfo = [];
   VideoInfoContent(
       {Key? key,
       this.getVideoDetail,
       required this.tabController,
-      this.chewieController,
+      this.videoPlayerController,
+      required this.onChanged,
       this.urlInfo})
       : super(key: key);
 
@@ -38,9 +40,6 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
 
   @override
   void dispose() {
-    if (widget.urlInfo!.length > 0) {
-      widget.chewieController!.dispose();
-    }
     super.dispose();
   }
 
@@ -94,16 +93,8 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
               ),
               onTap: () {
                 setState(() {
-                  widget.chewieController!.dispose();
                   currentIndex = index;
-                  widget.chewieController = ChewieController(
-                    videoPlayerController: VideoPlayerController.network(
-                        widget.urlInfo![index][1]),
-                    aspectRatio: 3 / 2,
-                    autoInitialize: true,
-                    autoPlay: true,
-                    looping: true,
-                  );
+                  widget.onChanged(index);
                 });
               },
             ),
