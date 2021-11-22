@@ -1,25 +1,19 @@
-import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/models/video_detail_list_model.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoInfoContent extends StatefulWidget {
   final VideoDetail? getVideoDetail;
-  final TabController tabController;
-  late VideoPlayerController? videoPlayerController;
   final ValueChanged<int> onChanged;
-  List? urlInfo = [];
+  List? urlInfo;
   VideoInfoContent(
       {Key? key,
       this.getVideoDetail,
-      required this.tabController,
-      this.videoPlayerController,
       required this.onChanged,
-      this.urlInfo})
+      required this.urlInfo})
       : super(key: key);
 
   _VideoInfoContentState createState() => _VideoInfoContentState();

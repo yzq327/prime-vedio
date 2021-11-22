@@ -20,10 +20,12 @@ class TabContent extends StatefulWidget {
 
 class _TabContentState extends State<TabContent> {
   List<VideoInfo> getVideoList = [];
-
   int total = 0;
   int currentPage = 1;
-  bool _enablePullUp = true;
+
+  bool get _enablePullUp {
+    return getVideoList.length != total;
+  }
 
   RefreshController _refreshController = RefreshController();
 
@@ -40,15 +42,11 @@ class _TabContentState extends State<TabContent> {
       if (model.list.length > 0) {
         setState(() {
           total = model.total;
-          getVideoList = getVideoList..addAll(model.list);
-          if (getVideoList.length == total) {
-            _enablePullUp = false;
-          }
+          getVideoList = currentPage == 1
+              ? model.list
+              : (getVideoList..addAll(model.list));
         });
       } else {
-        setState(() {
-          _enablePullUp = false;
-        });
         LogUtils.printLog('数据为空！');
       }
     });
@@ -63,7 +61,6 @@ class _TabContentState extends State<TabContent> {
   void _onRefresh() async {
     setState(() {
       currentPage = 1;
-      getVideoList = [];
     });
     await _getVideoTypeList();
     _refreshController.refreshCompleted();

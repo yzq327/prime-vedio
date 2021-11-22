@@ -1,4 +1,3 @@
-import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
@@ -6,6 +5,7 @@ import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_detail_list_model.dart';
+import 'package:primeVedio/ui/home/same_type_video_content.dart';
 import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
 import 'package:primeVedio/utils/log_utils.dart';
@@ -93,7 +93,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           elevation: 0,
           title: CommonText.mainTitle(widget.videoDetailPageParams.vodName),
         ),
-        body: getVideoDetail == null || _videoPlayerController == null
+        body: getVideoDetail == null
             ? CommonHintTextContain(text: '数据加载中...')
             : Column(
                 children: [
@@ -115,14 +115,14 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                                               ?.value.isPlaying ??
                                           false)
                                       ? IconButton(
-                                      iconSize: UIData.spaceSizeWidth50,
+                                          iconSize: UIData.spaceSizeWidth50,
                                           icon: Icon(Icons.pause),
                                           onPressed: () {
                                             _videoPlayerController?.pause();
                                           },
                                         )
                                       : IconButton(
-                                    iconSize: UIData.spaceSizeWidth50,
+                                          iconSize: UIData.spaceSizeWidth50,
                                           icon: Icon(Icons.play_arrow),
                                           onPressed: () {
                                             _videoPlayerController?.play();
@@ -159,16 +159,10 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                       child: TabBarView(controller: _tabController, children: [
                     VideoInfoContent(
                       getVideoDetail: getVideoDetail,
-                      tabController: _tabController!,
                       urlInfo: urlInfo,
-                      videoPlayerController:
-                      urlInfo!.length > 0 ? _videoPlayerController : null,
                       onChanged: _playWithIndex,
                     ),
-                    VideoInfoContent(
-                        getVideoDetail: getVideoDetail,
-                        tabController: _tabController!,
-                        onChanged: _playWithIndex),
+                    SameTypeVideoContent(getVideoDetail: getVideoDetail),
                   ])),
                 ],
               ));
