@@ -34,15 +34,18 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   VideoPlayerController? _videoPlayerController;
   List? urlInfo = [];
   bool isPlaying = false;
+  int position = 0;
+  int duration = 1;
 
   void _playWithIndex(int index) {
     _videoPlayerController?.dispose();
     _videoPlayerController = VideoPlayerController.network(urlInfo![index][1])
       ..initialize()
       ..addListener(() {
-        print('position: ${_videoPlayerController?.value.position.inSeconds}');
-        print('duration: ${_videoPlayerController?.value.duration.inSeconds}');
-        setState(() {});
+        position= _videoPlayerController?.value.position.inSeconds ?? 0;
+        duration= _videoPlayerController?.value.duration.inSeconds ?? 1;
+        setState(() {
+        });
       })
       ..setVolume(1)
       ..play();
@@ -110,26 +113,42 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                                 child: VideoPlayer(_videoPlayerController!),
                               ),
                               Positioned.fill(
-                                child: Center(
-                                  child: (_videoPlayerController
-                                              ?.value.isPlaying ??
-                                          false)
-                                      ? IconButton(
-                                          iconSize: UIData.spaceSizeWidth50,
-                                          icon: Icon(Icons.pause),
-                                          onPressed: () {
-                                            _videoPlayerController?.pause();
-                                          },
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(UIData.spaceSizeHeight40),
+                                      child: (_videoPlayerController
+                                                  ?.value.isPlaying ??
+                                              false)
+                                          ? IconButton(
+                                              iconSize: UIData.spaceSizeWidth50,
+                                              icon: Icon(Icons.pause),
+                                              onPressed: () {
+                                                _videoPlayerController?.pause();
+                                              },
+                                            )
+                                          : IconButton(
+                                              iconSize: UIData.spaceSizeWidth50,
+                                              icon: Icon(Icons.play_arrow),
+                                              onPressed: () {
+                                                _videoPlayerController?.play();
+                                              },
+                                            ),
+                                    ),
+                                    Container(
+                                        alignment: Alignment.bottomLeft,
+                                        height: UIData.spaceSizeHeight8,
+                                        color:  Colors.transparent,
+                                        child: (position/duration).isNaN ? SizedBox() :  LinearProgressIndicator(
+                                          backgroundColor: UIData.primaryColor,
+                                          valueColor: AlwaysStoppedAnimation(UIData.hoverThemeBgColor),
+                                          value: position/duration,
                                         )
-                                      : IconButton(
-                                          iconSize: UIData.spaceSizeWidth50,
-                                          icon: Icon(Icons.play_arrow),
-                                          onPressed: () {
-                                            _videoPlayerController?.play();
-                                          },
-                                        ),
+                                    ),
+                                  ],
                                 ),
-                              )
+                              ),
                             ],
                           )
                         : CommonText.mainTitle('暂无视频资源，尽情期待',
