@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
@@ -10,6 +11,7 @@ import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoDetailPageParams {
   final int vodId;
@@ -30,6 +32,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     with TickerProviderStateMixin {
   VideoDetail? getVideoDetail;
   TabController? _tabController;
+  late ChewieController _chewieController;
 
   _getVideoDetailList() {
     Map<String, Object> params = {
@@ -41,8 +44,16 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       VideoDetailListModel model = VideoDetailListModel.fromJson(value);
       if (model.list.length > 0) {
         setState(() {
-          // _tabController = TabController(length:2, vsync: this);
           getVideoDetail = model.list[0];
+          VideoPlayerController _videoPlayerController = VideoPlayerController.network(
+              'https://video.dious.cc/20200612/BG4n9GRS/index.m3u8');
+          _chewieController = ChewieController(
+            videoPlayerController: _videoPlayerController,
+            aspectRatio: 3 / 2,
+            autoInitialize: true,
+            autoPlay: true,
+            looping: true,
+          );
         });
       } else {
         LogUtils.printLog('数据为空！');
@@ -60,6 +71,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   void dispose() {
     _tabController!.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
@@ -78,13 +90,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                   Container(
                     height: UIData.spaceSizeHeight228,
                     width: double.infinity,
-                    child: Container(
-                      child: Image(
-                          image: CachedNetworkImageProvider(
-                              getVideoDetail!.vodPic),
-                          alignment: Alignment.topCenter,
-                          fit: BoxFit.cover),
-                    ),
+                    child: Chewie(controller: _chewieController)
                   ),
                   Container(
                     alignment: Alignment.topLeft,
