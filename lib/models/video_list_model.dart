@@ -33,11 +33,20 @@ class VideoInfo extends Object {
   @JsonKey(name: 'vod_pic')
   String vodPic;
 
+  @JsonKey(name: 'vod_year')
+  String vodYear;
+
+  @JsonKey(name: 'vod_score')
+  String vodScore;
+
+
 
   VideoInfo({
     required this.vodId,
     required this.vodName,
     required this.vodPic,
+    required this.vodYear,
+    required this.vodScore
   });
 
   factory VideoInfo.fromJson(Map<String, dynamic> srcJson) => _$VideoInfoFromJson(srcJson);

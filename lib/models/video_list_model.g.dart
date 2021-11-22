@@ -26,6 +26,8 @@ VideoInfo _$VideoInfoFromJson(Map<String, dynamic> json) {
     vodId: json['vod_id'] as int,
     vodName: json['vod_name'] as String,
     vodPic: json['vod_pic'] as String,
+    vodYear: json['vod_year'] as String,
+    vodScore: json['vod_score'] as String,
   );
 }
 
@@ -33,4 +35,6 @@ Map<String, dynamic> _$VideoInfoToJson(VideoInfo instance) => <String, dynamic>{
       'vod_id': instance.vodId,
       'vod_name': instance.vodName,
       'vod_pic': instance.vodPic,
+      'vod_year': instance.vodYear,
+      'vod_score': instance.vodScore,
     };

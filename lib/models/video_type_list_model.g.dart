@@ -8,7 +8,7 @@ part of 'video_type_list_model.dart';
 
 VideoTypeListModel _$VideoTypeListModelFromJson(Map<String, dynamic> json) {
   return VideoTypeListModel(
-    (json['class'] as List)
+    (json['class'] as List<dynamic>)
         .map((e) => VideoType.fromJson(e as Map<String, dynamic>))
         .toList(),
     json['code'] as int,
@@ -22,12 +22,12 @@ VideoTypeListModel _$VideoTypeListModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$VideoTypeListModelToJson(VideoTypeListModel instance) =>
     <String, dynamic>{
-      'typeList': instance.typeList,
+      'class': instance.typeList,
       'code': instance.code,
       'limit': instance.limit,
       'msg': instance.msg,
       'page': instance.page,
-      'pageCount': instance.pageCount,
+      'pagecount': instance.pageCount,
       'total': instance.total,
     };
 
