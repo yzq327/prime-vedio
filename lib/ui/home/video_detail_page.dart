@@ -117,7 +117,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                                     mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(UIData.spaceSizeHeight40),
+                                      padding: EdgeInsets.only(bottom: UIData.spaceSizeHeight50),
                                       child: (_videoPlayerController
                                                   ?.value.isPlaying ??
                                               false)
