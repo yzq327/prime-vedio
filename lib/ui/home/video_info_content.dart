@@ -25,6 +25,7 @@ class VideoInfoContent extends StatefulWidget {
 
 class _VideoInfoContentState extends State<VideoInfoContent> {
   int currentIndex = 0;
+  bool _reverse = false;
 
   VideoDetail? get getVideoDetail {
     return widget.getVideoDetail;
@@ -37,12 +38,11 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
 
   @override
   void dispose() {
-    if(widget.urlInfo!.length > 0) {
+    if (widget.urlInfo!.length > 0) {
       widget.chewieController!.dispose();
     }
     super.dispose();
   }
-
 
   Widget _buildSelectVideo() {
     return Column(
@@ -53,7 +53,14 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CommonText.mainTitle('选集'),
-              Icon(IconFont.icon_daoxu, color: UIData.primaryColor),
+              GestureDetector(
+                child: Icon(IconFont.icon_daoxu, color: UIData.primaryColor),
+                onTap: () {
+                  setState(() {
+                    _reverse = !_reverse;
+                  });
+                },
+              ),
             ],
           ),
         ),
@@ -62,6 +69,7 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
           height: UIData.spaceSizeHeight44,
           width: double.infinity,
           child: GridView.builder(
+            reverse: _reverse,
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
