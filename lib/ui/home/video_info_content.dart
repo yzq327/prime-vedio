@@ -59,13 +59,15 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
                   mainAxisSpacing: UIData.spaceSizeWidth8,
                 ),
                 itemCount: 10,
-                itemBuilder: (BuildContext context, int index) => Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: index == 0 ? UIData.darkBlueColor : UIData.darkWhiteColor,
-                    borderRadius: BorderRadius.circular(UIData.spaceSizeWidth2),
+                itemBuilder: (BuildContext context, int index) => GestureDetector(
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: index == 0 ? UIData.darkBlueColor : UIData.darkWhiteColor,
+                      borderRadius: BorderRadius.circular(UIData.spaceSizeWidth2),
+                    ),
+                    child:CommonText.text18('第${index + 1}集', color: index == 0 ? UIData.hoverThemeBgColor : UIData.blackColor  ),
                   ),
-                  child:CommonText.text18('第${index + 1}集', color: index == 0 ? UIData.hoverThemeBgColor : UIData.blackColor  ),
                 ),
               ),
             ),

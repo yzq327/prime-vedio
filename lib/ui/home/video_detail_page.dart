@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +32,10 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   VideoDetail? getVideoDetail;
   TabController? _tabController;
   late ChewieController _chewieController;
+  List? urlInfo = [];
 
-  _getVideoDetailList() {
+
+  void _getVideoDetailList() {
     Map<String, Object> params = {
       'ac': 'detail',
       'ids': widget.videoDetailPageParams.vodId,
@@ -45,15 +46,19 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       if (model.list.length > 0) {
         setState(() {
           getVideoDetail = model.list[0];
-          VideoPlayerController _videoPlayerController = VideoPlayerController.network(
-              'https://video.dious.cc/20200612/BG4n9GRS/index.m3u8');
-          _chewieController = ChewieController(
-            videoPlayerController: _videoPlayerController,
-            aspectRatio: 3 / 2,
-            autoInitialize: true,
-            autoPlay: true,
-            looping: true,
-          );
+          String vodPlayUrl = model.list[0].vodPlayUrl;
+          if (vodPlayUrl.isNotEmpty) {
+            urlInfo = vodPlayUrl.split('#').map((e) => e.split('\$')).toList();
+            VideoPlayerController _videoPlayerController =
+                VideoPlayerController.network(urlInfo![0][1]);
+            _chewieController = ChewieController(
+              videoPlayerController: _videoPlayerController,
+              aspectRatio: 3 / 2,
+              autoInitialize: true,
+              autoPlay: true,
+              looping: true,
+            );
+          }
         });
       } else {
         LogUtils.printLog('数据为空！');
@@ -71,7 +76,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   void dispose() {
     _tabController!.dispose();
-    _chewieController.dispose();
+    if(urlInfo!.length > 0) {
+      _chewieController.dispose();
+    }
     super.dispose();
   }
 
@@ -88,9 +95,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             : Column(
                 children: [
                   Container(
+                    alignment: Alignment.center,
                     height: UIData.spaceSizeHeight228,
                     width: double.infinity,
-                    child: Chewie(controller: _chewieController)
+                    child: urlInfo!.isNotEmpty
+                        ? Chewie(controller: _chewieController)
+                        : CommonText.mainTitle('暂无视频资源，尽情期待',
+                            color: UIData.hoverThemeBgColor),
                   ),
                   Container(
                     alignment: Alignment.topLeft,
@@ -99,27 +110,29 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                         vertical: UIData.spaceSizeHeight24),
                     child: TabBar(
                       controller: _tabController,
-                      labelStyle:
-                      TextStyle(fontSize: UIData.fontSize20),
+                      labelStyle: TextStyle(fontSize: UIData.fontSize20),
                       unselectedLabelStyle:
-                      TextStyle(fontSize: UIData.fontSize20),
+                          TextStyle(fontSize: UIData.fontSize20),
                       isScrollable: true,
-                      labelPadding:
-                      EdgeInsets.symmetric(horizontal: 50),
+                      labelPadding: EdgeInsets.symmetric(horizontal: 50),
                       labelColor: UIData.hoverTextColor,
                       unselectedLabelColor: UIData.primaryColor,
                       indicatorWeight: 0.0,
-                      indicator: StubTabIndicator(
-                          color: UIData.hoverThemeBgColor),
+                      indicator:
+                          StubTabIndicator(color: UIData.hoverThemeBgColor),
                       tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
                     ),
                   ),
-                  Expanded(child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        VideoInfoContent(getVideoDetail: getVideoDetail, tabController: _tabController!,),
-                        VideoInfoContent(getVideoDetail: getVideoDetail, tabController: _tabController!),
-                      ])),
+                  Expanded(
+                      child: TabBarView(controller: _tabController, children: [
+                    VideoInfoContent(
+                      getVideoDetail: getVideoDetail,
+                      tabController: _tabController!,
+                    ),
+                    VideoInfoContent(
+                        getVideoDetail: getVideoDetail,
+                        tabController: _tabController!),
+                  ])),
                 ],
               ));
   }
