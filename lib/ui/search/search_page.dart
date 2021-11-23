@@ -43,10 +43,10 @@ class _SearchPageState extends State<SearchPage> {
     queryData();
   }
 
-  void insertData() async {
+  void insertData(String searchValue) async {
     await dbUtil.open();
     Map<String, Object> par = Map<String, Object>();
-    par['content'] = 'test-search-value';
+    par['content'] = searchValue;
     await dbUtil.insertByHelper('search', par);
     await dbUtil.close();
     queryData();
@@ -58,7 +58,6 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       dataList = data.map((i) => SearchDBItem.fromJson(i)).toList();
     });
-    print('dataList******：$dataList');
     await dbUtil.close();
   }
 
@@ -77,6 +76,13 @@ class _SearchPageState extends State<SearchPage> {
       onChanged: (value) => setState(() {
         searchValue = value.trim();
       }),
+      onSubmitted: (value) {
+        insertData(value.trim());
+        setState(() {
+          searchValue = '';
+          _userEtController.text = '';
+        });
+      },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(UIData.spaceSizeWidth8),
         hintStyle: TextStyle(color: UIData.textDefaultColor),
@@ -123,22 +129,26 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
         dataList.length > 0
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: dataList
-                    .map((e) => Container(
-                          decoration: BoxDecoration(
-                            color: UIData.primaryColor,
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: UIData.spaceSizeHeight10,
-                              horizontal: UIData.spaceSizeWidth24),
-                          child: CommonText.text18(e.content,
-                              color: UIData.blackColor),
-                        ))
-                    .toList(),
-              )
+            ? Container(
+                width: double.infinity,
+                child: Wrap(
+                  spacing: UIData.spaceSizeWidth10,
+                  runSpacing: UIData.spaceSizeHeight10,
+                  children: dataList
+                      .map((e) => Container(
+                            height: UIData.spaceSizeHeight44,
+                            decoration: BoxDecoration(
+                              color: UIData.primaryColor,
+                              borderRadius: BorderRadius.circular(UIData.spaceSizeWidth2),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: UIData.spaceSizeHeight10,
+                                horizontal: UIData.spaceSizeWidth24),
+                            child: CommonText.text18(e.content,
+                                color: UIData.blackColor),
+                          ))
+                      .toList(), //要显示的子控件集合
+                ))
             : Container(
                 height: UIData.spaceSizeHeight60,
                 alignment: Alignment.center,
