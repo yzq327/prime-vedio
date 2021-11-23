@@ -48,11 +48,12 @@ class CommonText {
   }
 
   //自定义颜色18号字
-  static Widget text18(text, {height, textAlign = TextAlign.start, color = UIData.primaryColor}) {
+  static Widget text18(text, {height, textAlign = TextAlign.start, color = UIData.primaryColor, TextOverflow overflow = TextOverflow.ellipsis}) {
     return Text(
       text,
       style: TextStyle(color: color, fontSize: UIData.fontSize18, height: height),
       textAlign: textAlign,
+      overflow: overflow,
     );
   }
 
