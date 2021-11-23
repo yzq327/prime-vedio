@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/table/db_util.dart';
+import 'package:primeVedio/ui/search/search_result_page.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:primeVedio/table/table_init.dart';
+import 'package:primeVedio/utils/routes.dart';
 
 class SearchDBItem {
   int id;
@@ -77,6 +79,7 @@ class _SearchPageState extends State<SearchPage> {
         searchValue = value.trim();
       }),
       onSubmitted: (value) {
+        Navigator.pushNamed(context, Routes.searchResult, arguments: SearchResultPageParams( vodName: value));
         insertData(value.trim());
         setState(() {
           searchValue = '';
