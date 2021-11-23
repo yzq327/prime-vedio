@@ -34,6 +34,7 @@ class UIData {
   static const darkWhiteColor = const Color(0xFFF6F7F9);
   static const blackColor = const Color(0xFF000000);
   static const darkBlueColor = const Color(0xFF09647A);
+  static const textDefaultColor = const Color(0xFF9C9C9C);
 
   //***************************其余颜色***************************//
 

@@ -59,7 +59,6 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
   }
 
   bool get _enablePullUp {
-    print('getVideoList.length != total: ${getVideoList.length != total}');
     return getVideoList.length != total - 1;
   }
 
