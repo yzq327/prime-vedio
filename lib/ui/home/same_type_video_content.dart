@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/commom/common_img_display.dart';
-import 'package:primeVedio/commom/common_refresh_footer_content.dart';
-import 'package:primeVedio/commom/common_refresh_header_content.dart';
+import 'package:primeVedio/commom/common_smart_refresher.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_detail_list_model.dart';
@@ -142,11 +141,8 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
   @override
   Widget build(BuildContext context) {
     return getVideoList.length > 0
-        ? SmartRefresher(
-            enablePullDown: true,
+        ? CommonSmartRefresher(
             enablePullUp: _enablePullUp,
-            header: CommonRefreshHeaderContent(),
-            footer: CommonRefreshFooterContent(),
             controller: _refreshController,
             onRefresh: _onRefresh,
             onLoading: _onLoading,
@@ -160,7 +156,8 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
                 ..add(Container(
                   height: UIData.spaceSizeHeight60,
                   alignment: Alignment.center,
-                  child: CommonText.normalText(_enablePullUp ? '' : '没有更多同类型影片啦!',
+                  child: CommonText.normalText(
+                      _enablePullUp ? '' : '没有更多同类型影片啦!',
                       color: UIData.subThemeBgColor),
                 )),
             ))

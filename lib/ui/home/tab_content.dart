@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
-import 'package:primeVedio/commom/common_refresh_footer_content.dart';
-import 'package:primeVedio/commom/common_refresh_header_content.dart';
+import 'package:primeVedio/commom/common_smart_refresher.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
 import 'package:primeVedio/models/video_list_model.dart';
@@ -78,11 +77,8 @@ class _TabContentState extends State<TabContent> {
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      enablePullDown: true,
+    return CommonSmartRefresher(
       enablePullUp: _enablePullUp,
-      header: CommonRefreshHeaderContent(),
-      footer: CommonRefreshFooterContent(),
       controller: _refreshController,
       onRefresh: _onRefresh,
       onLoading: _onLoading,

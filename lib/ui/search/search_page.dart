@@ -27,7 +27,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController _userEtController = TextEditingController();
-  String searchValue = '';
 
   List<SearchDBItem> dataList = [];
   late DBUtil dbUtil;
@@ -35,7 +34,15 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    _userEtController.addListener(() { setState(() {
+    });});
     initDB();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _userEtController.dispose();
   }
 
   void initDB() async {
@@ -75,16 +82,10 @@ class _SearchPageState extends State<SearchPage> {
       controller: _userEtController,
       maxLength: 16,
       textInputAction: TextInputAction.search,
-      onChanged: (value) => setState(() {
-        searchValue = value.trim();
-      }),
       onSubmitted: (value) {
         Navigator.pushNamed(context, Routes.searchResult, arguments: SearchResultPageParams( vodName: value));
         insertData(value.trim());
-        setState(() {
-          searchValue = '';
-          _userEtController.text = '';
-        });
+        _userEtController.text = '';
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(UIData.spaceSizeWidth8),
@@ -97,14 +98,11 @@ class _SearchPageState extends State<SearchPage> {
             Radius.circular(UIData.spaceSizeHeight6), //边角为30
           ),
         ),
-        suffixIcon: searchValue.isNotEmpty
+        suffixIcon: _userEtController.text.isNotEmpty
             ? IconButton(
                 icon: Icon(IconFont.icon_closefill,
                     color: UIData.subTextColor, size: UIData.spaceSizeWidth20),
-                onPressed: () => setState(() {
-                  searchValue = '';
-                  _userEtController.text = '';
-                }),
+                onPressed: () => _userEtController.text = '',
               )
             : SizedBox(),
       ),
