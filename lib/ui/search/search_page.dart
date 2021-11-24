@@ -5,6 +5,7 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/ui/search/search_result_page.dart';
+import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:primeVedio/table/table_init.dart';
@@ -12,11 +13,16 @@ import 'package:primeVedio/utils/routes.dart';
 
 class SearchDBItem {
   int id;
+  String createTime;
   String content;
-  SearchDBItem({required this.id, required this.content});
+  SearchDBItem(
+      {required this.id, required this.createTime, required this.content});
 
   factory SearchDBItem.fromJson(Map<dynamic, dynamic> parsedJson) {
-    return SearchDBItem(id: parsedJson['id'], content: parsedJson['content']);
+    return SearchDBItem(
+        id: parsedJson['id'],
+        createTime: parsedJson['create_time'],
+        content: parsedJson['content']);
   }
 }
 
@@ -34,8 +40,9 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _userEtController.addListener(() { setState(() {
-    });});
+    _userEtController.addListener(() {
+      setState(() {});
+    });
     initDB();
   }
 
@@ -52,18 +59,28 @@ class _SearchPageState extends State<SearchPage> {
     queryData();
   }
 
-  void insertData(String searchValue) async {
+  void insertData(String creatTime, String searchValue) async {
     await dbUtil.open();
-    Map<String, Object> par = Map<String, Object>();
-    par['content'] = searchValue;
-    await dbUtil.insertByHelper('search', par);
+    List<SearchDBItem> searchedList =
+        dataList.where((element) => element.content == searchValue).toList();
+    if (searchedList.length > 0) {
+      await dbUtil.update(
+          'UPDATE search_records SET create_time = ? WHERE content = ?',
+          [creatTime, searchValue]);
+    } else {
+      Map<String, Object> par = Map<String, Object>();
+      par['create_time'] = creatTime;
+      par['content'] = searchValue;
+      await dbUtil.insertByHelper('search_records', par);
+    }
     await dbUtil.close();
     queryData();
   }
 
   void queryData() async {
     await dbUtil.open();
-    List<Map> data = await dbUtil.queryList("SELECT * FROM search");
+    List<Map> data = await dbUtil
+        .queryList("SELECT * FROM search_records ORDER By create_time DESC");
     setState(() {
       dataList = data.map((i) => SearchDBItem.fromJson(i)).toList();
     });
@@ -72,7 +89,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void delete() async {
     await dbUtil.open();
-    dbUtil.delete('DELETE FROM search', null);
+    dbUtil.delete('DELETE FROM search_records', null);
     await dbUtil.close();
     queryData();
   }
@@ -83,8 +100,9 @@ class _SearchPageState extends State<SearchPage> {
       maxLength: 16,
       textInputAction: TextInputAction.search,
       onSubmitted: (value) {
-        Navigator.pushNamed(context, Routes.searchResult, arguments: SearchResultPageParams( vodName: value));
-        insertData(value.trim());
+        Navigator.pushNamed(context, Routes.searchResult,
+            arguments: SearchResultPageParams(vodName: value));
+        insertData(StringsHelper.getCurrentTimeMillis(), value.trim());
         _userEtController.text = '';
       },
       decoration: InputDecoration(
@@ -140,7 +158,8 @@ class _SearchPageState extends State<SearchPage> {
                             height: UIData.spaceSizeHeight44,
                             decoration: BoxDecoration(
                               color: UIData.primaryColor,
-                              borderRadius: BorderRadius.circular(UIData.spaceSizeWidth2),
+                              borderRadius:
+                                  BorderRadius.circular(UIData.spaceSizeWidth2),
                             ),
                             padding: EdgeInsets.symmetric(
                                 vertical: UIData.spaceSizeHeight10,

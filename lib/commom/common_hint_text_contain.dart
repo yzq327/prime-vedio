@@ -16,7 +16,7 @@ class CommonHintTextContain extends StatelessWidget{
       height: UIData.spaceSizeHeight580,
       alignment: Alignment.center,
       child: CommonText.mainTitle(text,
-          color: UIData.hoverThemeBgColor),
+          color: UIData.hoverThemeBgColor, overflow: TextOverflow.visible),
     );
   }
 }

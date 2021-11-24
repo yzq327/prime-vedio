@@ -51,7 +51,6 @@ class DBUtil {
   ///修改
   //样例：dbUtil.update('UPDATE relation SET fuid = ?, type = ? WHERE uid = ?', [1,2,3]);
   Future<int> update(String sql, List? paramters) async {
-
     return await db.rawUpdate(sql, paramters);
   }
 

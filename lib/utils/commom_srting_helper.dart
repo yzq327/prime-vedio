@@ -211,8 +211,12 @@ class StringsHelper {
   //判断是否包含特殊字符
   static bool isSpecialChar(String str) {
     RegExp regEx = RegExp("[\$()（）”“‘’\'\"]|-");
-//    LogUtils.printLog('包含非法字符:${regEx.hasMatch(str)}');
     return regEx.hasMatch(str);
+  }
+
+  static String getCurrentTimeMillis() {
+    DateTime createTime = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+    return createTime.toLocal().toString().substring(0,19);
   }
 }
 

@@ -6,7 +6,6 @@ import 'package:primeVedio/commom/common_img_display.dart';
 import 'package:primeVedio/commom/common_smart_refresher.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
-import 'package:primeVedio/models/video_detail_list_model.dart';
 import 'package:primeVedio/models/video_list_model.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
