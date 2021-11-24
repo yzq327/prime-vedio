@@ -8,6 +8,7 @@ import 'package:primeVedio/models/video_detail_list_model.dart';
 import 'package:primeVedio/ui/home/same_type_video_content.dart';
 import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
+import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:video_player/video_player.dart';
@@ -34,20 +35,18 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   VideoPlayerController? _videoPlayerController;
   List? urlInfo = [];
   bool isPlaying = false;
-  int position = 0;
-  int duration = 1;
+  Duration position = Duration.zero;
+  Duration duration = Duration.zero;
 
   void _playWithIndex(int index) {
     _videoPlayerController?.dispose();
     _videoPlayerController = VideoPlayerController.network(urlInfo![index][1])
       ..initialize()
       ..addListener(() {
-        position= _videoPlayerController?.value.position.inSeconds ?? 0;
-        duration= _videoPlayerController?.value.duration.inSeconds ?? 1;
-        setState(() {
-        });
+        position = _videoPlayerController?.value.position ?? Duration.zero;
+        duration = _videoPlayerController?.value.duration ?? Duration.zero;
+        setState(() {});
       })
-      ..setVolume(1)
       ..play();
   }
 
@@ -88,6 +87,108 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     super.dispose();
   }
 
+  Widget _buildVideoPlayer() {
+    return Container(
+      alignment: Alignment.center,
+      height: UIData.spaceSizeHeight228,
+      width: double.infinity,
+      child: urlInfo!.isNotEmpty
+          ? Stack(
+              children: [
+                AspectRatio(
+                  aspectRatio: _videoPlayerController!.value.aspectRatio,
+                  child: VideoPlayer(_videoPlayerController!),
+                ),
+                Positioned.fill(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.only(bottom: UIData.spaceSizeHeight40),
+                        child:
+                            (_videoPlayerController?.value.isPlaying ?? false)
+                                ? IconButton(
+                                    iconSize: UIData.spaceSizeWidth50,
+                                    icon: Icon(Icons.pause),
+                                    onPressed: () {
+                                      _videoPlayerController?.pause();
+                                    },
+                                  )
+                                : IconButton(
+                                    iconSize: UIData.spaceSizeWidth50,
+                                    icon: Icon(Icons.play_arrow),
+                                    onPressed: () {
+                                      _videoPlayerController?.play();
+                                    },
+                                  ),
+                      ),
+                      Container(
+                          alignment: Alignment.bottomLeft,
+                          height: UIData.spaceSizeHeight32,
+                          color: duration == Duration.zero
+                              ? Colors.transparent
+                              : Color.fromRGBO(0, 0, 0, 0.3),
+                          child: duration == Duration.zero
+                              ? SizedBox()
+                              : Row(
+                                  children: [
+                                    CommonText.text18(
+                                        StringsHelper.formatDuration(position)),
+                                    Slider(
+                                      value: position.inSeconds.toDouble(),
+                                      min: 0,
+                                      max: duration.inSeconds.toDouble(),
+                                      divisions: duration.inSeconds,
+                                      activeColor: UIData.primaryColor,
+                                      inactiveColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                      label:
+                                          '${StringsHelper.formatDuration(position)}',
+                                      onChanged: (value) {
+                                        print('onChanged:$value');
+                                        setState(() {
+                                          _videoPlayerController!.seekTo(
+                                              Duration(seconds: value.toInt()));
+                                        });
+                                      },
+                                    ),
+                                    CommonText.text18(
+                                        StringsHelper.formatDuration(duration)),
+                                  ],
+                                )),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          : CommonText.mainTitle('暂无视频资源，尽情期待',
+              color: UIData.hoverThemeBgColor),
+    );
+  }
+
+  Widget _buildVideoTabBar() {
+    return Container(
+      alignment: Alignment.topLeft,
+      width: 400,
+      margin: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight24),
+      child: TabBar(
+        controller: _tabController,
+        labelStyle: TextStyle(fontSize: UIData.fontSize20),
+        padding: EdgeInsets.only(
+          left: UIData.spaceSizeWidth50,
+        ),
+        unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
+        isScrollable: true,
+        labelPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
+        labelColor: UIData.hoverTextColor,
+        unselectedLabelColor: UIData.primaryColor,
+        indicatorWeight: 0.0,
+        indicator: StubTabIndicator(color: UIData.hoverThemeBgColor),
+        tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,81 +201,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             ? CommonHintTextContain(text: '数据加载中...')
             : Column(
                 children: [
-                  Container(
-                    alignment: Alignment.center,
-                    height: UIData.spaceSizeHeight228,
-                    width: double.infinity,
-                    child: urlInfo!.isNotEmpty
-                        ? Stack(
-                            children: [
-                              AspectRatio(
-                                aspectRatio:
-                                    _videoPlayerController!.value.aspectRatio,
-                                child: VideoPlayer(_videoPlayerController!),
-                              ),
-                              Positioned.fill(
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.only(bottom: UIData.spaceSizeHeight50),
-                                      child: (_videoPlayerController
-                                                  ?.value.isPlaying ??
-                                              false)
-                                          ? IconButton(
-                                              iconSize: UIData.spaceSizeWidth50,
-                                              icon: Icon(Icons.pause),
-                                              onPressed: () {
-                                                _videoPlayerController?.pause();
-                                              },
-                                            )
-                                          : IconButton(
-                                              iconSize: UIData.spaceSizeWidth50,
-                                              icon: Icon(Icons.play_arrow),
-                                              onPressed: () {
-                                                _videoPlayerController?.play();
-                                              },
-                                            ),
-                                    ),
-                                    Container(
-                                        alignment: Alignment.bottomLeft,
-                                        height: UIData.spaceSizeHeight8,
-                                        color:  Colors.transparent,
-                                        child: (position/duration).isNaN ? SizedBox() :  LinearProgressIndicator(
-                                          backgroundColor: UIData.primaryColor,
-                                          valueColor: AlwaysStoppedAnimation(UIData.hoverThemeBgColor),
-                                          value: position/duration,
-                                        )
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                        : CommonText.mainTitle('暂无视频资源，尽情期待',
-                            color: UIData.hoverThemeBgColor),
-                  ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    width: 400,
-                    margin: EdgeInsets.symmetric(
-                        vertical: UIData.spaceSizeHeight24),
-                    child: TabBar(
-                      controller: _tabController,
-                      labelStyle: TextStyle(fontSize: UIData.fontSize20),
-                      padding: EdgeInsets.only(left: UIData.spaceSizeWidth50,),
-                      unselectedLabelStyle:
-                          TextStyle(fontSize: UIData.fontSize20),
-                      isScrollable: true,
-                      labelPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
-                      labelColor: UIData.hoverTextColor,
-                      unselectedLabelColor: UIData.primaryColor,
-                      indicatorWeight: 0.0,
-                      indicator:
-                          StubTabIndicator(color: UIData.hoverThemeBgColor),
-                      tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
-                    ),
-                  ),
+                  _buildVideoPlayer(),
+                  _buildVideoTabBar(),
                   Expanded(
                       child: TabBarView(controller: _tabController, children: [
                     VideoInfoContent(
