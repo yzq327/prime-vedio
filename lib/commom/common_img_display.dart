@@ -9,8 +9,9 @@ class CommonImgDisplay extends StatelessWidget{
   final String vodPic;
   final int vodId;
   final String vodName;
+  final bool? recordRoute;
 
-  CommonImgDisplay({required this.vodPic, required this.vodId, required this.vodName});
+  CommonImgDisplay({required this.vodPic, required this.vodId, required this.vodName, this.recordRoute = true});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,10 @@ class CommonImgDisplay extends StatelessWidget{
             fit: BoxFit.cover),
       ),
       onTap: () {
-        if(vodId != null) {
+        if(recordRoute == true) {
           Navigator.pushNamed(context, Routes.detail, arguments: VideoDetailPageParams(vodId: vodId, vodName: vodName));
+        } else {
+          Navigator.pushReplacementNamed(context, Routes.detail, arguments: VideoDetailPageParams(vodId: vodId, vodName: vodName));
         }
       },
     );

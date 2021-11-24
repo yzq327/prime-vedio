@@ -109,10 +109,10 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
                     height: UIData.spaceSizeHeight100,
                     width: UIData.spaceSizeWidth160,
                     child: CommonImgDisplay(
-                      vodPic: getVideoList[index].vodPic,
-                      vodId: getVideoList[index].vodId,
-                      vodName: getVideoList[index].vodName,
-                    )),
+                        vodPic: getVideoList[index].vodPic,
+                        vodId: getVideoList[index].vodId,
+                        vodName: getVideoList[index].vodName,
+                        recordRoute: false)),
                 SizedBox(width: UIData.spaceSizeWidth18),
                 GestureDetector(
                   child: Column(
@@ -135,7 +135,7 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, Routes.detail,
+                    Navigator.pushReplacementNamed(context, Routes.detail,
                         arguments: VideoDetailPageParams(
                             vodId: getVideoList[index].vodId,
                             vodName: getVideoList[index].vodName));
