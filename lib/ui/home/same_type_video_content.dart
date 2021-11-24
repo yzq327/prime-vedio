@@ -89,78 +89,79 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
   }
 
   Widget _buildRecommendVideo(int index) {
-    return Container(
-      margin: EdgeInsets.only(
-        left: UIData.spaceSizeWidth20,
-        bottom: UIData.spaceSizeHeight8,
-        right: UIData.spaceSizeWidth16,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-              height: UIData.spaceSizeHeight100,
-              width: UIData.spaceSizeWidth160,
-              child: CommonImgDisplay(
-                vodPic: getVideoList[index].vodPic,
-                vodId: getVideoList[index].vodId,
-                vodName: getVideoList[index].vodName,
-              )),
-          SizedBox(width: UIData.spaceSizeWidth18),
-          GestureDetector(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return index == getVideoList.length
+        ? Container(
+            height: UIData.spaceSizeHeight60,
+            alignment: Alignment.center,
+            child: CommonText.normalText('没有更多同类型影片啦',
+                color: UIData.subThemeBgColor),
+          )
+        : Container(
+            margin: EdgeInsets.only(
+              left: UIData.spaceSizeWidth20,
+              bottom: UIData.spaceSizeHeight8,
+              right: UIData.spaceSizeWidth16,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                Container(
+                    height: UIData.spaceSizeHeight100,
                     width: UIData.spaceSizeWidth160,
-                    child: CommonText.text18(getVideoList[index].vodName)),
-                SizedBox(
-                  height: UIData.spaceSizeHeight8,
-                ),
-                CommonText.text18("评分：${getVideoList[index].vodScore}",
-                    color: UIData.subTextColor),
-                SizedBox(
-                  height: UIData.spaceSizeHeight8,
-                ),
-                CommonText.text14("上线年份： ${getVideoList[index].vodYear}",
-                    color: UIData.hoverThemeBgColor),
+                    child: CommonImgDisplay(
+                      vodPic: getVideoList[index].vodPic,
+                      vodId: getVideoList[index].vodId,
+                      vodName: getVideoList[index].vodName,
+                    )),
+                SizedBox(width: UIData.spaceSizeWidth18),
+                GestureDetector(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                          width: UIData.spaceSizeWidth160,
+                          child:
+                              CommonText.text18(getVideoList[index].vodName)),
+                      SizedBox(
+                        height: UIData.spaceSizeHeight8,
+                      ),
+                      CommonText.text18("评分：${getVideoList[index].vodScore}",
+                          color: UIData.subTextColor),
+                      SizedBox(
+                        height: UIData.spaceSizeHeight8,
+                      ),
+                      CommonText.text14("上线年份： ${getVideoList[index].vodYear}",
+                          color: UIData.hoverThemeBgColor),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.detail,
+                        arguments: VideoDetailPageParams(
+                            vodId: getVideoList[index].vodId,
+                            vodName: getVideoList[index].vodName));
+                  },
+                )
               ],
             ),
-            onTap: () {
-              Navigator.pushNamed(context, Routes.detail,
-                  arguments: VideoDetailPageParams(
-                      vodId: getVideoList[index].vodId,
-                      vodName: getVideoList[index].vodName));
-            },
-          )
-        ],
-      ),
-    );
+          );
   }
 
   @override
   Widget build(BuildContext context) {
-    return getVideoList.length > 0
-        ? CommonSmartRefresher(
+    return getVideoList.length == 0
+        ? CommonHintTextContain(text: '暂无同类型影片，看看其他的吧')
+        : CommonSmartRefresher(
             enablePullUp: _enablePullUp,
             controller: _refreshController,
             onRefresh: _onRefresh,
             onLoading: _onLoading,
-            child: ListView(
+            child: ListView.builder(
               shrinkWrap: true,
-              children: getVideoList
-                  .asMap()
-                  .keys
-                  .map((index) => _buildRecommendVideo(index))
-                  .toList()
-                ..add(Container(
-                  height: UIData.spaceSizeHeight60,
-                  alignment: Alignment.center,
-                  child: CommonText.normalText(
-                      _enablePullUp ? '' : '没有更多同类型影片啦!',
-                      color: UIData.subThemeBgColor),
-                )),
-            ))
-        : CommonHintTextContain(text: '暂无同类型影片，看看其他的吧');
+              itemCount:
+                  _enablePullUp ? getVideoList.length : getVideoList.length + 1,
+              itemBuilder: (context, index) {
+                return _buildRecommendVideo(index);
+              },
+            ));
   }
 }

@@ -80,7 +80,7 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
                       : UIData.darkWhiteColor,
                   borderRadius: BorderRadius.circular(UIData.spaceSizeWidth2),
                 ),
-                child: CommonText.text18('第${index + 1}集',
+                child: CommonText.text18(widget.urlInfo![index][0],
                     color: index == currentIndex
                         ? UIData.hoverThemeBgColor
                         : UIData.blackColor),
