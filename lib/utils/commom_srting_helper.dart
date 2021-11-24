@@ -220,10 +220,16 @@ class StringsHelper {
   }
 
   static String formatDuration(Duration? duration) {
+    //padLeft: 如果字符串没有'2'的长度，则在前面加上字符串'0'并返回,不会改变原字符串
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration!.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    if(duration.inHours > 0) {
+      return "${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds";
+    } else {
+      return "$twoDigitMinutes:$twoDigitSeconds";
+    }
+
   }
 }
 
