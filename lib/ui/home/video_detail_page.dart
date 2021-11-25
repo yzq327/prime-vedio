@@ -32,22 +32,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     with TickerProviderStateMixin {
   VideoDetail? getVideoDetail;
   TabController? _tabController;
-  VideoPlayerController? _videoPlayerController;
+  String? videoUrl;
   List? urlInfo = [];
-  bool isPlaying = false;
-  Duration position = Duration.zero;
-  Duration duration = Duration.zero;
 
   void _playWithIndex(int index) {
-    _videoPlayerController?.dispose();
-    _videoPlayerController = VideoPlayerController.network(urlInfo![index][1])
-      ..initialize()
-      ..addListener(() {
-        position = _videoPlayerController?.value.position ?? Duration.zero;
-        duration = _videoPlayerController?.value.duration ?? Duration.zero;
-        setState(() {});
-      })
-      ..play();
+    setState(() {
+      videoUrl = urlInfo![index][1];
+    });
   }
 
   void _getVideoDetailList() {
@@ -83,7 +74,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   void dispose() {
     _tabController!.dispose();
-    _videoPlayerController?.dispose();
     super.dispose();
   }
 
@@ -93,7 +83,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       height: UIData.spaceSizeHeight228,
       width: double.infinity,
       child: urlInfo!.isNotEmpty
-          ? CommonVideoPlayer(controller: _videoPlayerController, position: position, duration: duration, vodName: widget.videoDetailPageParams.vodName)
+          ? CommonVideoPlayer(
+              url: videoUrl!, vodName: widget.videoDetailPageParams.vodName)
           : CommonText.mainTitle('暂无视频资源，尽情期待',
               color: UIData.hoverThemeBgColor),
     );

@@ -8,16 +8,12 @@ import 'package:video_player/video_player.dart';
 import 'commom_text.dart';
 
 class CommonVideoPlayer extends StatefulWidget {
-  final VideoPlayerController? controller;
-  late final Duration? position;
-  late final Duration? duration;
+  final String url;
   late final String? vodName;
 
   CommonVideoPlayer({
     Key? key,
-    required this.controller,
-    this.position,
-    this.duration,
+    required this.url,
     this.vodName,
   }) : super(key: key);
 
@@ -25,12 +21,24 @@ class CommonVideoPlayer extends StatefulWidget {
 }
 
 class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
-  late Timer _timer;
+  VideoPlayerController? _videoPlayerController;
+  late Timer? _timer;
   bool _hidePlayControl = true;
   bool _hidePauseIcon = true;
+  Duration position = Duration.zero;
+  Duration duration = Duration.zero;
+  late double tempDuration;
 
-  VideoPlayerController get _videoPlayerController {
-    return widget.controller!;
+  playByUrl (String url) {
+    _videoPlayerController?.dispose();
+    _videoPlayerController = VideoPlayerController.network(url)
+      ..initialize()
+      ..addListener(() {
+        position = _videoPlayerController?.value.position ?? Duration.zero;
+        duration = _videoPlayerController?.value.duration ?? Duration.zero;
+        setState(() {});
+      })
+      ..play();
   }
 
   /// 是否全屏
@@ -40,20 +48,30 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   @override
   void initState() {
     super.initState();
+    playByUrl(widget.url);
+  }
+
+  @override
+  void didUpdateWidget(covariant CommonVideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(oldWidget.url != widget.url) {
+      playByUrl(widget.url);
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
-    if (_timer != null) _timer.cancel();
+    _videoPlayerController!.dispose();
+    _timer?.cancel();
   }
 
   void _playOrPause() {
-    _videoPlayerController.value.isPlaying
-        ? _videoPlayerController.pause()
-        : _videoPlayerController.play();
+    _videoPlayerController!.value.isPlaying
+        ? _videoPlayerController!.pause()
+        : _videoPlayerController!.play();
     setState(() {
-      _hidePauseIcon = _videoPlayerController.value.isPlaying ? true : false;
+      _hidePauseIcon = _videoPlayerController!.value.isPlaying ? true : false;
     });
   }
 
@@ -67,7 +85,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   }
 
   void _startPlayControlTimer() {
-    // if (_timer != null) _timer.cancel();
+       // _timer?.cancel();
     _timer = Timer(Duration(seconds: 3), () {
       setState(() {
         Future.delayed(Duration(milliseconds: 300)).whenComplete(() {
@@ -80,22 +98,23 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   void _toggleFullScreen() {}
 
   bool get showLoading {
+    // print('_videoPlayerController.value.isBuffering: ${_videoPlayerController.value.isBuffering}');
+    // print('_videoPlayerController.value.isPlaying: ${_videoPlayerController.value.isPlaying}');
     // return !_videoPlayerController.value.isInitialized ||
     //     (!_videoPlayerController.value.isPlaying &&
     //         _videoPlayerController.value.isBuffering);
-    return !_videoPlayerController.value.isInitialized;
+    return !_videoPlayerController!.value.isInitialized;
   }
 
   Widget _buildStatusIcon() {
     return Container(
       color: UIData.videoStateBgColor,
       padding: EdgeInsets.all(UIData.spaceSizeWidth8),
-      margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight40),
       child: showLoading
           ? CircularProgressIndicator(
               strokeWidth: 2.0, color: UIData.primaryColor)
           : Icon(
-              _videoPlayerController.value.isPlaying
+              _videoPlayerController!.value.isPlaying
                   ? Icons.pause
                   : Icons.play_arrow,
               size: UIData.spaceSizeWidth26,
@@ -124,30 +143,34 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AspectRatio(
-          aspectRatio: _videoPlayerController.value.aspectRatio,
-          child: VideoPlayer(_videoPlayerController),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: showLoading ? _buildStatusIcon() : SizedBox(),
+    return Container(
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: _videoPlayerController!.value.aspectRatio,
+                child: VideoPlayer(_videoPlayerController!),
+              ),
+            ),
           ),
-        ),
-        GestureDetector(
-          onDoubleTap: _playOrPause,
-          onTap: _togglePlayControl,
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.transparent,
-            child: WillPopScope(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Offstage(
-                      offstage: _hidePauseIcon,
+          Positioned.fill(
+            child: Center(
+              child: showLoading ? _buildStatusIcon() : SizedBox(),
+            ),
+          ),
+          GestureDetector(
+            onDoubleTap: _playOrPause,
+            onTap: _togglePlayControl,
+            child: Container(
+
+              // width: double.infinity,
+              // height: double.infinity,
+              color: Colors.transparent,
+              child: WillPopScope(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
                       child: AnimatedOpacity(
                         opacity: _hidePauseIcon ? 0 : 1,
                         duration: Duration(milliseconds: 300),
@@ -156,10 +179,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                         ),
                       ),
                     ),
-                  ),
-                  Positioned.fill(
-                    child: Offstage(
-                      offstage: _hidePlayControl,
+                    Positioned.fill(
                       child: AnimatedOpacity(
                         opacity: _hidePlayControl ? 0 : 1,
                         duration: Duration(milliseconds: 300),
@@ -187,10 +207,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                             ),
                             Container(
                                 height: UIData.spaceSizeHeight32,
-                                color: widget.duration == Duration.zero
+                                color: duration == Duration.zero
                                     ? Colors.transparent
                                     : UIData.videoSlideBgColor,
-                                child: widget.duration == Duration.zero
+                                child: duration == Duration.zero
                                     ? SizedBox()
                                     : Row(
                                         children: [
@@ -200,44 +220,56 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                                             alignment: Alignment.center,
                                             child: CommonText.text18(
                                                 StringsHelper.formatDuration(
-                                                    widget.position)),
+                                                   position)),
                                           ),
                                           Slider(
-                                            value: widget.position!.inSeconds
+                                            value: position.inSeconds
                                                 .toDouble(),
                                             min: 0,
-                                            max: widget.duration!.inSeconds
+                                            max: duration.inSeconds
                                                 .toDouble(),
                                             divisions:
-                                                widget.duration!.inSeconds,
+                                                duration.inSeconds,
                                             activeColor: UIData.primaryColor,
                                             inactiveColor:
                                                 UIData.videoStateDefaultColor,
                                             label:
-                                                '${StringsHelper.formatDuration(widget.position)}',
-                                            onChanged: (double value) {
-                                              _videoPlayerController.seekTo(
+                                                '${StringsHelper.formatDuration(position)}',
+                                            // onChanged: (double value) {
+                                            //   _videoPlayerController.seekTo(
+                                            //       Duration(
+                                            //           seconds: value.toInt()));
+                                            // },
+                                            onChangeStart: (double value) {
+                                              tempDuration =  value;
+                                            },
+                                            onChangeEnd: (double value) {
+                                              _videoPlayerController?.seekTo(
                                                   Duration(
                                                       seconds: value.toInt()));
-                                            },
+                                            }, onChanged: (double value) {
+                                              setState(() {
+                                                tempDuration = value;
+                                              });
+                                          },
                                           ),
                                           CommonText.text18(
                                               StringsHelper.formatDuration(
-                                                  widget.duration)),
+                                                  duration)),
                                         ],
                                       )),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                onWillPop: _onWillPop,
               ),
-              onWillPop: _onWillPop,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
