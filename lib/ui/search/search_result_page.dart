@@ -118,46 +118,40 @@ class _SearchResultPageState extends State<SearchResultPage>
         ),
       ),
       body: getVideoList.length > 0
-          ? Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth16),
-                    child: CommonSmartRefresher(
-                      enablePullUp: _enablePullUp,
-                      controller: _refreshController,
-                      onRefresh: _onRefresh,
-                      onLoading: _onLoading,
-                      child: ListView(
-                        children: [
-                          GridView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.7,
-                              mainAxisSpacing: UIData.spaceSizeHeight8,
-                              crossAxisSpacing: UIData.spaceSizeWidth8,
-                            ),
-                            itemCount: getVideoList.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                _buildSearchedVideo(index),
-                          ),
-                          Container(
-                            height: UIData.spaceSizeHeight60,
-                            alignment: Alignment.center,
-                            child: CommonText.normalText(
-                                _enablePullUp ? '' : '没有更多影片啦!',
-                                color: UIData.subThemeBgColor),
-                          ),
-                        ],
-                      ),
+          ? Container(
+            padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth16),
+            child: CommonSmartRefresher(
+              enablePullUp: _enablePullUp,
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              child: ListView(
+                children: [
+                  GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.7,
+                      mainAxisSpacing: UIData.spaceSizeHeight8,
+                      crossAxisSpacing: UIData.spaceSizeWidth8,
                     ),
+                    itemCount: getVideoList.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        _buildSearchedVideo(index),
                   ),
-                ),
-              ],
-            )
+                  Container(
+                    height: UIData.spaceSizeHeight60,
+                    alignment: Alignment.center,
+                    child: CommonText.normalText(
+                        _enablePullUp ? '' : '没有更多影片啦!',
+                        color: UIData.subThemeBgColor),
+                  ),
+                ],
+              ),
+            ),
+          )
           : CommonHintTextContain(text: '暂未搜索到您想看的影片，换个关键词试试吧'),
     );
   }
