@@ -154,18 +154,25 @@ class _SearchPageState extends State<SearchPage> {
                   spacing: UIData.spaceSizeWidth10,
                   runSpacing: UIData.spaceSizeHeight10,
                   children: dataList
-                      .map((e) => Container(
-                            height: UIData.spaceSizeHeight44,
-                            decoration: BoxDecoration(
-                              color: UIData.primaryColor,
-                              borderRadius:
-                                  BorderRadius.circular(UIData.spaceSizeWidth2),
+                      .map((e) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, Routes.searchResult,
+                                  arguments: SearchResultPageParams(
+                                      vodName: e.content));
+                            },
+                            child: Container(
+                              height: UIData.spaceSizeHeight44,
+                              decoration: BoxDecoration(
+                                color: UIData.primaryColor,
+                                borderRadius: BorderRadius.circular(
+                                    UIData.spaceSizeWidth2),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: UIData.spaceSizeHeight10,
+                                  horizontal: UIData.spaceSizeWidth24),
+                              child: CommonText.text18(e.content,
+                                  color: UIData.blackColor),
                             ),
-                            padding: EdgeInsets.symmetric(
-                                vertical: UIData.spaceSizeHeight10,
-                                horizontal: UIData.spaceSizeWidth24),
-                            child: CommonText.text18(e.content,
-                                color: UIData.blackColor),
                           ))
                       .toList(), //要显示的子控件集合
                 ))

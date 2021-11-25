@@ -11,14 +11,14 @@ class CommonVideoPlayer extends StatefulWidget {
   final VideoPlayerController? controller;
   late final Duration? position;
   late final Duration? duration;
-  String? vodName;
+  late final String? vodName;
 
   CommonVideoPlayer({
     Key? key,
     required this.controller,
     this.position,
     this.duration,
-    this.vodName = '影片名字',
+    this.vodName,
   }) : super(key: key);
 
   _CommonVideoPlayerState createState() => _CommonVideoPlayerState();

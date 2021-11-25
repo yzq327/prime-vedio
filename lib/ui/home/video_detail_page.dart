@@ -93,7 +93,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       height: UIData.spaceSizeHeight228,
       width: double.infinity,
       child: urlInfo!.isNotEmpty
-          ? CommonVideoPlayer(controller: _videoPlayerController, position: position, duration: duration,)
+          ? CommonVideoPlayer(controller: _videoPlayerController, position: position, duration: duration, vodName: widget.videoDetailPageParams.vodName)
           : CommonText.mainTitle('暂无视频资源，尽情期待',
               color: UIData.hoverThemeBgColor),
     );
