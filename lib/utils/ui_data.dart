@@ -35,6 +35,9 @@ class UIData {
   static const blackColor = const Color(0xFF000000);
   static const darkBlueColor = const Color(0xFF09647A);
   static const textDefaultColor = const Color(0xFF9C9C9C);
+  static const videoStateDefaultColor = const Color.fromRGBO(255, 255, 255, 0.5);
+  static const videoSlideBgColor = const Color.fromRGBO(0, 0, 0, 0.3);
+  static const videoStateBgColor = const Color.fromRGBO(0, 0, 0, 0.5);
 
   //***************************其余颜色***************************//
 
