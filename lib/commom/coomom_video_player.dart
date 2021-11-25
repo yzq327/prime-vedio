@@ -169,25 +169,22 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                             Container(
                                 alignment: Alignment.center,
                                 height: UIData.spaceSizeHeight44,
-                                color: widget.duration == Duration.zero
-                                    ? Colors.transparent
-                                    : UIData.videoSlideBgColor,
-                                child: widget.duration == Duration.zero
-                                    ? SizedBox()
-                                    : Row(
-                                        children: <Widget>[
-                                          IconButton(
-                                              icon: Icon(
-                                                Icons.arrow_back_ios,
-                                                color: Colors.white,
-                                              ),
-                                              onPressed: backPress),
-                                          CommonText.text18(
-                                            widget.vodName ?? '',
-                                            color: UIData.primaryColor,
-                                          ),
-                                        ],
-                                      )),
+                                color: UIData.videoSlideBgColor,
+                                child: Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.arrow_back_ios,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: backPress),
+                                    CommonText.text18(
+                                      widget.vodName ?? '',
+                                      color: UIData.primaryColor,
+                                    ),
+                                  ],
+                                )
+                            ),
                             Container(
                                 height: UIData.spaceSizeHeight32,
                                 color: widget.duration == Duration.zero
