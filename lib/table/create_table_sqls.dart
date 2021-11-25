@@ -4,7 +4,7 @@ class CreateTableSqls {
   static final String createTableSql_search_records = '''
     CREATE TABLE IF NOT EXISTS search_records (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 
-    create_time TEXT(30),
+    create_time DateTime,
     content TEXT(100));
     ''';
 

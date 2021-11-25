@@ -215,8 +215,7 @@ class StringsHelper {
   }
 
   static String getCurrentTimeMillis() {
-    DateTime createTime = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-    return createTime.toLocal().toString().substring(0,19);
+    return DateTime.now().toLocal().toString().substring(0,19);
   }
 
   static String formatDuration(Duration? duration) {
