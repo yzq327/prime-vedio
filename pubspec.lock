@@ -197,6 +197,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  device_display_brightness:
+    dependency: "direct main"
+    description:
+      name: device_display_brightness
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.6"
   dio:
     dependency: "direct main"
     description:
@@ -651,6 +658,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.4"
+  volume_controller:
+    dependency: "direct main"
+    description:
+      name: volume_controller
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.2"
   watcher:
     dependency: transitive
     description:
