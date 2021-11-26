@@ -11,13 +11,13 @@ import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoDetailPageParams {
   final int vodId;
   final String vodName;
+  final String vodPic;
 
-  VideoDetailPageParams({required this.vodId, this.vodName = ''});
+  VideoDetailPageParams({required this.vodId, this.vodName = '', this.vodPic = ''});
 }
 
 class VideoDetailPage extends StatefulWidget {
@@ -84,7 +84,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       width: double.infinity,
       child: urlInfo!.isNotEmpty
           ? CommonVideoPlayer(
-              url: videoUrl!, vodName: widget.videoDetailPageParams.vodName)
+              url: videoUrl!, vodName: widget.videoDetailPageParams.vodName,  vodPic: widget.videoDetailPageParams.vodPic)
           : CommonText.mainTitle('暂无视频资源，尽情期待',
               color: UIData.hoverThemeBgColor),
     );
