@@ -26,6 +26,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
   late double tempDuration;
+  double defaultAspectRatio = 16 / 9;
+  bool isChangeSlider = false;
 
   playByUrl(String url) {
     _videoPlayerController?.dispose();
@@ -206,19 +208,31 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                                 StringsHelper.formatDuration(position)),
                           ),
                           Slider(
-                            value: position.inSeconds.toDouble(),
+                            value: isChangeSlider
+                                ? tempDuration
+                                : position.inSeconds.toDouble(),
                             min: 0,
                             max: duration.inSeconds.toDouble(),
                             divisions: duration.inSeconds,
                             activeColor: UIData.primaryColor,
                             inactiveColor: UIData.videoStateDefaultColor,
-                            label: '${StringsHelper.formatDuration(position)}',
+                            label: isChangeSlider
+                                ? '${StringsHelper.formatDuration(Duration(seconds: tempDuration.toInt()))}'
+                                : '${StringsHelper.formatDuration(position)}',
                             onChangeStart: (double value) {
-                              tempDuration = value;
+                              setState(() {
+                                tempDuration = value;
+                                isChangeSlider = true;
+                              });
                             },
                             onChangeEnd: (double value) {
                               _videoPlayerController
                                   ?.seekTo(Duration(seconds: value.toInt()));
+                              setState(() {
+                                tempDuration = value;
+                                isChangeSlider = false;
+                              });
+                              _startPlayControlTimer();
                             },
                             onChanged: (double value) {
                               setState(() {
@@ -246,7 +260,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         child: AspectRatio(
           aspectRatio: _videoPlayerController!.value.isInitialized
               ? _videoPlayerController!.value.aspectRatio
-              : (16 / 9),
+              : defaultAspectRatio,
           child: WillPopScope(
             child: Stack(
               children: [
