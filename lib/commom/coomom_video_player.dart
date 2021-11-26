@@ -130,7 +130,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: CachedNetworkImageProvider(widget.vodPic!),
+            image: CachedNetworkImageProvider(widget.vodPic!,
+                errorListener: () {
+                  print('图片加载错误');
+                }),
             alignment: Alignment.topLeft,
             fit: BoxFit.cover,
           )),
