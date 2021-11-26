@@ -10,6 +10,12 @@ import 'package:video_player/video_player.dart';
 import 'commom_slider.dart';
 import 'commom_text.dart';
 
+class SpeedText {
+  String text;
+  double speedValue;
+  SpeedText(this.text, this.speedValue);
+}
+
 class FullWidthTrackShape extends RoundedRectSliderTrackShape {
   Rect getPreferredRect({
     required RenderBox parentBox,
@@ -43,9 +49,21 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   VideoPlayerController? _videoPlayerController;
   Timer? _timer;
   bool _showTagging = false;
+  bool _showSpeedSelect = false;
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
   double defaultAspectRatio = 16 / 9;
+
+  List<SpeedText> get getSpeedText {
+    return [
+      SpeedText('正常', 1.0),
+      SpeedText('1.25X', 1.25),
+      SpeedText('1.5X', 1.5),
+      SpeedText('1.75X', 1.75),
+      SpeedText('2.0X', 2.0),
+      SpeedText('3.0X', 3.0),
+    ];
+  }
 
   playByUrl(String url) {
     _videoPlayerController?.dispose();
@@ -141,6 +159,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     }
   }
 
+  void handleChangeSlider(double value) {
+    _videoPlayerController?.seekTo(Duration(seconds: value.toInt()));
+    _startPlayControlTimer();
+  }
+
   Widget _buildShowLoading() {
     return Positioned.fill(
       child: AnimatedOpacity(
@@ -186,12 +209,6 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         ),
       ),
     );
-  }
-
-  void handleChangeSlider(double value) {
-    _videoPlayerController?.seekTo(
-        Duration(seconds: value.toInt()));
-    _startPlayControlTimer();
   }
 
   Widget _buildShowTaggingContent() {
@@ -241,7 +258,12 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                               child: CommonText.text18(
                                   StringsHelper.formatDuration(position)),
                             ),
-                            CommonSlider(position: position, duration: duration, onChangeEnd: (value) => handleChangeSlider(value)),
+                            Expanded(
+                                child: CommonSlider(
+                                    position: position,
+                                    duration: duration,
+                                    onChangeEnd: (value) =>
+                                        handleChangeSlider(value))),
                             Container(
                               margin:
                                   EdgeInsets.only(left: UIData.spaceSizeWidth6),
@@ -251,17 +273,72 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                               child: CommonText.text18(
                                   StringsHelper.formatDuration(duration)),
                             ),
-                            IconButton(
-                                alignment: Alignment.centerLeft,
-                                padding: EdgeInsets.zero,
-                                onPressed: () {},
-                                icon: Icon(
-                                  IconFont.icon_sudu___,
-                                  color: UIData.primaryColor,
-                                ))
+                            SizedBox(
+                              width: UIData.spaceSizeWidth24,
+                              child: IconButton(
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    setState(() {
+                                      _showSpeedSelect = !_showSpeedSelect;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    IconFont.icon_sudu___,
+                                    color: UIData.primaryColor,
+                                  )),
+                            ),
+                            Container(
+                              width: UIData.spaceSizeWidth24,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: UIData.spaceSizeWidth4),
+                              child: IconButton(
+                                  alignment: Alignment.centerLeft,
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    print('全屏');
+                                  },
+                                  icon: Icon(
+                                    IconFont.icon_quanping_,
+                                    color: UIData.primaryColor,
+                                  )),
+                            )
                           ],
                         )),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShowSpeedContent() {
+    return Positioned.fill(
+      child: Offstage(
+        offstage: !_showSpeedSelect,
+        child: AnimatedOpacity(
+          opacity: _showSpeedSelect ? 1 : 0,
+          duration: Duration(milliseconds: 300),
+          child: Container(
+            color: UIData.videoStateBgColor,
+            // margin: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight30),
+            child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.66,
+                crossAxisSpacing: UIData.spaceSizeWidth16,
+              ),
+              itemCount: getSpeedText.length,
+              itemBuilder: (BuildContext context, int index) => GestureDetector(
+                child: CommonText.text18(getSpeedText[index].text),
+                onTap: () {
+                  _videoPlayerController!
+                      .setPlaybackSpeed(getSpeedText[index].speedValue);
+                },
+              ),
+            ),
           ),
         ),
       ),
@@ -286,6 +363,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 _buildShowLoading(),
                 _buildShowPauseIcon(),
                 _buildShowTaggingContent(),
+                _buildShowSpeedContent(),
               ],
             ),
             onWillPop: _onWillPop,
