@@ -7,6 +7,7 @@ import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:video_player/video_player.dart';
 
+import 'commom_slider.dart';
 import 'commom_text.dart';
 
 class FullWidthTrackShape extends RoundedRectSliderTrackShape {
@@ -44,9 +45,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   bool _showTagging = false;
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
-  late double tempDuration;
   double defaultAspectRatio = 16 / 9;
-  bool isChangeSlider = false;
 
   playByUrl(String url) {
     _videoPlayerController?.dispose();
@@ -189,6 +188,12 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     );
   }
 
+  void handleChangeSlider(double value) {
+    _videoPlayerController?.seekTo(
+        Duration(seconds: value.toInt()));
+    _startPlayControlTimer();
+  }
+
   Widget _buildShowTaggingContent() {
     return Positioned.fill(
       child: Offstage(
@@ -236,55 +241,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                               child: CommonText.text18(
                                   StringsHelper.formatDuration(position)),
                             ),
-                            RotatedBox(
-                              quarterTurns: 4,
-                              child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  trackHeight: UIData.spaceSizeHeight4,
-                                  trackShape:
-                                      FullWidthTrackShape(), // 轨道形状，可以自定义
-                                  thumbShape: RoundSliderThumbShape(
-                                      enabledThumbRadius:
-                                          UIData.spaceSizeWidth6),
-                                  overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: UIData.spaceSizeWidth16,
-                                  ),
-                                ),
-                                child: Slider(
-                                  value: isChangeSlider
-                                      ? tempDuration
-                                      : position.inSeconds.toDouble(),
-                                  min: 0,
-                                  max: duration.inSeconds.toDouble(),
-                                  divisions: duration.inSeconds,
-                                  activeColor: UIData.primaryColor,
-                                  inactiveColor: UIData.videoStateDefaultColor,
-                                  label: isChangeSlider
-                                      ? '${StringsHelper.formatDuration(Duration(seconds: tempDuration.toInt()))}'
-                                      : '${StringsHelper.formatDuration(position)}',
-                                  onChangeStart: (double value) {
-                                    setState(() {
-                                      tempDuration = value;
-                                      isChangeSlider = true;
-                                    });
-                                  },
-                                  onChangeEnd: (double value) {
-                                    _videoPlayerController?.seekTo(
-                                        Duration(seconds: value.toInt()));
-                                    setState(() {
-                                      tempDuration = value;
-                                      isChangeSlider = false;
-                                    });
-                                    _startPlayControlTimer();
-                                  },
-                                  onChanged: (double value) {
-                                    setState(() {
-                                      tempDuration = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
+                            CommonSlider(position: position, duration: duration, onChangeEnd: (value) => handleChangeSlider(value)),
                             Container(
                               margin:
                                   EdgeInsets.only(left: UIData.spaceSizeWidth6),
