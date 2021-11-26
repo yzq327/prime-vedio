@@ -71,6 +71,8 @@ class UIData {
   //***************************宽度***************************//
   static double spaceSizeWidth1 = ScreenUtil().setWidth(1);
   static double spaceSizeWidth2 = ScreenUtil().setWidth(2);
+  static double spaceSizeWidth4 = ScreenUtil().setWidth(4);
+  static double spaceSizeWidth6 = ScreenUtil().setWidth(6);
   static double spaceSizeWidth8 = ScreenUtil().setWidth(8);
   static double spaceSizeWidth10 = ScreenUtil().setWidth(10);
   static double spaceSizeWidth12 = ScreenUtil().setWidth(12);
