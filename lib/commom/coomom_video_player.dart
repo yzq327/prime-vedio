@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -53,6 +54,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
   double defaultAspectRatio = 16 / 9;
+  double currentSpeed = 1.0;
 
   List<SpeedText> get getSpeedText {
     return [
@@ -133,11 +135,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   void _toggleFullScreen() {}
 
   bool get showLoading {
-    // print('_videoPlayerController.value.isBuffering: ${_videoPlayerController.value.isBuffering}');
-    // print('_videoPlayerController.value.isPlaying: ${_videoPlayerController.value.isPlaying}');
-    // return !_videoPlayerController.value.isInitialized ||
-    //     (!_videoPlayerController.value.isPlaying &&
-    //         _videoPlayerController.value.isBuffering);
+    // print('_videoPlayerController.value.isInitialized: ${_videoPlayerController!.value.isBuffering}');
+    // print('_videoPlayerController.value.isBuffering: ${_videoPlayerController!.value.isBuffering}');
+    // print('_videoPlayerController.value.isPlaying: ${_videoPlayerController!.value.isPlaying}');
+    // print('currentSpeed-------: $currentSpeed');
     return !_videoPlayerController!.value.isInitialized;
   }
 
@@ -321,22 +322,30 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           duration: Duration(milliseconds: 300),
           child: Container(
             color: UIData.videoStateBgColor,
-            // margin: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight30),
-            child: GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.66,
-                crossAxisSpacing: UIData.spaceSizeWidth16,
-              ),
-              itemCount: getSpeedText.length,
-              itemBuilder: (BuildContext context, int index) => GestureDetector(
-                child: CommonText.text18(getSpeedText[index].text),
-                onTap: () {
-                  _videoPlayerController!
-                      .setPlaybackSpeed(getSpeedText[index].speedValue);
-                },
+            padding: EdgeInsets.all( UIData.spaceSizeHeight40),
+            child: SizedBox(
+              child:
+              GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 0.66,
+                  crossAxisSpacing: UIData.spaceSizeWidth16,
+                ),
+                itemCount: getSpeedText.length,
+                itemBuilder: (BuildContext context, int index) => GestureDetector(
+                  child: CommonText.text18(getSpeedText[index].text, color: currentSpeed == getSpeedText[index].speedValue ? UIData.hoverThemeBgColor : UIData.primaryColor ),
+                  onTap: () {
+                    setState(() {
+                      _showSpeedSelect = false;
+                      currentSpeed = getSpeedText[index].speedValue;
+                    });
+                    Fluttertoast.showToast(msg: "已切换至${getSpeedText[index].text}", textColor: UIData.hoverThemeBgColor);
+                    _videoPlayerController!
+                        .setPlaybackSpeed(getSpeedText[index].speedValue);
+                  },
+                ),
               ),
             ),
           ),

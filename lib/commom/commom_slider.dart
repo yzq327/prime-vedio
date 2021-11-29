@@ -24,9 +24,9 @@ class FullWidthTrackShape extends RoundedRectSliderTrackShape {
 class CommonSlider extends StatefulWidget {
   late final Duration position;
   late final  Duration duration;
-  final ValueChanged<double>? onChangeEnd;
+  final ValueChanged<double> onChangeEnd;
 
-  CommonSlider({Key? key, required this.position, required this.duration, this.onChangeEnd})
+  CommonSlider({Key? key, required this.position, required this.duration, required this.onChangeEnd})
       : super(key: key);
 
   _CommonSliderState createState() => _CommonSliderState();
@@ -86,7 +86,7 @@ class _CommonSliderState extends State<CommonSlider> {
             });
           },
           onChangeEnd: (double value) {
-            widget.onChangeEnd!(value);
+            widget.onChangeEnd(value);
             setState(() {
               tempDuration = value;
               isChangeSlider = false;

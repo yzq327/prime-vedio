@@ -21,8 +21,14 @@ class CommonImg extends StatelessWidget {
           ),
         ),
       ),
-      placeholder: (_, url) => CircularProgressIndicator(
-              strokeWidth: 2.0, color: UIData.primaryColor),
+      placeholder: (content, url) => SizedBox(
+        width: UIData.spaceSizeHeight50,
+        height: UIData.spaceSizeHeight50,
+        child: Center(
+          child: CircularProgressIndicator(
+                  strokeWidth: 2.0, color: UIData.primaryColor),
+        ),
+      ),
       errorWidget: (context, url, error) => Image.asset(UIData.defaultImg),
     );
   }
