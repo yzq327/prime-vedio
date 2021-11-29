@@ -386,41 +386,43 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     return Positioned.fill(
         top: UIData.spaceSizeHeight50,
         bottom: UIData.spaceSizeHeight50,
-        // right: UIData.spaceSizeHeight30,
-        child: Container(
-          width: double.infinity,
-          alignment: Alignment.centerRight,
-          child: Row(
-            children: [
-              Container(
-                width: UIData.spaceSizeWidth10,
-                child: CommonBasicSlider(
-                  currentValue: currentVolume,
-                  onChange: (double value) {
-                    print('value----:$value');
-                    VolumeController().setVolume(value);
-                    VolumeController().getVolume().then((volume) {
-                      print('volume111111:$volume ');
-                    });
-                    setState(() {
-                      currentVolume = value;
-                    });
-                  },
+        right: UIData.spaceSizeHeight10,
+        child: Row(
+          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(),
+            Row(
+              children: [
+                Container(
+                  width: UIData.spaceSizeWidth10,
+                  child: CommonBasicSlider(
+                    currentValue: currentVolume,
+                    onChange: (double value) {
+                      print('改变的音量----:$value');
+                      VolumeController().setVolume(value);
+                      VolumeController().getVolume().then((volume) {
+                        print('当前音量:$volume ');
+                      });
+                      setState(() {
+                        currentVolume = value;
+                      });
+                    },
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Icon(IconFont.icon_yinliang, color: UIData.primaryColor,),
-              )
-            ],
-          ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(IconFont.icon_yinliang, color: UIData.primaryColor,),
+                )
+              ],
+            ),
+          ],
         ));
   }
   Widget _buildBrightnessSlider() {
     return Positioned.fill(
         top: UIData.spaceSizeHeight50,
         bottom: UIData.spaceSizeHeight50,
-        left: UIData.spaceSizeHeight30,
+        left: UIData.spaceSizeHeight10,
         child: Row(
           children: [
             Padding(
@@ -432,8 +434,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
               child: CommonBasicSlider(
                 currentValue: currentBrightness,
                 onChange: (double value) {
-                  print('value----:$value');
+                  print('亮度----:$value');
                   DeviceDisplayBrightness.setBrightness(value);
+                  DeviceDisplayBrightness.getBrightness().then((value) =>  print('当前亮度:$value '));
                   setState(() {
                     currentBrightness = value;
                   });
