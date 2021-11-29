@@ -322,7 +322,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           duration: Duration(milliseconds: 300),
           child: Container(
             color: UIData.videoStateBgColor,
-            padding: EdgeInsets.all( UIData.spaceSizeHeight40),
+            padding: EdgeInsets.all(UIData.spaceSizeHeight40),
             child: SizedBox(
               child:
               GridView.builder(
@@ -330,18 +330,18 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  childAspectRatio: 0.66,
+                  childAspectRatio: 1.2,
                   crossAxisSpacing: UIData.spaceSizeWidth16,
                 ),
                 itemCount: getSpeedText.length,
                 itemBuilder: (BuildContext context, int index) => GestureDetector(
-                  child: CommonText.text18(getSpeedText[index].text, color: currentSpeed == getSpeedText[index].speedValue ? UIData.hoverThemeBgColor : UIData.primaryColor ),
+                  child: Center(child: CommonText.text18(getSpeedText[index].text, color: currentSpeed == getSpeedText[index].speedValue ? UIData.hoverThemeBgColor : UIData.primaryColor )),
                   onTap: () {
                     setState(() {
                       _showSpeedSelect = false;
                       currentSpeed = getSpeedText[index].speedValue;
                     });
-                    Fluttertoast.showToast(msg: "已切换至${getSpeedText[index].text}", textColor: UIData.hoverThemeBgColor);
+                    Fluttertoast.showToast(msg: "已切换至${getSpeedText[index].text}", timeInSecForIosWeb: 2, gravity: ToastGravity.CENTER);
                     _videoPlayerController!
                         .setPlaybackSpeed(getSpeedText[index].speedValue);
                   },
