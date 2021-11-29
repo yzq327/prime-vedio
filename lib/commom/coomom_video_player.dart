@@ -37,6 +37,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   Duration duration = Duration.zero;
   double defaultAspectRatio = 16 / 9;
   double currentSpeed = 1.0;
+  bool isLock = false;
 
   List<SpeedText> get getSpeedText {
     return [
@@ -194,17 +195,107 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     );
   }
 
-  Widget _buildOperationIcon (IconData icon, GestureTapCallback onTap ) {
+  Widget _buildOperationIcon(IconData icon, GestureTapCallback onTap) {
     return Padding(
-      padding: EdgeInsets.only(
-          right: UIData.spaceSizeWidth8),
+      padding: EdgeInsets.only(right: UIData.spaceSizeWidth8),
       child: GestureDetector(
         child: Icon(
           icon,
           color: UIData.primaryColor,
         ),
-        onTap:onTap,
+        onTap: onTap,
       ),
+    );
+  }
+
+  Widget _buildBackRow () {
+    return Visibility(
+      visible: !isLock,
+      child: Container(
+          alignment: Alignment.center,
+          height: UIData.spaceSizeHeight44,
+          color: UIData.videoSlideBgColor,
+          child: Center(
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                    onPressed: backPress),
+                CommonText.text18(
+                  widget.vodName ?? '',
+                  color: UIData.primaryColor,
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget _buildLockIcon() {
+    return Container(
+        alignment: Alignment.centerRight,
+        child: IconButton(
+            icon: Icon(
+              isLock
+                  ? IconFont.icon_suofuben
+                  : IconFont.icon_jiesuofuben,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              setState(() {
+                isLock = !isLock;
+              });
+              _startPlayControlTimer();
+            }));
+  }
+
+  Widget _buildButtonOperateRow() {
+    return Visibility(
+      visible: !isLock,
+      child: Container(
+          height: UIData.spaceSizeHeight32,
+          color: duration == Duration.zero
+              ? Colors.transparent
+              : UIData.videoSlideBgColor,
+          child: duration == Duration.zero
+              ? SizedBox()
+              : Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: UIData.spaceSizeWidth8),
+                child: CommonText.text18(
+                    StringsHelper.formatDuration(position)),
+              ),
+              Expanded(
+                  child: CommonSlider(
+                      position: position,
+                      duration: duration,
+                      onChangeEnd: (value) =>
+                          handleChangeSlider(value))),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: UIData.spaceSizeWidth8),
+                child: CommonText.text18(
+                    StringsHelper.formatDuration(duration)),
+              ),
+              _buildOperationIcon(
+                IconFont.icon_sudu___,
+                    () => setState(() {
+                  _showSpeedSelect = !_showSpeedSelect;
+                }),
+              ),
+              _buildOperationIcon(
+                IconFont.icon_quanping_,
+                    () => setState(() {
+                  _showSpeedSelect = !_showSpeedSelect;
+                }),
+              ),
+            ],
+          )),
     );
   }
 
@@ -218,65 +309,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                  alignment: Alignment.center,
-                  height: UIData.spaceSizeHeight44,
-                  color: UIData.videoSlideBgColor,
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                          ),
-                          onPressed: backPress),
-                      CommonText.text18(
-                        widget.vodName ?? '',
-                        color: UIData.primaryColor,
-                      ),
-                    ],
-                  )),
-              Container(
-                  height: UIData.spaceSizeHeight32,
-                  color: duration == Duration.zero
-                      ? Colors.transparent
-                      : UIData.videoSlideBgColor,
-                  child: duration == Duration.zero
-                      ? SizedBox()
-                      : Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: UIData.spaceSizeWidth8),
-                              child: CommonText.text18(
-                                  StringsHelper.formatDuration(position)),
-                            ),
-                            Expanded(
-                                child: CommonSlider(
-                                    position: position,
-                                    duration: duration,
-                                    onChangeEnd: (value) =>
-                                        handleChangeSlider(value))),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: UIData.spaceSizeWidth8),
-                              child: CommonText.text18(
-                                  StringsHelper.formatDuration(duration)),
-                            ),
-                            _buildOperationIcon(
-                                 IconFont.icon_sudu___,
-                                 () => setState(() {
-                                   _showSpeedSelect = !_showSpeedSelect;
-                                 }),
-                            ),
-                            _buildOperationIcon(
-                              IconFont.icon_quanping_,
-                                  () => setState(() {
-                                _showSpeedSelect = !_showSpeedSelect;
-                              }),
-                            ),
-                          ],
-                        )),
+              _buildBackRow(),
+              _buildLockIcon(),
+              _buildButtonOperateRow(),
             ],
           ),
         ),
