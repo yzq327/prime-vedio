@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:device_display_brightness/device_display_brightness.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,9 +8,11 @@ import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:video_player/video_player.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 import 'commom_slider.dart';
 import 'commom_text.dart';
+import 'common_basic_slider.dart';
 
 class SpeedText {
   String text;
@@ -38,6 +41,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   double defaultAspectRatio = 16 / 9;
   double currentSpeed = 1.0;
   bool isLock = false;
+  late double currentVolume = 0.5;
+  late double currentBrightness = 0.0;
 
   List<SpeedText> get getSpeedText {
     return [
@@ -70,6 +75,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   void initState() {
     super.initState();
     playByUrl(widget.url);
+    VolumeController().listener((volume) {
+      setState((){});
+    });
+    VolumeController().getVolume().then((volume) => currentVolume = volume);
+    _getBrightness();
   }
 
   @override
@@ -85,6 +95,14 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     super.dispose();
     _videoPlayerController!.dispose();
     _timer?.cancel();
+  }
+
+  void _getBrightness() {
+    DeviceDisplayBrightness.getBrightness().then((value) {
+      setState(() {
+        currentBrightness = value;
+      });
+    });
   }
 
   void _playOrPause() {
@@ -208,7 +226,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     );
   }
 
-  Widget _buildBackRow () {
+  Widget _buildBackRow() {
     return Visibility(
       visible: !isLock,
       child: Container(
@@ -239,9 +257,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         alignment: Alignment.centerRight,
         child: IconButton(
             icon: Icon(
-              isLock
-                  ? IconFont.icon_suofuben
-                  : IconFont.icon_jiesuofuben,
+              isLock ? IconFont.icon_suofuben : IconFont.icon_jiesuofuben,
               color: Colors.white,
             ),
             onPressed: () {
@@ -263,39 +279,38 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           child: duration == Duration.zero
               ? SizedBox()
               : Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: UIData.spaceSizeWidth8),
-                child: CommonText.text18(
-                    StringsHelper.formatDuration(position)),
-              ),
-              Expanded(
-                  child: CommonSlider(
-                      position: position,
-                      duration: duration,
-                      onChangeEnd: (value) =>
-                          handleChangeSlider(value))),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: UIData.spaceSizeWidth8),
-                child: CommonText.text18(
-                    StringsHelper.formatDuration(duration)),
-              ),
-              _buildOperationIcon(
-                IconFont.icon_sudu___,
-                    () => setState(() {
-                  _showSpeedSelect = !_showSpeedSelect;
-                }),
-              ),
-              _buildOperationIcon(
-                IconFont.icon_quanping_,
-                    () => setState(() {
-                  _showSpeedSelect = !_showSpeedSelect;
-                }),
-              ),
-            ],
-          )),
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: UIData.spaceSizeWidth8),
+                      child: CommonText.text18(
+                          StringsHelper.formatDuration(position)),
+                    ),
+                    Expanded(
+                        child: CommonSlider(
+                            position: position,
+                            duration: duration,
+                            onChangeEnd: (value) => handleChangeSlider(value))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: UIData.spaceSizeWidth8),
+                      child: CommonText.text18(
+                          StringsHelper.formatDuration(duration)),
+                    ),
+                    _buildOperationIcon(
+                      IconFont.icon_sudu___,
+                      () => setState(() {
+                        _showSpeedSelect = !_showSpeedSelect;
+                      }),
+                    ),
+                    _buildOperationIcon(
+                      IconFont.icon_quanping_,
+                      () => setState(() {
+                        _showSpeedSelect = !_showSpeedSelect;
+                      }),
+                    ),
+                  ],
+                )),
     );
   }
 
@@ -367,6 +382,69 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     );
   }
 
+  Widget _buildVolumeSlider() {
+    return Positioned.fill(
+        top: UIData.spaceSizeHeight50,
+        bottom: UIData.spaceSizeHeight50,
+        // right: UIData.spaceSizeHeight30,
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.centerRight,
+          child: Row(
+            children: [
+              Container(
+                width: UIData.spaceSizeWidth10,
+                child: CommonBasicSlider(
+                  currentValue: currentVolume,
+                  onChange: (double value) {
+                    print('value----:$value');
+                    VolumeController().setVolume(value);
+                    VolumeController().getVolume().then((volume) {
+                      print('volume111111:$volume ');
+                    });
+                    setState(() {
+                      currentVolume = value;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Icon(IconFont.icon_yinliang, color: UIData.primaryColor,),
+              )
+            ],
+          ),
+        ));
+  }
+  Widget _buildBrightnessSlider() {
+    return Positioned.fill(
+        top: UIData.spaceSizeHeight50,
+        bottom: UIData.spaceSizeHeight50,
+        left: UIData.spaceSizeHeight30,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Icon(IconFont.icon_liangdu, color: UIData.primaryColor,),
+            ),
+            Container(
+              width: UIData.spaceSizeWidth10,
+              child: CommonBasicSlider(
+                currentValue: currentBrightness,
+                onChange: (double value) {
+                  print('value----:$value');
+                  DeviceDisplayBrightness.setBrightness(value);
+                  setState(() {
+                    currentBrightness = value;
+                  });
+                },
+              ),
+            ),
+
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -386,6 +464,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 _buildShowPauseIcon(),
                 _buildShowTaggingContent(),
                 _buildShowSpeedContent(),
+                _buildBrightnessSlider(),
+                _buildVolumeSlider(),
               ],
             ),
             onWillPop: _onWillPop,
