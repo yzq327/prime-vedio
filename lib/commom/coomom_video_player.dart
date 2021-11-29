@@ -17,24 +17,6 @@ class SpeedText {
   SpeedText(this.text, this.speedValue);
 }
 
-class FullWidthTrackShape extends RoundedRectSliderTrackShape {
-  Rect getPreferredRect({
-    required RenderBox parentBox,
-    Offset offset = Offset.zero,
-    required SliderThemeData sliderTheme,
-    bool isEnabled = false,
-    bool isDiscrete = false,
-  }) {
-    final double? trackHeight = sliderTheme.trackHeight;
-    final double trackLeft = offset.dx;
-    final double trackTop =
-        offset.dy + (parentBox.size.height - trackHeight!) / 2;
-    // 让轨道宽度等于 Slider 宽度
-    final double trackWidth = parentBox.size.width;
-    return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
-  }
-}
-
 class CommonVideoPlayer extends StatefulWidget {
   final String url;
   late final String? vodName;
@@ -212,6 +194,20 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     );
   }
 
+  Widget _buildOperationIcon (IconData icon, GestureTapCallback onTap ) {
+    return Padding(
+      padding: EdgeInsets.only(
+          right: UIData.spaceSizeWidth8),
+      child: GestureDetector(
+        child: Icon(
+          icon,
+          color: UIData.primaryColor,
+        ),
+        onTap:onTap,
+      ),
+    );
+  }
+
   Widget _buildShowTaggingContent() {
     return Positioned.fill(
       child: Offstage(
@@ -249,13 +245,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                       ? SizedBox()
                       : Row(
                           children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                  right: UIData.spaceSizeWidth4,
-                                  left: UIData.spaceSizeWidth2),
-                              width: position.inHours > 0
-                                  ? UIData.spaceSizeWidth70
-                                  : UIData.spaceSizeWidth60,
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: UIData.spaceSizeWidth8),
                               child: CommonText.text18(
                                   StringsHelper.formatDuration(position)),
                             ),
@@ -265,45 +257,24 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                                     duration: duration,
                                     onChangeEnd: (value) =>
                                         handleChangeSlider(value))),
-                            Container(
-                              margin:
-                                  EdgeInsets.only(left: UIData.spaceSizeWidth6),
-                              width: position.inHours > 0
-                                  ? UIData.spaceSizeWidth70
-                                  : UIData.spaceSizeWidth60,
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: UIData.spaceSizeWidth8),
                               child: CommonText.text18(
                                   StringsHelper.formatDuration(duration)),
                             ),
-                            SizedBox(
-                              width: UIData.spaceSizeWidth24,
-                              child: IconButton(
-                                  alignment: Alignment.centerLeft,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    setState(() {
-                                      _showSpeedSelect = !_showSpeedSelect;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    IconFont.icon_sudu___,
-                                    color: UIData.primaryColor,
-                                  )),
+                            _buildOperationIcon(
+                                 IconFont.icon_sudu___,
+                                 () => setState(() {
+                                   _showSpeedSelect = !_showSpeedSelect;
+                                 }),
                             ),
-                            Container(
-                              width: UIData.spaceSizeWidth24,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: UIData.spaceSizeWidth4),
-                              child: IconButton(
-                                  alignment: Alignment.centerLeft,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    print('全屏');
-                                  },
-                                  icon: Icon(
-                                    IconFont.icon_quanping_,
-                                    color: UIData.primaryColor,
-                                  )),
-                            )
+                            _buildOperationIcon(
+                              IconFont.icon_quanping_,
+                                  () => setState(() {
+                                _showSpeedSelect = !_showSpeedSelect;
+                              }),
+                            ),
                           ],
                         )),
             ],
@@ -324,8 +295,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
             color: UIData.videoStateBgColor,
             padding: EdgeInsets.all(UIData.spaceSizeHeight40),
             child: SizedBox(
-              child:
-              GridView.builder(
+              child: GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -334,14 +304,22 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                   crossAxisSpacing: UIData.spaceSizeWidth16,
                 ),
                 itemCount: getSpeedText.length,
-                itemBuilder: (BuildContext context, int index) => GestureDetector(
-                  child: Center(child: CommonText.text18(getSpeedText[index].text, color: currentSpeed == getSpeedText[index].speedValue ? UIData.hoverThemeBgColor : UIData.primaryColor )),
+                itemBuilder: (BuildContext context, int index) =>
+                    GestureDetector(
+                  child: Center(
+                      child: CommonText.text18(getSpeedText[index].text,
+                          color: currentSpeed == getSpeedText[index].speedValue
+                              ? UIData.hoverThemeBgColor
+                              : UIData.primaryColor)),
                   onTap: () {
                     setState(() {
                       _showSpeedSelect = false;
                       currentSpeed = getSpeedText[index].speedValue;
                     });
-                    Fluttertoast.showToast(msg: "已切换至${getSpeedText[index].text}", timeInSecForIosWeb: 2, gravity: ToastGravity.CENTER);
+                    Fluttertoast.showToast(
+                        msg: "已切换至${getSpeedText[index].text}",
+                        timeInSecForIosWeb: 2,
+                        gravity: ToastGravity.CENTER);
                     _videoPlayerController!
                         .setPlaybackSpeed(getSpeedText[index].speedValue);
                   },
