@@ -41,8 +41,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   double defaultAspectRatio = 16 / 9;
   double currentSpeed = 1.0;
   bool isLock = false;
-  late double currentVolume = 0.5;
-  late double currentBrightness = 0.0;
+  double currentVolume = 0.5;
+  double currentBrightness = 0.0;
 
   List<SpeedText> get getSpeedText {
     return [
@@ -75,11 +75,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   void initState() {
     super.initState();
     playByUrl(widget.url);
-    VolumeController().listener((volume) {
-      setState((){});
-    });
+    DeviceDisplayBrightness.getBrightness()
+        .then((value) => currentBrightness = value);
     VolumeController().getVolume().then((volume) => currentVolume = volume);
-    _getBrightness();
   }
 
   @override
@@ -95,14 +93,6 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     super.dispose();
     _videoPlayerController!.dispose();
     _timer?.cancel();
-  }
-
-  void _getBrightness() {
-    DeviceDisplayBrightness.getBrightness().then((value) {
-      setState(() {
-        currentBrightness = value;
-      });
-    });
   }
 
   void _playOrPause() {
@@ -388,7 +378,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         bottom: UIData.spaceSizeHeight50,
         right: UIData.spaceSizeHeight10,
         child: Row(
-          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(),
             Row(
@@ -398,11 +388,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                   child: CommonBasicSlider(
                     currentValue: currentVolume,
                     onChange: (double value) {
-                      print('改变的音量----:$value');
                       VolumeController().setVolume(value);
-                      VolumeController().getVolume().then((volume) {
-                        print('当前音量:$volume ');
-                      });
                       setState(() {
                         currentVolume = value;
                       });
@@ -411,13 +397,17 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(IconFont.icon_yinliang, color: UIData.primaryColor,),
+                  child: Icon(
+                    IconFont.icon_yinliang,
+                    color: UIData.primaryColor,
+                  ),
                 )
               ],
             ),
           ],
         ));
   }
+
   Widget _buildBrightnessSlider() {
     return Positioned.fill(
         top: UIData.spaceSizeHeight50,
@@ -427,23 +417,23 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Icon(IconFont.icon_liangdu, color: UIData.primaryColor,),
+              child: Icon(
+                IconFont.icon_liangdu,
+                color: UIData.primaryColor,
+              ),
             ),
             Container(
               width: UIData.spaceSizeWidth10,
               child: CommonBasicSlider(
                 currentValue: currentBrightness,
                 onChange: (double value) {
-                  print('亮度----:$value');
                   DeviceDisplayBrightness.setBrightness(value);
-                  DeviceDisplayBrightness.getBrightness().then((value) =>  print('当前亮度:$value '));
                   setState(() {
                     currentBrightness = value;
                   });
                 },
               ),
             ),
-
           ],
         ));
   }
