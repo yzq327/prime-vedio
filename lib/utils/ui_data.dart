@@ -38,6 +38,9 @@ class UIData {
   static const videoStateDefaultColor = const Color.fromRGBO(255, 255, 255, 0.5);
   static const videoSlideBgColor = const Color.fromRGBO(0, 0, 0, 0.3);
   static const videoStateBgColor = const Color.fromRGBO(0, 0, 0, 0.5);
+  static const myPageBgColor = const Color(0xFF0D1821);
+  static const lightBlockColor = const Color(0xFF081923);
+
 
   //***************************其余颜色***************************//
 
@@ -71,6 +74,7 @@ class UIData {
   //***************************宽度***************************//
   static double spaceSizeWidth1 = ScreenUtil().setWidth(1);
   static double spaceSizeWidth2 = ScreenUtil().setWidth(2);
+  static double spaceSizeWidth3 = ScreenUtil().setWidth(3);
   static double spaceSizeWidth4 = ScreenUtil().setWidth(4);
   static double spaceSizeWidth6 = ScreenUtil().setWidth(6);
   static double spaceSizeWidth8 = ScreenUtil().setWidth(8);
@@ -145,6 +149,7 @@ class UIData {
   static double spaceSizeHeight200 = ScreenUtil().setHeight(200);
   static double spaceSizeHeight228 = ScreenUtil().setHeight(228);
   static double spaceSizeHeight240 = ScreenUtil().setHeight(240);
+  static double spaceSizeHeight300 = ScreenUtil().setHeight(300);
   static double spaceSizeHeight400 = ScreenUtil().setHeight(400);
   static double spaceSizeHeight580 = ScreenUtil().setHeight(580);
   static double spaceSizeHeight700 = ScreenUtil().setHeight(700);
@@ -154,6 +159,7 @@ class UIData {
   //images
   static const String imageDir = "assets/images";
   static const String defaultImg = "$imageDir/default_img.png"; //加载失败默认图片
+  static const String myImg = "$imageDir/my_img.png"; //我的头像
 
 
   //*******************首页************************//
