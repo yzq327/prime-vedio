@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 class StringsHelper {
 
 //省份简称列表
@@ -229,6 +231,10 @@ class StringsHelper {
       return "$twoDigitMinutes:$twoDigitSeconds";
     }
 
+  }
+
+  static Size getWidgetSize (BuildContext context) {
+    return MediaQuery.of(context).size;
   }
 }
 

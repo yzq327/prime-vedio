@@ -43,6 +43,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   bool isLock = false;
   double currentVolume = 0.5;
   double currentBrightness = 0.0;
+  double _dragTop = 0.0;
+  double _dragStartY = 0.0;
+  bool changeBrightness = false;
+  bool changeVolume = false;
+  double tempValue = 0.0;
 
   List<SpeedText> get getSpeedText {
     return [
@@ -154,6 +159,45 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   void handleChangeSlider(double value) {
     _videoPlayerController?.seekTo(Duration(seconds: value.toInt()));
     _startPlayControlTimer();
+  }
+
+  void _handleOnPanDown (DragDownDetails e) {
+    double widgetWidth = StringsHelper.getWidgetSize(context).width;
+    setState(() {
+      _dragStartY = e.globalPosition.dy;
+      _dragTop = e.globalPosition.dy;
+      tempValue =  e.globalPosition.dx < widgetWidth / 2 ? currentBrightness : currentVolume;
+    });
+  }
+
+  void _handleOnPanUpdate (DragUpdateDetails e) {
+    double widgetWidth = StringsHelper.getWidgetSize(context).width;
+    setState(() {
+      changeBrightness = e.globalPosition.dx < widgetWidth / 2;
+      changeVolume = !changeBrightness;
+      _dragTop += e.delta.dy;
+      double changedHeight = (_dragStartY - _dragTop)/140;
+      double tempChange = tempValue + changedHeight;
+      tempChange = tempChange < 0
+          ? 0.0
+          : tempChange > 1
+          ? 1.0
+          : tempChange;
+      if (changeBrightness) {
+        currentBrightness = tempChange;
+        DeviceDisplayBrightness.setBrightness(currentBrightness);
+      } else {
+        currentVolume = tempChange;
+        VolumeController().setVolume(currentVolume);
+      }
+    });
+  }
+
+  void _handleOnPanEnd (DragEndDetails e) {
+    setState(() {
+      changeBrightness = false;
+      changeVolume = false;
+    });
   }
 
   Widget _buildShowLoading() {
@@ -373,76 +417,91 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   }
 
   Widget _buildVolumeSlider() {
-    return Positioned.fill(
-        top: UIData.spaceSizeHeight50,
-        bottom: UIData.spaceSizeHeight50,
-        right: UIData.spaceSizeHeight10,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(),
-            Row(
-              children: [
-                Container(
-                  width: UIData.spaceSizeWidth10,
-                  child: CommonBasicSlider(
-                    currentValue: currentVolume,
-                    onChange: (double value) {
-                      VolumeController().setVolume(value);
-                      setState(() {
-                        currentVolume = value;
-                      });
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Icon(
-                    IconFont.icon_yinliang,
-                    color: UIData.primaryColor,
-                  ),
-                )
-              ],
-            ),
-          ],
-        ));
-  }
-
-  Widget _buildBrightnessSlider() {
-    return Positioned.fill(
-        top: UIData.spaceSizeHeight50,
-        bottom: UIData.spaceSizeHeight50,
-        left: UIData.spaceSizeHeight10,
+    return Offstage(
+      offstage: !changeVolume,
+      child: AnimatedOpacity(
+        opacity: changeVolume ? 1 : 0,
+        duration: Duration(milliseconds: 300),
         child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Icon(
-                IconFont.icon_liangdu,
-                color: UIData.primaryColor,
-              ),
-            ),
             Container(
               width: UIData.spaceSizeWidth10,
               child: CommonBasicSlider(
-                currentValue: currentBrightness,
+                currentValue: currentVolume,
                 onChange: (double value) {
-                  DeviceDisplayBrightness.setBrightness(value);
+                  VolumeController().setVolume(value);
                   setState(() {
-                    currentBrightness = value;
+                    currentVolume = value;
                   });
                 },
               ),
             ),
+            Padding(
+              padding: EdgeInsets.all(UIData.spaceSizeWidth10),
+              child: Icon(
+                IconFont.icon_yinliang,
+                color: UIData.primaryColor,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBrightnessSlider() {
+    return Offstage(
+        offstage: !changeBrightness,
+        child: AnimatedOpacity(
+            opacity: changeBrightness ? 1 : 0,
+            duration: Duration(milliseconds: 300),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(UIData.spaceSizeWidth10),
+                  child: Icon(
+                    IconFont.icon_liangdu,
+                    color: UIData.primaryColor,
+                  ),
+                ),
+                Container(
+                  width: UIData.spaceSizeWidth10,
+                  child: CommonBasicSlider(
+                    currentValue: currentBrightness,
+                    onChange: (double value) {
+                      DeviceDisplayBrightness.setBrightness(value);
+                      setState(() {
+                        currentBrightness = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            )));
+  }
+
+  Widget _buildPanContent() {
+    return Positioned.fill(
+        top: UIData.spaceSizeHeight40,
+        bottom: UIData.spaceSizeHeight40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildBrightnessSlider(),
+            _buildVolumeSlider(),
           ],
         ));
   }
+
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onDoubleTap: _playOrPause,
       onTap: _togglePlayControl,
+      onPanDown: _handleOnPanDown,
+      onPanUpdate: _handleOnPanUpdate,
+      onPanEnd: _handleOnPanEnd,
       child: Container(
         color: Colors.transparent,
         child: AspectRatio(
@@ -457,8 +516,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 _buildShowPauseIcon(),
                 _buildShowTaggingContent(),
                 _buildShowSpeedContent(),
-                _buildBrightnessSlider(),
-                _buildVolumeSlider(),
+                _buildPanContent(),
               ],
             ),
             onWillPop: _onWillPop,
