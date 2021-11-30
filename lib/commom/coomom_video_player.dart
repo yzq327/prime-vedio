@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_display_brightness/device_display_brightness.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
@@ -128,7 +129,23 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     });
   }
 
-  void _toggleFullScreen() {}
+  void _toggleFullScreen() {
+    setState(() {
+      if (_isFullScreen) {
+        SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+            overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+      } else {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft
+        ]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+      }
+      _startPlayControlTimer(); // 操作完控件开始计时隐藏
+    });
+  }
 
   bool get showLoading {
     // print('_videoPlayerController.value.isInitialized: ${_videoPlayerController!.value.isBuffering}');
@@ -161,28 +178,30 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     _startPlayControlTimer();
   }
 
-  void _handleOnPanDown (DragDownDetails e) {
+  void _handleOnPanDown(DragDownDetails e) {
     double widgetWidth = StringsHelper.getWidgetSize(context).width;
     setState(() {
       _dragStartY = e.globalPosition.dy;
       _dragTop = e.globalPosition.dy;
-      tempValue =  e.globalPosition.dx < widgetWidth / 2 ? currentBrightness : currentVolume;
+      tempValue = e.globalPosition.dx < widgetWidth / 2
+          ? currentBrightness
+          : currentVolume;
     });
   }
 
-  void _handleOnPanUpdate (DragUpdateDetails e) {
+  void _handleOnPanUpdate(DragUpdateDetails e) {
     double widgetWidth = StringsHelper.getWidgetSize(context).width;
     setState(() {
       changeBrightness = e.globalPosition.dx < widgetWidth / 2;
       changeVolume = !changeBrightness;
       _dragTop += e.delta.dy;
-      double changedHeight = (_dragStartY - _dragTop)/140;
+      double changedHeight = (_dragStartY - _dragTop) / 140;
       double tempChange = tempValue + changedHeight;
       tempChange = tempChange < 0
           ? 0.0
           : tempChange > 1
-          ? 1.0
-          : tempChange;
+              ? 1.0
+              : tempChange;
       if (changeBrightness) {
         currentBrightness = tempChange;
         DeviceDisplayBrightness.setBrightness(currentBrightness);
@@ -193,7 +212,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     });
   }
 
-  void _handleOnPanEnd (DragEndDetails e) {
+  void _handleOnPanEnd(DragEndDetails e) {
     setState(() {
       changeBrightness = false;
       changeVolume = false;
@@ -339,9 +358,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                     ),
                     _buildOperationIcon(
                       IconFont.icon_quanping_,
-                      () => setState(() {
-                        _showSpeedSelect = !_showSpeedSelect;
-                      }),
+                      () {
+                        _toggleFullScreen();
+                      },
                     ),
                   ],
                 )),
@@ -493,7 +512,6 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         ));
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -504,22 +522,25 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       onPanEnd: _handleOnPanEnd,
       child: Container(
         color: Colors.transparent,
-        child: AspectRatio(
-          aspectRatio: _videoPlayerController!.value.isInitialized
-              ? _videoPlayerController!.value.aspectRatio
-              : defaultAspectRatio,
-          child: WillPopScope(
-            child: Stack(
-              children: [
-                VideoPlayer(_videoPlayerController!),
-                _buildShowLoading(),
-                _buildShowPauseIcon(),
-                _buildShowTaggingContent(),
-                _buildShowSpeedContent(),
-                _buildPanContent(),
-              ],
+        child: Hero(
+          tag: "player",
+          child: AspectRatio(
+            aspectRatio: _videoPlayerController!.value.isInitialized
+                ? _videoPlayerController!.value.aspectRatio
+                : defaultAspectRatio,
+            child: WillPopScope(
+              child: Stack(
+                children: [
+                  VideoPlayer(_videoPlayerController!),
+                  _buildShowLoading(),
+                  _buildShowPauseIcon(),
+                  _buildShowTaggingContent(),
+                  _buildShowSpeedContent(),
+                  _buildPanContent(),
+                ],
+              ),
+              onWillPop: _onWillPop,
             ),
-            onWillPop: _onWillPop,
           ),
         ),
       ),
