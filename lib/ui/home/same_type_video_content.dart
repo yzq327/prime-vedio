@@ -106,7 +106,7 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                    height: UIData.spaceSizeHeight100,
+                    height: UIData.spaceSizeHeight104,
                     width: UIData.spaceSizeWidth160,
                     child: CommonImgDisplay(
                         vodPic: getVideoList[index].vodPic,
@@ -114,32 +114,32 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
                         vodName: getVideoList[index].vodName,
                         recordRoute: false)),
                 SizedBox(width: UIData.spaceSizeWidth18),
-                GestureDetector(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: UIData.spaceSizeWidth160,
-                          child:
-                              CommonText.text18(getVideoList[index].vodName)),
-                      SizedBox(
-                        height: UIData.spaceSizeHeight8,
-                      ),
-                      CommonText.text18("评分：${getVideoList[index].vodScore}",
-                          color: UIData.subTextColor),
-                      SizedBox(
-                        height: UIData.spaceSizeHeight8,
-                      ),
-                      CommonText.text14("上线年份： ${getVideoList[index].vodYear}",
-                          color: UIData.hoverThemeBgColor),
-                    ],
+                Expanded(
+                  child: GestureDetector(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText.text18(getVideoList[index].vodName),
+                        SizedBox(
+                          height: UIData.spaceSizeHeight8,
+                        ),
+                        CommonText.text18("评分：${getVideoList[index].vodScore}",
+                            color: UIData.subTextColor),
+                        SizedBox(
+                          height: UIData.spaceSizeHeight8,
+                        ),
+                        CommonText.text14("上线年份： ${getVideoList[index].vodYear}",
+                            color: UIData.hoverThemeBgColor),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, Routes.detail,
+                          arguments: VideoDetailPageParams(
+                              vodId: getVideoList[index].vodId,
+                              vodName: getVideoList[index].vodName,
+                              vodPic:getVideoList[index].vodPic ));
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pushReplacementNamed(context, Routes.detail,
-                        arguments: VideoDetailPageParams(
-                            vodId: getVideoList[index].vodId,
-                            vodName: getVideoList[index].vodName));
-                  },
                 )
               ],
             ),
