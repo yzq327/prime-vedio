@@ -39,8 +39,9 @@ class _MinePageState extends State<MinePage> {
     );
   }
 
-  Widget _buildIconInfo(IconData icon, String iconText, GestureTapCallback onTap) {
-    return  GestureDetector(
+  Widget _buildIconInfo(
+      IconData icon, String iconText, GestureTapCallback onTap) {
+    return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
@@ -59,81 +60,108 @@ class _MinePageState extends State<MinePage> {
   }
 
   Widget _buildMyInfo() {
-    return  Expanded(
-      child: Container(
-          margin:
-          EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
+    return Column(
+      children: [
+        ClipPath(
+            child: Container(
+                color: UIData.lightBlockColor,
+                height: UIData.spaceSizeHeight60,
+                width: UIData.spaceSizeWidth320,
+                child: null),
+            clipper: ArcClipper()),
+        Container(
+          width: double.infinity,
+          height: UIData.spaceSizeHeight160,
+          decoration: BoxDecoration(
+              color: UIData.lightBlockColor,
+              borderRadius:
+                  BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
+              boxShadow: [
+                BoxShadow(
+                    color: UIData.shadowColor,
+                    offset: Offset(0.0, 10),
+                    blurRadius: 10.0,
+                    spreadRadius: 0.0)
+              ]),
           child: Column(
             children: [
-              Transform.translate(
-                  offset: Offset(0, ScreenUtil().setHeight(-160)),
-                  child: ClipPath(
-                      child: Container(
-                          color: UIData.lightBlockColor,
-                          height: UIData.spaceSizeHeight60,
-                          width: UIData.spaceSizeWidth320,
-                          child: null),
-                      clipper: ArcClipper())),
               Container(
-                transform: Matrix4.translationValues(
-                    0, -UIData.spaceSizeHeight160, 0),
-                width: double.infinity,
-                height: UIData.spaceSizeHeight160,
+                transform:
+                    Matrix4.translationValues(0, -UIData.spaceSizeHeight60, 0),
+                width: UIData.spaceSizeWidth88,
+                height: UIData.spaceSizeWidth88,
                 decoration: BoxDecoration(
                   color: UIData.lightBlockColor,
                   borderRadius: BorderRadius.all(
-                      Radius.circular(UIData.spaceSizeWidth20)),
-                    boxShadow: [
-                      BoxShadow(
-                          color:  UIData.shadowColor,
-                          offset: Offset(0.0, 4),
-                          blurRadius: 8.0,
-                          spreadRadius: 0.0)
-                    ]
+                      Radius.circular(UIData.spaceSizeWidth44)),
                 ),
-                child: Column(
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(UIData.spaceSizeWidth40)),
+                    child: Image.asset(
+                      UIData.myImg,
+                      fit: BoxFit.fitWidth,
+                      width: UIData.spaceSizeWidth80,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                transform:
+                    Matrix4.translationValues(0, -UIData.spaceSizeHeight20, 0),
+                padding: EdgeInsets.only(
+                    left: UIData.spaceSizeWidth24,
+                    right: UIData.spaceSizeWidth24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      transform: Matrix4.translationValues(
-                          0, -UIData.spaceSizeHeight60, 0),
-                      width: UIData.spaceSizeWidth88,
-                      height: UIData.spaceSizeWidth88,
-                      decoration: BoxDecoration(
-                        color: UIData.lightBlockColor,
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(UIData.spaceSizeWidth44)),
-                      ),
-                      child: Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(UIData.spaceSizeWidth40)),
-                          child: Image.asset(
-                            UIData.myImg,
-                            fit: BoxFit.fitWidth,
-                            width: UIData.spaceSizeWidth80,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      transform: Matrix4.translationValues(
-                          0, -UIData.spaceSizeHeight20, 0),
-                      padding: EdgeInsets.only(
-                          left: UIData.spaceSizeWidth24,
-                          right: UIData.spaceSizeWidth24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildIconInfo( IconFont.icon_lishijilu_copy, '我看过的', (){}),
-                          _buildIconInfo( IconFont.icon_shoucangjia, '我收藏的', (){}),
-                        ],
-                      ),
-                    ),
+                    _buildIconInfo(IconFont.icon_lishijilu_copy, '我看过的', () {}),
+                    _buildIconInfo(IconFont.icon_shoucangjia, '我收藏的', () {}),
                   ],
                 ),
               ),
             ],
-          )),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCommonRow( IconData icon, String iconText, GestureTapCallback onTap) {
+    return Container(
+      margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight20),
+      padding: EdgeInsets.all(UIData.spaceSizeWidth20),
+      width: double.infinity,
+      decoration: BoxDecoration(
+          color: UIData.lightBlockColor,
+          borderRadius:
+          BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
+          boxShadow: [
+            BoxShadow(
+                color: UIData.shadowColor,
+                offset: Offset(0.0, 3.5),
+                blurRadius: 30.0,
+                spreadRadius: 3.0)
+          ]),
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: UIData.spaceSizeWidth8),
+            child: Icon(icon, color: UIData.primaryColor, size: UIData.spaceSizeWidth24,),
+          ),
+          CommonText.text14(iconText),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutVideo() {
+    return Column(
+      children: [
+        _buildCommonRow(IconFont.icon_guanyuwomen, '关于我们', (){}),
+        _buildCommonRow(IconFont.icon_licensexinxi, 'LICENSE', (){}),
+      ],
     );
   }
 
@@ -152,7 +180,14 @@ class _MinePageState extends State<MinePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildMyBgImg(),
-          _buildMyInfo(),
+          Container(
+            transform:
+            Matrix4.translationValues(0, -UIData.spaceSizeHeight160, 0),
+            margin: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
+            child: Column(
+              children: [_buildMyInfo(), SizedBox(height: UIData.spaceSizeHeight20), _buildAboutVideo()],
+            ),
+          ),
         ],
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
