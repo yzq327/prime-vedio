@@ -67,7 +67,7 @@ class _MinePageState extends State<MinePage> {
                 color: UIData.lightBlockColor,
                 height: UIData.spaceSizeHeight60,
                 width: UIData.spaceSizeWidth320,
-                child: null),
+                child: CommonText.text18('text', color: UIData.primaryColor)),
             clipper: ArcClipper()),
         Container(
           width: double.infinity,
@@ -128,7 +128,8 @@ class _MinePageState extends State<MinePage> {
     );
   }
 
-  Widget _buildCommonRow( IconData icon, String iconText, GestureTapCallback onTap) {
+  Widget _buildCommonRow(
+      IconData icon, String iconText, GestureTapCallback onTap) {
     return Container(
       margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight20),
       padding: EdgeInsets.all(UIData.spaceSizeWidth20),
@@ -136,7 +137,7 @@ class _MinePageState extends State<MinePage> {
       decoration: BoxDecoration(
           color: UIData.lightBlockColor,
           borderRadius:
-          BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
+              BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
           boxShadow: [
             BoxShadow(
                 color: UIData.shadowColor,
@@ -148,7 +149,11 @@ class _MinePageState extends State<MinePage> {
         children: [
           Padding(
             padding: EdgeInsets.only(right: UIData.spaceSizeWidth8),
-            child: Icon(icon, color: UIData.primaryColor, size: UIData.spaceSizeWidth24,),
+            child: Icon(
+              icon,
+              color: UIData.primaryColor,
+              size: UIData.spaceSizeWidth24,
+            ),
           ),
           CommonText.text14(iconText),
         ],
@@ -159,8 +164,8 @@ class _MinePageState extends State<MinePage> {
   Widget _buildAboutVideo() {
     return Column(
       children: [
-        _buildCommonRow(IconFont.icon_guanyuwomen, '关于我们', (){}),
-        _buildCommonRow(IconFont.icon_licensexinxi, 'LICENSE', (){}),
+        _buildCommonRow(IconFont.icon_guanyuwomen, '关于我们', () {}),
+        _buildCommonRow(IconFont.icon_licensexinxi, 'LICENSE', () {}),
       ],
     );
   }
@@ -176,16 +181,19 @@ class _MinePageState extends State<MinePage> {
     return Scaffold(
       backgroundColor: UIData.myPageBgColor,
       appBar: null,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      body: ListView(
         children: [
           _buildMyBgImg(),
           Container(
             transform:
-            Matrix4.translationValues(0, -UIData.spaceSizeHeight160, 0),
+                Matrix4.translationValues(0, -UIData.spaceSizeHeight160, 0),
             margin: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
             child: Column(
-              children: [_buildMyInfo(), SizedBox(height: UIData.spaceSizeHeight20), _buildAboutVideo()],
+              children: [
+                _buildMyInfo(),
+                SizedBox(height: UIData.spaceSizeHeight20),
+                _buildAboutVideo(),
+              ],
             ),
           ),
         ],
