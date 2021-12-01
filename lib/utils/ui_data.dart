@@ -40,6 +40,8 @@ class UIData {
   static const videoStateBgColor = const Color.fromRGBO(0, 0, 0, 0.5);
   static const myPageBgColor = const Color(0xFF0D1821);
   static const lightBlockColor = const Color(0xFF081923);
+  static const shadowColor =  const Color.fromRGBO(210, 234, 242, 0.25);
+
 
 
   //***************************其余颜色***************************//
