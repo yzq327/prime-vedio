@@ -15,9 +15,10 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
-
   Widget _buildMyBgImg() {
     return Container(
+      transform:
+      Matrix4.translationValues(0, -UIData.spaceSizeHeight40, 0),
       width: double.infinity,
       alignment: Alignment.bottomCenter,
       padding: EdgeInsets.only(bottom: UIData.spaceSizeHeight16),
@@ -62,57 +63,25 @@ class _MinePageState extends State<MinePage> {
   Widget _buildMyInfo() {
     return Column(
       children: [
-        ClipPath(
-            child: Container(
-                color: UIData.lightBlockColor,
-                height: UIData.spaceSizeHeight60,
-                width: UIData.spaceSizeWidth320,
-                child: CommonText.text18('text', color: UIData.primaryColor)),
-            clipper: ArcClipper()),
-        Container(
-          width: double.infinity,
-          height: UIData.spaceSizeHeight160,
-          decoration: BoxDecoration(
-              color: UIData.lightBlockColor,
-              borderRadius:
-                  BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
-              boxShadow: [
-                BoxShadow(
-                    color: UIData.shadowColor,
-                    offset: Offset(0.0, 10),
-                    blurRadius: 10.0,
-                    spreadRadius: 0.0)
-              ]),
-          child: Column(
-            children: [
-              Container(
-                transform:
-                    Matrix4.translationValues(0, -UIData.spaceSizeHeight60, 0),
-                width: UIData.spaceSizeWidth88,
-                height: UIData.spaceSizeWidth88,
-                decoration: BoxDecoration(
-                  color: UIData.lightBlockColor,
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(UIData.spaceSizeWidth44)),
-                ),
-                child: Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(UIData.spaceSizeWidth40)),
-                    child: Image.asset(
-                      UIData.myImg,
-                      fit: BoxFit.fitWidth,
-                      width: UIData.spaceSizeWidth80,
-                    ),
-                  ),
-                ),
+        ClipShadowPath(
+            clipper: ArcClipper(),
+            shadow: BoxShadow(
+              color: UIData.shadowColor,
+              blurRadius: UIData.spaceSizeWidth30,
+              spreadRadius: 3,
+              offset: Offset(
+                0,
+                UIData.spaceSizeWidth3,
               ),
-              Container(
-                transform:
-                    Matrix4.translationValues(0, -UIData.spaceSizeHeight20, 0),
+            ),
+            child: Container(
+              color: UIData.lightBlockColor,
+              width: double.infinity,
+              height: UIData.spaceSizeHeight200,
+              child: Container(
                 padding: EdgeInsets.only(
                     left: UIData.spaceSizeWidth24,
-                    right: UIData.spaceSizeWidth24),
+                    right: UIData.spaceSizeWidth24, top:UIData.spaceSizeHeight104),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -121,7 +90,27 @@ class _MinePageState extends State<MinePage> {
                   ],
                 ),
               ),
-            ],
+            )),
+        Container(
+          transform:
+              Matrix4.translationValues(0, -UIData.spaceSizeHeight228, 0),
+          width: UIData.spaceSizeWidth88,
+          height: UIData.spaceSizeWidth88,
+          decoration: BoxDecoration(
+            color: UIData.lightBlockColor,
+            borderRadius:
+                BorderRadius.all(Radius.circular(UIData.spaceSizeWidth44)),
+          ),
+          child: Center(
+            child: ClipRRect(
+              borderRadius:
+                  BorderRadius.all(Radius.circular(UIData.spaceSizeWidth40)),
+              child: Image.asset(
+                UIData.myImg,
+                fit: BoxFit.fitWidth,
+                width: UIData.spaceSizeWidth80,
+              ),
+            ),
           ),
         ),
       ],
@@ -131,6 +120,8 @@ class _MinePageState extends State<MinePage> {
   Widget _buildCommonRow(
       IconData icon, String iconText, GestureTapCallback onTap) {
     return Container(
+      transform:
+      Matrix4.translationValues(0, -UIData.spaceSizeHeight70, 0),
       margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight20),
       padding: EdgeInsets.all(UIData.spaceSizeWidth20),
       width: double.infinity,
@@ -191,7 +182,6 @@ class _MinePageState extends State<MinePage> {
             child: Column(
               children: [
                 _buildMyInfo(),
-                SizedBox(height: UIData.spaceSizeHeight20),
                 _buildAboutVideo(),
               ],
             ),
