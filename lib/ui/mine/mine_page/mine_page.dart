@@ -18,8 +18,6 @@ class MinePage extends StatefulWidget {
 class _MinePageState extends State<MinePage> {
   Widget _buildMyBgImg() {
     return Container(
-      transform:
-      Matrix4.translationValues(0, -UIData.spaceSizeHeight40, 0),
       width: double.infinity,
       alignment: Alignment.bottomCenter,
       padding: EdgeInsets.only(bottom: UIData.spaceSizeHeight16),
@@ -45,24 +43,30 @@ class _MinePageState extends State<MinePage> {
       IconData icon, String iconText, GestureTapCallback onTap) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            color: UIData.primaryColor,
-            size: UIData.spaceSizeWidth44,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: UIData.spaceSizeHeight6),
-            child: CommonText.text14(iconText),
-          )
-        ],
+      child: Container(
+        color: Colors.transparent,
+        child: Column(
+          children: [
+            Expanded(
+              child: Icon(
+                icon,
+                color: UIData.primaryColor,
+                size: UIData.spaceSizeWidth44,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: UIData.spaceSizeHeight6),
+              child: CommonText.text14(iconText),
+            ),
+
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMyInfo() {
-    return Column(
+    return Stack(
       children: [
         ClipShadowPath(
             clipper: ArcClipper(),
@@ -82,6 +86,7 @@ class _MinePageState extends State<MinePage> {
               child: Container(
                 padding: EdgeInsets.only(
                     left: UIData.spaceSizeWidth24,
+                    bottom: UIData.spaceSizeWidth24,
                     right: UIData.spaceSizeWidth24, top:UIData.spaceSizeHeight104),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,24 +99,30 @@ class _MinePageState extends State<MinePage> {
                 ),
               ),
             )),
-        Container(
-          transform:
-              Matrix4.translationValues(0, -UIData.spaceSizeHeight228, 0),
-          width: UIData.spaceSizeWidth88,
-          height: UIData.spaceSizeWidth88,
-          decoration: BoxDecoration(
-            color: UIData.lightBlockColor,
-            borderRadius:
-                BorderRadius.all(Radius.circular(UIData.spaceSizeWidth44)),
-          ),
-          child: Center(
-            child: ClipRRect(
-              borderRadius:
-                  BorderRadius.all(Radius.circular(UIData.spaceSizeWidth40)),
-              child: Image.asset(
-                UIData.myImg,
-                fit: BoxFit.fitWidth,
-                width: UIData.spaceSizeWidth80,
+        Positioned.fill(
+          child: Container(
+            transform:
+                Matrix4.translationValues(0, -UIData.spaceSizeHeight100, 0),
+            child: Center(
+              child: Container(
+                width: UIData.spaceSizeWidth88,
+                height: UIData.spaceSizeWidth88,
+                decoration: BoxDecoration(
+                  color: UIData.lightBlockColor,
+                  borderRadius:
+                  BorderRadius.all(Radius.circular(UIData.spaceSizeWidth44)),
+                ),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(UIData.spaceSizeWidth40)),
+                    child: Image.asset(
+                      UIData.myImg,
+                      fit: BoxFit.fitWidth,
+                      width: UIData.spaceSizeWidth80,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -123,8 +134,6 @@ class _MinePageState extends State<MinePage> {
   Widget _buildCommonRow(
       IconData icon, String iconText, GestureTapCallback onTap) {
     return Container(
-      transform:
-      Matrix4.translationValues(0, -UIData.spaceSizeHeight70, 0),
       margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight20),
       padding: EdgeInsets.all(UIData.spaceSizeWidth20),
       width: double.infinity,
@@ -172,24 +181,31 @@ class _MinePageState extends State<MinePage> {
             maxHeight: MediaQuery.of(context).size.height),
         designSize: Size(375, 812),
         orientation: Orientation.portrait);
-    return Scaffold(
-      backgroundColor: UIData.myPageBgColor,
-      appBar: null,
-      body: ListView(
-        children: [
-          _buildMyBgImg(),
-          Container(
-            transform:
-                Matrix4.translationValues(0, -UIData.spaceSizeHeight160, 0),
-            margin: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
-            child: Column(
-              children: [
-                _buildMyInfo(),
-                _buildAboutVideo(),
-              ],
-            ),
+    return MediaQuery.removePadding(
+      removeTop: true,
+      context: context,
+      child: Scaffold(
+        backgroundColor: UIData.myPageBgColor,
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              _buildMyBgImg(),
+              Transform.translate(
+                offset: Offset(0, UIData.spaceSizeHeight172),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
+                  child: Column(
+                    children: [
+                      _buildMyInfo(),
+                      SizedBox(height: UIData.spaceSizeHeight24,),
+                      _buildAboutVideo(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
