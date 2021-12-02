@@ -27,5 +27,5 @@ class HttpOptions {
   static int receiveTimeout = 30000;
   static const int pageSize = 23;
 
-  static String baseUrl = "http://dy.51isu.com:11801/api.php/provide/vod";
+  static String baseUrl = "https://m3u8.apibdzy.com/api.php/provide/vod";
 }
