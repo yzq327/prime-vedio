@@ -223,26 +223,33 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
             child: CommonText.normalText('没有更多观影历史啦',
                 color: UIData.subThemeBgColor),
           )
-        : Container(
-            margin: EdgeInsets.only(
-              left: UIData.spaceSizeWidth20,
-              bottom: UIData.spaceSizeHeight8,
-              right: UIData.spaceSizeWidth16,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    height: UIData.spaceSizeHeight104,
-                    width: UIData.spaceSizeWidth160,
-                    child: CommonImgDisplay(
-                        vodPic: videoHistory[index].vodPic,
-                        vodId: videoHistory[index].vodId,
-                        vodName: videoHistory[index].vodName,
-                        recordRoute: false)),
-                SizedBox(width: UIData.spaceSizeWidth18),
-                Expanded(
-                  child: GestureDetector(
+        : GestureDetector(
+            onTap: () {
+              Navigator.pushReplacementNamed(context, Routes.detail,
+                  arguments: VideoDetailPageParams(
+                      vodId: videoHistory[index].vodId,
+                      vodName: videoHistory[index].vodName,
+                      vodPic: videoHistory[index].vodPic));
+            },
+            child: Container(
+              margin: EdgeInsets.only(
+                left: UIData.spaceSizeWidth20,
+                bottom: UIData.spaceSizeHeight8,
+                right: UIData.spaceSizeWidth16,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                      height: UIData.spaceSizeHeight104,
+                      width: UIData.spaceSizeWidth160,
+                      child: CommonImgDisplay(
+                          vodPic: videoHistory[index].vodPic,
+                          vodId: videoHistory[index].vodId,
+                          vodName: videoHistory[index].vodName,
+                          recordRoute: false)),
+                  SizedBox(width: UIData.spaceSizeWidth18),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -260,16 +267,9 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
                             color: UIData.hoverThemeBgColor),
                       ],
                     ),
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, Routes.detail,
-                          arguments: VideoDetailPageParams(
-                              vodId: videoHistory[index].vodId,
-                              vodName: videoHistory[index].vodName,
-                              vodPic: videoHistory[index].vodPic));
-                    },
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           );
   }
