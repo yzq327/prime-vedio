@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/utils/font_icon.dart';
+import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 import 'arc_clipper.dart';
@@ -85,7 +86,9 @@ class _MinePageState extends State<MinePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildIconInfo(IconFont.icon_lishijilu_copy, '我看过的', () {}),
+                    _buildIconInfo(IconFont.icon_lishijilu_copy, '我看过的', () {
+                      Navigator.pushNamed(context, Routes.mineVideoHistory);
+                    }),
                     _buildIconInfo(IconFont.icon_shoucangjia, '我收藏的', () {}),
                   ],
                 ),
