@@ -162,7 +162,11 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
                     onTap: () {},
                     child: Container(
                       width: UIData.spaceSizeWidth110,
-                      height: UIData.spaceSizeWidth110,
+                      height: UIData.spaceSizeWidth90,
+                      margin: EdgeInsets.only(
+                        top: UIData.spaceSizeWidth20,
+                        bottom: UIData.spaceSizeHeight16,
+                      ),
                       alignment: Alignment.center,
                       color: Colors.red,
                       child: Icon(
@@ -173,7 +177,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
                   ),
                 ),
                 Positioned(
-                  height: 200,
+                  top:UIData.spaceSizeHeight16,
                   left: -offset,
                   right: offset,
                   child: Container(
