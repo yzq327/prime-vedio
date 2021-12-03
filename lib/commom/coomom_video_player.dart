@@ -21,15 +21,22 @@ class SpeedText {
   SpeedText(this.text, this.speedValue);
 }
 
+class StoreDuration {
+  int currentPosition;
+  String totalDuration;
+  StoreDuration(this.currentPosition,this.totalDuration);
+}
+
 class CommonVideoPlayer extends StatefulWidget {
   final String url;
   late final String? vodName;
   late final String? vodPic;
   late final double? width;
   late final double? height;
+  late final ValueChanged<StoreDuration> onStoreDuration;
 
   CommonVideoPlayer({Key? key, required this.url, this.vodName, this.vodPic,     this.width = double.infinity,
-    this.height = double.infinity,})
+    this.height = double.infinity, required this.onStoreDuration})
       : super(key: key);
 
   _CommonVideoPlayerState createState() => _CommonVideoPlayerState();
@@ -180,6 +187,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     if (_isFullScreen) {
       _toggleFullScreen();
     } else {
+      widget.onStoreDuration(StoreDuration(position.inMicroseconds, StringsHelper.formatDuration(duration)));
       Navigator.pop(context);
     }
   }

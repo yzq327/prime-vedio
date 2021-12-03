@@ -4,10 +4,14 @@ import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/commom/coomom_video_player.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
+import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/models/video_detail_list_model.dart';
+import 'package:primeVedio/table/db_util.dart';
+import 'package:primeVedio/table/table_init.dart';
 import 'package:primeVedio/ui/home/same_type_video_content.dart';
 import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
+import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -16,7 +20,8 @@ class VideoDetailPageParams {
   final String vodName;
   final String vodPic;
 
-  VideoDetailPageParams({required this.vodId, this.vodName = '', this.vodPic = ''});
+  VideoDetailPageParams(
+      {required this.vodId, this.vodName = '', this.vodPic = ''});
 }
 
 class VideoDetailPage extends StatefulWidget {
@@ -33,6 +38,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   TabController? _tabController;
   String? videoUrl;
   List? urlInfo = [];
+  List<VideoHistoryItem> videoHistoryList = [];
+  late DBUtil dbUtil;
+  String currentEpo = '';
 
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
@@ -40,6 +48,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   void _playWithIndex(int index) {
     setState(() {
       videoUrl = urlInfo![index][1];
+      currentEpo = urlInfo![index][0];
     });
   }
 
@@ -68,9 +77,60 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   @override
   void initState() {
+    super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _getVideoDetailList();
-    super.initState();
+    initDB();
+  }
+
+  void initDB() async {
+    TablesInit tables = TablesInit();
+    tables.init();
+    dbUtil = new DBUtil();
+
+    queryData();
+  }
+
+  void queryData() async {
+    await dbUtil.open();
+    List<Map> data = await dbUtil.queryList(
+        "SELECT * FROM video_play_record ORDER By create_time DESC");
+    setState(() {
+      videoHistoryList = data.map((i) => VideoHistoryItem.fromJson(i)).toList();
+    });
+    await dbUtil.close();
+  }
+
+  void insertData(StoreDuration item) async {
+    print('item: ${item.currentPosition}');
+    print('item: ${item.totalDuration}');
+    await dbUtil.open();
+    List<VideoHistoryItem> searchedList = videoHistoryList
+        .where((element) => element.vodId == getVideoDetail!.vodId)
+        .toList();
+    if (searchedList.length > 0) {
+      await dbUtil.update(
+          'UPDATE video_play_record SET create_time = ? , vod_epo = ?, watched_duration = ?, total = ?  WHERE vod_id = ?',
+          [
+            StringsHelper.getCurrentTimeMillis(),
+            currentEpo,
+            item.currentPosition,
+            item.totalDuration,
+            widget.videoDetailPageParams.vodId
+          ]);
+    } else {
+      Map<String, Object> par = Map<String, Object>();
+      par['create_time'] = StringsHelper.getCurrentTimeMillis();
+      par['vod_id'] =  widget.videoDetailPageParams.vodId;
+      par['vod_name'] = widget.videoDetailPageParams.vodName;
+      par['vod_pic'] =  widget.videoDetailPageParams.vodPic;
+      par['vod_epo'] = currentEpo;
+      par['total'] = item.totalDuration.toString();
+      par['watched_duration'] = item.currentPosition;
+      await dbUtil.insertByHelper('video_play_record', par);
+    }
+    await dbUtil.close();
+    queryData();
   }
 
   @override
@@ -81,30 +141,34 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   Widget _buildVideoPlayer() {
     return CommonVideoPlayer(
-        url: videoUrl!,
-        vodName: widget.videoDetailPageParams.vodName,
-        vodPic: widget.videoDetailPageParams.vodPic,
-        height: UIData.spaceSizeHeight228,
+      url: videoUrl!,
+      vodName: widget.videoDetailPageParams.vodName,
+      vodPic: widget.videoDetailPageParams.vodPic,
+      height: UIData.spaceSizeHeight228,
+      onStoreDuration: insertData,
     );
   }
 
   Widget _buildVideoTabBar() {
-    return _isFullScreen ? SizedBox(): TabBar(
-      controller: _tabController,
-      labelStyle: TextStyle(fontSize: UIData.fontSize20),
-      padding: EdgeInsets.only(
-        top: UIData.spaceSizeHeight16,
-        left: UIData.spaceSizeWidth50,
-      ),
-      unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
-      isScrollable: true,
-      labelPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
-      labelColor: UIData.hoverTextColor,
-      unselectedLabelColor: UIData.primaryColor,
-      indicatorWeight: 0.0,
-      indicator: StubTabIndicator(color: UIData.hoverThemeBgColor),
-      tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
-    );
+    return _isFullScreen
+        ? SizedBox()
+        : TabBar(
+            controller: _tabController,
+            labelStyle: TextStyle(fontSize: UIData.fontSize20),
+            padding: EdgeInsets.only(
+              top: UIData.spaceSizeHeight16,
+              left: UIData.spaceSizeWidth50,
+            ),
+            unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
+            isScrollable: true,
+            labelPadding:
+                EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
+            labelColor: UIData.hoverTextColor,
+            unselectedLabelColor: UIData.primaryColor,
+            indicatorWeight: 0.0,
+            indicator: StubTabIndicator(color: UIData.hoverThemeBgColor),
+            tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
+          );
   }
 
   @override
