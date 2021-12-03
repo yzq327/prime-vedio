@@ -23,6 +23,7 @@ class _TabContentState extends State<TabContent> {
   List<VideoInfo> getVideoList = [];
   int total = 0;
   int currentPage = 1;
+  bool isLoading = false;
 
   bool get _enablePullUp {
     return getVideoList.length != total;
@@ -36,6 +37,9 @@ class _TabContentState extends State<TabContent> {
       't': widget.typeId,
       'pg': currentPage,
     };
+    setState(() {
+      isLoading = true;
+    });
 
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET, params: params)
         .then((value) {
@@ -50,7 +54,9 @@ class _TabContentState extends State<TabContent> {
       } else {
         LogUtils.printLog('数据为空！');
       }
-    });
+    }).whenComplete(() => setState(() {
+              isLoading = false;
+            }));
   }
 
   @override
@@ -82,22 +88,23 @@ class _TabContentState extends State<TabContent> {
       controller: _refreshController,
       onRefresh: _onRefresh,
       onLoading: _onLoading,
-      child: ListView(
-        children: getVideoList.length > 0
-            ? [
-                VideoSwiper(videoList: getVideoList),
-                RecentVideoContainer(videoList: getVideoList),
-                Container(
-                  height: UIData.spaceSizeHeight60,
-                  alignment: Alignment.center,
-                  child: CommonText.normalText(_enablePullUp ? '' : '没有更多数据了!',
-                      color: UIData.subThemeBgColor),
+      child: isLoading
+          ? CommonHintTextContain(text: '数据加载中..')
+          : getVideoList.length > 0
+              ? ListView(
+                  children: [
+                    VideoSwiper(videoList: getVideoList),
+                    RecentVideoContainer(videoList: getVideoList),
+                    Container(
+                      height: UIData.spaceSizeHeight60,
+                      alignment: Alignment.center,
+                      child: CommonText.normalText(
+                          _enablePullUp ? '' : '没有更多数据了!',
+                          color: UIData.subThemeBgColor),
+                    )
+                  ],
                 )
-              ]
-            : [
-                CommonHintTextContain(),
-              ],
-      ),
+              : CommonHintTextContain(),
     );
   }
 }

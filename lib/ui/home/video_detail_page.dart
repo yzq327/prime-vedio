@@ -93,6 +93,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       controller: _tabController,
       labelStyle: TextStyle(fontSize: UIData.fontSize20),
       padding: EdgeInsets.only(
+        top: UIData.spaceSizeHeight16,
         left: UIData.spaceSizeWidth50,
       ),
       unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
