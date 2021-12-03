@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/commom/coomom_video_player.dart';
 import 'package:primeVedio/http/http_options.dart';
@@ -34,6 +33,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   TabController? _tabController;
   String? videoUrl;
   List? urlInfo = [];
+
+  bool get _isFullScreen =>
+      MediaQuery.of(context).orientation == Orientation.landscape;
 
   void _playWithIndex(int index) {
     setState(() {
@@ -78,38 +80,29 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   }
 
   Widget _buildVideoPlayer() {
-    return Container(
-      alignment: Alignment.center,
-      height: UIData.spaceSizeHeight228,
-      width: double.infinity,
-      child: urlInfo!.isNotEmpty
-          ? CommonVideoPlayer(
-              url: videoUrl!, vodName: widget.videoDetailPageParams.vodName,  vodPic: widget.videoDetailPageParams.vodPic)
-          : CommonText.mainTitle('暂无视频资源，尽情期待',
-              color: UIData.hoverThemeBgColor),
+    return CommonVideoPlayer(
+        url: videoUrl!,
+        vodName: widget.videoDetailPageParams.vodName,
+        vodPic: widget.videoDetailPageParams.vodPic,
+        height: UIData.spaceSizeHeight228,
     );
   }
 
   Widget _buildVideoTabBar() {
-    return Container(
-      alignment: Alignment.topLeft,
-      width: 400,
-      margin: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight24),
-      child: TabBar(
-        controller: _tabController,
-        labelStyle: TextStyle(fontSize: UIData.fontSize20),
-        padding: EdgeInsets.only(
-          left: UIData.spaceSizeWidth50,
-        ),
-        unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
-        isScrollable: true,
-        labelPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
-        labelColor: UIData.hoverTextColor,
-        unselectedLabelColor: UIData.primaryColor,
-        indicatorWeight: 0.0,
-        indicator: StubTabIndicator(color: UIData.hoverThemeBgColor),
-        tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
+    return _isFullScreen ? SizedBox(): TabBar(
+      controller: _tabController,
+      labelStyle: TextStyle(fontSize: UIData.fontSize20),
+      padding: EdgeInsets.only(
+        left: UIData.spaceSizeWidth50,
       ),
+      unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
+      isScrollable: true,
+      labelPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth50),
+      labelColor: UIData.hoverTextColor,
+      unselectedLabelColor: UIData.primaryColor,
+      indicatorWeight: 0.0,
+      indicator: StubTabIndicator(color: UIData.hoverThemeBgColor),
+      tabs: [Tab(text: '详情'), Tab(text: '猜你喜欢')],
     );
   }
 

@@ -1,19 +1,21 @@
 import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_display_brightness/device_display_brightness.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+
 import 'package:video_player/video_player.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-import 'commom_slider.dart';
-import 'commom_text.dart';
-import 'common_basic_slider.dart';
+import '../commom_slider.dart';
+import '../commom_text.dart';
+import '../common_basic_slider.dart';
+import 'controller_widget.dart';
 
 class SpeedText {
   String text;
@@ -21,22 +23,28 @@ class SpeedText {
   SpeedText(this.text, this.speedValue);
 }
 
-class CommonVideoPlayer extends StatefulWidget {
-  final String url;
-  late final String? vodName;
-  late final String? vodPic;
-  late final double? width;
-  late final double? height;
+class VideoPlayerControl extends StatefulWidget {
+  final Widget child;
 
-  CommonVideoPlayer({Key? key, required this.url, this.vodName, this.vodPic,     this.width = double.infinity,
-    this.height = double.infinity,})
-      : super(key: key);
+  VideoPlayerControl({
+    Key? key,
+    required this.child,
+  }): super(key: key);
 
-  _CommonVideoPlayerState createState() => _CommonVideoPlayerState();
+  @override
+  VideoPlayerControlState createState() => VideoPlayerControlState();
 }
 
-class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
-  VideoPlayerController? _videoPlayerController;
+
+class VideoPlayerControlState extends State<VideoPlayerControl> {
+  VideoPlayerController get _videoPlayerController => ControllerWidget.of(context)!.controller;
+  bool get videoInit => ControllerWidget.of(context)!.videoInit;
+  String get title=>ControllerWidget.of(context)!.title;
+  String get vodPic=>ControllerWidget.of(context)!.vodPic;
+  /// 记录是否全屏
+  bool get _isFullScreen =>
+      MediaQuery.of(context).orientation == Orientation.landscape;
+
   Timer? _timer;
   bool _showTagging = false;
   bool _showSpeedSelect = false;
@@ -64,53 +72,30 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     ];
   }
 
-  playByUrl(String url) {
-    _videoPlayerController?.dispose();
-    _videoPlayerController = VideoPlayerController.network(url)
-      ..initialize()
-      ..addListener(() {
-        position = _videoPlayerController?.value.position ?? Duration.zero;
-        duration = _videoPlayerController?.value.duration ?? Duration.zero;
-        setState(() {});
-      })
-      ..play();
+  bool get showLoading {
+    return !_videoPlayerController.value.isInitialized;
   }
-
-  /// 记录是否全屏
-  bool get _isFullScreen =>
-      MediaQuery.of(context).orientation == Orientation.landscape;
-
-  Size get _window => MediaQuery.of(context).size;
 
   @override
   void initState() {
     super.initState();
-    playByUrl(widget.url);
     DeviceDisplayBrightness.getBrightness()
         .then((value) => currentBrightness = value);
     VolumeController().getVolume().then((volume) => currentVolume = volume);
   }
 
-  @override
-  void didUpdateWidget(covariant CommonVideoPlayer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.url != widget.url) {
-      playByUrl(widget.url);
-    }
-  }
 
   @override
   void dispose() {
     super.dispose();
-    _videoPlayerController!.dispose();
     _timer?.cancel();
   }
 
   void _playOrPause() {
-    if (_videoPlayerController!.value.isInitialized) {
-      _videoPlayerController!.value.isPlaying
-          ? _videoPlayerController!.pause()
-          : _videoPlayerController!.play();
+    if (_videoPlayerController.value.isInitialized) {
+      _videoPlayerController.value.isPlaying
+          ? _videoPlayerController.pause()
+          : _videoPlayerController.play();
     }
   }
 
@@ -135,7 +120,24 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   }
 
   void _toggleFullScreen() {
-    // print('_isFullScreen: $_isFullScreen');
+    // print('-----点击了_isFullScreen： $_isFullScreen');
+  //   setState(() {
+  //     if (_isFullScreen) {
+  //       /// 如果是全屏就切换竖屏
+  //       AutoOrientation.portraitAutoMode();
+  //
+  //       ///显示状态栏，与底部虚拟操作按钮
+  //       SystemChrome.setEnabledSystemUIOverlays(
+  //           [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+  //     } else {
+  //       AutoOrientation.landscapeAutoMode();
+  //
+  //       ///关闭状态栏，与底部虚拟操作按钮
+  //       SystemChrome.setEnabledSystemUIOverlays([]);
+  //     }
+  //     _startPlayControlTimer(); // 操作完控件开始计时隐藏
+  //   });
+  // }
     setState(() {
       if (_isFullScreen) {
         // Navigator.push(context, MaterialPageRoute(builder: (context)  {
@@ -158,12 +160,14 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     });
   }
 
-  bool get showLoading {
-    // print('_videoPlayerController.value.isInitialized: ${_videoPlayerController!.value.isBuffering}');
-    // print('_videoPlayerController.value.isBuffering: ${_videoPlayerController!.value.isBuffering}');
-    // print('_videoPlayerController.value.isPlaying: ${_videoPlayerController!.value.isPlaying}');
-    // print('currentSpeed-------: $currentSpeed');
-    return !_videoPlayerController!.value.isInitialized;
+
+  // 供父组件调用刷新页面，减少父组件的build
+  void setPosition({position, totalDuration}) {
+    // print('res----: $position');
+    setState(() {
+      position = position;
+      duration = totalDuration;
+    });
   }
 
   // 拦截返回键
@@ -185,7 +189,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   }
 
   void handleChangeSlider(double value) {
-    _videoPlayerController?.seekTo(Duration(seconds: value.toInt()));
+    _videoPlayerController.seekTo(Duration(seconds: value.toInt()));
     _startPlayControlTimer();
   }
 
@@ -211,8 +215,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       tempChange = tempChange < 0
           ? 0.0
           : tempChange > 1
-              ? 1.0
-              : tempChange;
+          ? 1.0
+          : tempChange;
       if (changeBrightness) {
         currentBrightness = tempChange;
         DeviceDisplayBrightness.setBrightness(currentBrightness);
@@ -230,6 +234,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     });
   }
 
+
   Widget _buildShowLoading() {
     return Positioned.fill(
       child: AnimatedOpacity(
@@ -239,13 +244,13 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
               image: DecorationImage(
-            image:
-                CachedNetworkImageProvider(widget.vodPic!, errorListener: () {
-              print('图片加载错误');
-            }),
-            alignment: Alignment.topLeft,
-            fit: BoxFit.cover,
-          )),
+                image:
+                CachedNetworkImageProvider(vodPic, errorListener: () {
+                  print('图片加载错误');
+                }),
+                alignment: Alignment.topLeft,
+                fit: BoxFit.cover,
+              )),
           child: Container(
             color: UIData.videoStateBgColor,
             padding: EdgeInsets.all(UIData.spaceSizeWidth8),
@@ -260,7 +265,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   Widget _buildShowPauseIcon() {
     return Positioned.fill(
       child: AnimatedOpacity(
-        opacity: _videoPlayerController!.value.isPlaying ? 0 : 1,
+        opacity: _videoPlayerController.value.isPlaying ? 0 : 1,
         duration: Duration(milliseconds: 300),
         child: Center(
           child: Container(
@@ -307,7 +312,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                     ),
                     onPressed: backPress),
                 CommonText.text18(
-                  widget.vodName ?? '',
+                  title,
                   color: UIData.primaryColor,
                 ),
               ],
@@ -340,41 +345,44 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           color: duration == Duration.zero
               ? Colors.transparent
               : UIData.videoSlideBgColor,
-          child: duration == Duration.zero
+          // color:  UIData.videoSlideBgColor,
+          child:
+          duration == Duration.zero
               ? SizedBox()
-              : Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: UIData.spaceSizeWidth8),
-                      child: CommonText.text18(
-                          StringsHelper.formatDuration(position)),
-                    ),
-                    Expanded(
-                        child: CommonSlider(
-                            position: position,
-                            duration: duration,
-                            onChangeEnd: (value) => handleChangeSlider(value))),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: UIData.spaceSizeWidth8),
-                      child: CommonText.text18(
-                          StringsHelper.formatDuration(duration)),
-                    ),
-                    _buildOperationIcon(
-                      IconFont.icon_sudu___,
-                      () => setState(() {
-                        _showSpeedSelect = !_showSpeedSelect;
-                      }),
-                    ),
-                    _buildOperationIcon(
-                      IconFont.icon_quanping_,
-                      () {
-                        _toggleFullScreen();
-                      },
-                    ),
-                  ],
-                )),
+              :
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: UIData.spaceSizeWidth8),
+                child: CommonText.text18(
+                    StringsHelper.formatDuration(position)),
+              ),
+              Expanded(
+                  child: CommonSlider(
+                      position: position,
+                      duration: duration,
+                      onChangeEnd: (value) => handleChangeSlider(value))),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: UIData.spaceSizeWidth8),
+                child: CommonText.text18(
+                    StringsHelper.formatDuration(duration)),
+              ),
+              _buildOperationIcon(
+                IconFont.icon_sudu___,
+                    () => setState(() {
+                  _showSpeedSelect = !_showSpeedSelect;
+                }),
+              ),
+              _buildOperationIcon(
+                IconFont.icon_quanping_,
+                    () {
+                  _toggleFullScreen();
+                },
+              ),
+            ],
+          )),
     );
   }
 
@@ -420,24 +428,24 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 itemCount: getSpeedText.length,
                 itemBuilder: (BuildContext context, int index) =>
                     GestureDetector(
-                  child: Center(
-                      child: CommonText.text18(getSpeedText[index].text,
-                          color: currentSpeed == getSpeedText[index].speedValue
-                              ? UIData.hoverThemeBgColor
-                              : UIData.primaryColor)),
-                  onTap: () {
-                    setState(() {
-                      _showSpeedSelect = false;
-                      currentSpeed = getSpeedText[index].speedValue;
-                    });
-                    Fluttertoast.showToast(
-                        msg: "已切换至${getSpeedText[index].text}",
-                        timeInSecForIosWeb: 2,
-                        gravity: ToastGravity.CENTER);
-                    _videoPlayerController!
-                        .setPlaybackSpeed(getSpeedText[index].speedValue);
-                  },
-                ),
+                      child: Center(
+                          child: CommonText.text18(getSpeedText[index].text,
+                              color: currentSpeed == getSpeedText[index].speedValue
+                                  ? UIData.hoverThemeBgColor
+                                  : UIData.primaryColor)),
+                      onTap: () {
+                        setState(() {
+                          _showSpeedSelect = false;
+                          currentSpeed = getSpeedText[index].speedValue;
+                        });
+                        Fluttertoast.showToast(
+                            msg: "已切换至${getSpeedText[index].text}",
+                            timeInSecForIosWeb: 2,
+                            gravity: ToastGravity.CENTER);
+                        _videoPlayerController
+                            .setPlaybackSpeed(getSpeedText[index].speedValue);
+                      },
+                    ),
               ),
             ),
           ),
@@ -525,44 +533,40 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.url.isEmpty ?
-    CommonText.mainTitle('暂无视频资源，尽情期待',
-        color: UIData.hoverThemeBgColor) :
-    Container(
-      width: _isFullScreen ? _window.width : widget.width,
-      height: _isFullScreen ? _window.height : widget.height,
-      child: GestureDetector(
-        onDoubleTap: _playOrPause,
-        onTap: _togglePlayControl,
-        onPanDown: _handleOnPanDown,
-        onPanUpdate: _handleOnPanUpdate,
-        onPanEnd: _handleOnPanEnd,
-        child: Container(
-          color: Colors.transparent,
-          child:
-          Hero(
-            tag: "player",
-            child: AspectRatio(
-              aspectRatio: _videoPlayerController!.value.isInitialized
-                  ? _videoPlayerController!.value.aspectRatio
-                  : defaultAspectRatio,
-              child: WillPopScope(
-                child: Stack(
-                  children: [
-                    VideoPlayer(_videoPlayerController!),
-                    _buildShowLoading(),
-                    _buildShowPauseIcon(),
-                    _buildShowTaggingContent(),
-                    _buildShowSpeedContent(),
-                    _buildPanContent(),
-                  ],
-                ),
-                onWillPop: _onWillPop,
+    return GestureDetector(
+      onDoubleTap: _playOrPause,
+      onTap: _togglePlayControl,
+      onPanDown: _handleOnPanDown,
+      onPanUpdate: _handleOnPanUpdate,
+      onPanEnd: _handleOnPanEnd,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.transparent,
+        child: Hero(
+          tag: "player",
+          child: AspectRatio(
+            aspectRatio: _videoPlayerController.value.isInitialized
+                ? _videoPlayerController.value.aspectRatio
+                : defaultAspectRatio,
+            child: WillPopScope(
+              child: Stack(
+                children: [
+                  widget.child,
+                  _buildShowLoading(),
+                  _buildShowPauseIcon(),
+                  _buildShowTaggingContent(),
+                  _buildShowSpeedContent(),
+                  _buildPanContent(),
+                ],
               ),
+              onWillPop: _onWillPop,
             ),
           ),
         ),
       ),
     );
   }
+
+
 }
