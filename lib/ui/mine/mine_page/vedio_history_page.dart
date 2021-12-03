@@ -122,16 +122,20 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
           )
         : GestureDetector(
             onTap: () {
-              Navigator.pushReplacementNamed(context, Routes.detail,
+              Navigator.pushNamed(context, Routes.detail,
                   arguments: VideoDetailPageParams(
                       vodId: videoHistoryList[index].vodId,
                       vodName: videoHistoryList[index].vodName,
-                      vodPic: videoHistoryList[index].vodPic));
+                      vodPic: videoHistoryList[index].vodPic,
+                      watchedDuration: videoHistoryList[index].watchedDuration
+                  ));
             },
             child: Container(
+              color: Colors.transparent,
+              width: double.infinity,
               margin: EdgeInsets.only(
                 left: UIData.spaceSizeWidth20,
-                bottom: UIData.spaceSizeHeight8,
+                bottom: UIData.spaceSizeHeight16,
                 right: UIData.spaceSizeWidth16,
               ),
               child: Row(
@@ -144,7 +148,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
                           vodPic: videoHistoryList[index].vodPic,
                           vodId: videoHistoryList[index].vodId,
                           vodName: videoHistoryList[index].vodName,
-                          recordRoute: false)),
+                      )),
                   SizedBox(width: UIData.spaceSizeWidth18),
                   Expanded(
                     child: Column(

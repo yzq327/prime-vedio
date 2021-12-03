@@ -19,9 +19,10 @@ class VideoDetailPageParams {
   final int vodId;
   final String vodName;
   final String vodPic;
+  final int watchedDuration;
 
   VideoDetailPageParams(
-      {required this.vodId, this.vodName = '', this.vodPic = ''});
+      {required this.vodId, this.vodName = '', this.vodPic = '', this.watchedDuration = 0});
 }
 
 class VideoDetailPage extends StatefulWidget {
@@ -102,8 +103,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   }
 
   void insertData(StoreDuration item) async {
-    print('item: ${item.currentPosition}');
-    print('item: ${item.totalDuration}');
     await dbUtil.open();
     List<VideoHistoryItem> searchedList = videoHistoryList
         .where((element) => element.vodId == getVideoDetail!.vodId)
@@ -146,6 +145,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       vodPic: widget.videoDetailPageParams.vodPic,
       height: UIData.spaceSizeHeight228,
       onStoreDuration: insertData,
+      watchedDuration: widget.videoDetailPageParams.watchedDuration,
     );
   }
 

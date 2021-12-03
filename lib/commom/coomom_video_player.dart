@@ -24,7 +24,7 @@ class SpeedText {
 class StoreDuration {
   int currentPosition;
   String totalDuration;
-  StoreDuration(this.currentPosition,this.totalDuration);
+  StoreDuration(this.currentPosition, this.totalDuration);
 }
 
 class CommonVideoPlayer extends StatefulWidget {
@@ -34,9 +34,17 @@ class CommonVideoPlayer extends StatefulWidget {
   late final double? width;
   late final double? height;
   late final ValueChanged<StoreDuration> onStoreDuration;
+  final int watchedDuration;
 
-  CommonVideoPlayer({Key? key, required this.url, this.vodName, this.vodPic,     this.width = double.infinity,
-    this.height = double.infinity, required this.onStoreDuration})
+  CommonVideoPlayer(
+      {Key? key,
+      required this.url,
+      this.vodName,
+      this.vodPic,
+      this.width = double.infinity,
+      this.height = double.infinity,
+      required this.onStoreDuration,
+      this.watchedDuration = 0})
       : super(key: key);
 
   _CommonVideoPlayerState createState() => _CommonVideoPlayerState();
@@ -75,8 +83,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     _videoPlayerController?.dispose();
     _videoPlayerController = VideoPlayerController.network(url)
       ..initialize()
+      ..seekTo(Duration(milliseconds: widget.watchedDuration))
       ..addListener(() {
-        position = _videoPlayerController?.value.position ?? Duration.zero;
+        position = _videoPlayerController?.value.position ?? Duration(milliseconds: widget.watchedDuration);
         duration = _videoPlayerController?.value.duration ?? Duration.zero;
         setState(() {});
       })
@@ -92,7 +101,13 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      position = Duration(milliseconds: widget.watchedDuration);
+    });
+    print('widget.watchedDuration: -----${widget.watchedDuration}');
+    print('position: -----$position');
     playByUrl(widget.url);
+   
     DeviceDisplayBrightness.getBrightness()
         .then((value) => currentBrightness = value);
     VolumeController().getVolume().then((volume) => currentVolume = volume);
@@ -142,7 +157,6 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   }
 
   void _toggleFullScreen() {
-    // print('_isFullScreen: $_isFullScreen');
     setState(() {
       if (_isFullScreen) {
         // Navigator.push(context, MaterialPageRoute(builder: (context)  {
@@ -152,7 +166,6 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
             overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
         SystemChrome.setPreferredOrientations(
             [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
       } else {
         SystemChrome.setPreferredOrientations([
           // DeviceOrientation.portraitUp,
@@ -187,7 +200,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     if (_isFullScreen) {
       _toggleFullScreen();
     } else {
-      widget.onStoreDuration(StoreDuration(position.inMilliseconds, StringsHelper.formatDuration(duration)));
+      widget.onStoreDuration(StoreDuration(
+          position.inMilliseconds, StringsHelper.formatDuration(duration)));
       Navigator.pop(context);
     }
   }
@@ -533,44 +547,42 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.url.isEmpty ?
-    CommonText.mainTitle('暂无视频资源，尽情期待',
-        color: UIData.hoverThemeBgColor) :
-    Container(
-      width: _isFullScreen ? _window.width : widget.width,
-      height: _isFullScreen ? _window.height : widget.height,
-      child: GestureDetector(
-        onDoubleTap: _playOrPause,
-        onTap: _togglePlayControl,
-        onPanDown: _handleOnPanDown,
-        onPanUpdate: _handleOnPanUpdate,
-        onPanEnd: _handleOnPanEnd,
-        child: Container(
-          color: Colors.transparent,
-          child:
-          Hero(
-            tag: "player",
-            child: AspectRatio(
-              aspectRatio: _videoPlayerController!.value.isInitialized
-                  ? _videoPlayerController!.value.aspectRatio
-                  : defaultAspectRatio,
-              child: WillPopScope(
-                child: Stack(
-                  children: [
-                    VideoPlayer(_videoPlayerController!),
-                    _buildShowLoading(),
-                    _buildShowPauseIcon(),
-                    _buildShowTaggingContent(),
-                    _buildShowSpeedContent(),
-                    _buildPanContent(),
-                  ],
+    return widget.url.isEmpty
+        ? CommonText.mainTitle('暂无视频资源，尽情期待', color: UIData.hoverThemeBgColor)
+        : Container(
+            width: _isFullScreen ? _window.width : widget.width,
+            height: _isFullScreen ? _window.height : widget.height,
+            child: GestureDetector(
+              onDoubleTap: _playOrPause,
+              onTap: _togglePlayControl,
+              onPanDown: _handleOnPanDown,
+              onPanUpdate: _handleOnPanUpdate,
+              onPanEnd: _handleOnPanEnd,
+              child: Container(
+                color: Colors.transparent,
+                child: Hero(
+                  tag: "player",
+                  child: AspectRatio(
+                    aspectRatio: _videoPlayerController!.value.isInitialized
+                        ? _videoPlayerController!.value.aspectRatio
+                        : defaultAspectRatio,
+                    child: WillPopScope(
+                      child: Stack(
+                        children: [
+                          VideoPlayer(_videoPlayerController!),
+                          _buildShowLoading(),
+                          _buildShowPauseIcon(),
+                          _buildShowTaggingContent(),
+                          _buildShowSpeedContent(),
+                          _buildPanContent(),
+                        ],
+                      ),
+                      onWillPop: _onWillPop,
+                    ),
+                  ),
                 ),
-                onWillPop: _onWillPop,
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 }

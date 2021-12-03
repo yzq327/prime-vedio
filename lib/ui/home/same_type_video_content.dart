@@ -102,6 +102,7 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
               bottom: UIData.spaceSizeHeight8,
               right: UIData.spaceSizeWidth16,
             ),
+            color: Colors.transparent,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -128,7 +129,8 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
                         SizedBox(
                           height: UIData.spaceSizeHeight8,
                         ),
-                        CommonText.text14("上线年份： ${getVideoList[index].vodYear}",
+                        CommonText.text14(
+                            "上线年份： ${getVideoList[index].vodYear}",
                             color: UIData.hoverThemeBgColor),
                       ],
                     ),
@@ -137,7 +139,7 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
                           arguments: VideoDetailPageParams(
                               vodId: getVideoList[index].vodId,
                               vodName: getVideoList[index].vodName,
-                              vodPic:getVideoList[index].vodPic ));
+                              vodPic: getVideoList[index].vodPic));
                     },
                   ),
                 )
