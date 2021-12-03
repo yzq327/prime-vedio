@@ -28,10 +28,11 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   int total = 0;
   List<VideoHistoryItem> videoHistoryList = [];
   late DBUtil dbUtil;
-
+  int currentPage = 1;
+  int pageSize = 2;
+  double offset = 0;
   bool get _enablePullUp {
-    // return videoHistory.length != total;
-    return false;
+    return videoHistoryList.length != total;
   }
 
   @override
@@ -52,10 +53,16 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
     queryData();
   }
 
-  void queryData() async {
+  queryData() async {
     await dbUtil.open();
-    List<Map> data = await dbUtil
-        .queryList("SELECT * FROM video_play_record ORDER By create_time DESC");
+    int currentSize = currentPage * pageSize;
+    List<Map> allData =
+        await dbUtil.queryList("SELECT * FROM video_play_record");
+    setState(() {
+      total = allData.length;
+    });
+    List<Map> data = await dbUtil.queryList(
+        "SELECT * FROM video_play_record ORDER By create_time DESC LIMIT $currentSize");
     setState(() {
       videoHistoryList = data.map((i) => VideoHistoryItem.fromJson(i)).toList();
     });
@@ -65,21 +72,27 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   void delete(int? vodId) async {
     await dbUtil.open();
     if (vodId == null) {
-      dbUtil.delete('DELETE FROM search_records', null);
+      dbUtil.delete('DELETE FROM video_play_record', null);
     } else {
-      dbUtil.delete('DELETE FROM relation WHERE vod_id = ?', [vodId]);
+      dbUtil.delete('DELETE FROM video_play_record WHERE vod_id = ?', [vodId]);
     }
     await dbUtil.close();
     queryData();
   }
 
   void _onRefresh() async {
-    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      currentPage = 1;
+    });
+    await queryData();
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
-    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      currentPage = currentPage + 1;
+    });
+    await queryData();
     _refreshController.loadComplete();
   }
 
@@ -103,7 +116,9 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
           GestureDetector(
             onTap: () {
               CommonDialog.showAlertDialog(context,
-                  title: '提示', content: '确定要清空观影历史吗？', onConfirm: ()=> delete(null));
+                  title: '提示',
+                  content: '确定要清空观影历史吗？',
+                  onConfirm: () => delete(null));
             },
             child: Icon(IconFont.icon_clear_l, color: UIData.primaryColor),
           )
@@ -127,50 +142,87 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
                       vodId: videoHistoryList[index].vodId,
                       vodName: videoHistoryList[index].vodName,
                       vodPic: videoHistoryList[index].vodPic,
-                      watchedDuration: videoHistoryList[index].watchedDuration
-                  ));
+                      watchedDuration:
+                          videoHistoryList[index].watchedDuration));
             },
-            child: Container(
-              color: Colors.transparent,
-              width: double.infinity,
-              margin: EdgeInsets.only(
-                left: UIData.spaceSizeWidth20,
-                bottom: UIData.spaceSizeHeight16,
-                right: UIData.spaceSizeWidth16,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                      height: UIData.spaceSizeHeight104,
-                      width: UIData.spaceSizeWidth160,
-                      child: CommonImgDisplay(
-                          vodPic: videoHistoryList[index].vodPic,
-                          vodId: videoHistoryList[index].vodId,
-                          vodName: videoHistoryList[index].vodName,
-                      )),
-                  SizedBox(width: UIData.spaceSizeWidth18),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            onHorizontalDragDown: (DragDownDetails downDetails) {
+              //水平方向上按下时触发。
+            },
+            onHorizontalDragUpdate: (DragUpdateDetails updateDetails) {
+              //水平方向上滑动时回调，随着手势滑动一直回调。
+            },
+            onHorizontalDragEnd: (DragEndDetails endDetails) {
+              //水平方向上滑动结束时回调
+            },
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      width: UIData.spaceSizeWidth110,
+                      height: UIData.spaceSizeWidth110,
+                      alignment: Alignment.center,
+                      color: Colors.red,
+                      child: Icon(
+                        IconFont.icon_shanchutianchong,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  height: 200,
+                  left: -offset,
+                  right: offset,
+                  child: Container(
+                    color: UIData.themeBgColor,
+                    width: double.infinity,
+                    margin: EdgeInsets.only(
+                      left: UIData.spaceSizeWidth20,
+                      bottom: UIData.spaceSizeHeight16,
+                    ),
+                    padding: EdgeInsets.only(
+                      right: UIData.spaceSizeHeight16,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CommonText.text18(videoHistoryList[index].vodName),
-                        SizedBox(
-                          height: UIData.spaceSizeHeight8,
-                        ),
-                        CommonText.text18(videoHistoryList[index].vodEpo,
-                            color: UIData.subTextColor),
-                        SizedBox(
-                          height: UIData.spaceSizeHeight8,
-                        ),
-                        CommonText.text14(
-                            "${StringsHelper.formatDuration(Duration(milliseconds: videoHistoryList[index].watchedDuration))} / ${videoHistoryList[index].totalDuration} ",
-                            color: UIData.hoverThemeBgColor),
+                        Container(
+                            height: UIData.spaceSizeHeight104,
+                            width: UIData.spaceSizeWidth160,
+                            child: CommonImgDisplay(
+                              vodPic: videoHistoryList[index].vodPic,
+                              vodId: videoHistoryList[index].vodId,
+                              vodName: videoHistoryList[index].vodName,
+                            )),
+                        SizedBox(width: UIData.spaceSizeWidth18),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CommonText.text18(
+                                  videoHistoryList[index].vodName),
+                              SizedBox(
+                                height: UIData.spaceSizeHeight8,
+                              ),
+                              CommonText.text18(videoHistoryList[index].vodEpo,
+                                  color: UIData.subTextColor),
+                              SizedBox(
+                                height: UIData.spaceSizeHeight8,
+                              ),
+                              CommonText.text14(
+                                  "${StringsHelper.formatDuration(Duration(milliseconds: videoHistoryList[index].watchedDuration))} / ${videoHistoryList[index].totalDuration} ",
+                                  color: UIData.hoverThemeBgColor),
+                            ],
+                          ),
+                        )
                       ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           );
   }
