@@ -187,7 +187,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     if (_isFullScreen) {
       _toggleFullScreen();
     } else {
-      widget.onStoreDuration(StoreDuration(position.inMicroseconds, StringsHelper.formatDuration(duration)));
+      widget.onStoreDuration(StoreDuration(position.inMilliseconds, StringsHelper.formatDuration(duration)));
       Navigator.pop(context);
     }
   }
