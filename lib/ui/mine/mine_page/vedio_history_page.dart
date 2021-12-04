@@ -34,6 +34,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   bool get _enablePullUp {
     return videoHistoryList.length != total;
   }
+  double initLocation = 0;
 
   @override
   void initState() {
@@ -146,6 +147,9 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
                           videoHistoryList[index].watchedDuration));
             },
             onHorizontalDragDown: (DragDownDetails downDetails) {
+              setState(() {
+                initLocation =downDetails.globalPosition.dx;
+              });
               //水平方向上按下时触发。
             },
             onHorizontalDragUpdate: (DragUpdateDetails updateDetails) {

@@ -82,8 +82,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   playByUrl(String url) {
     _videoPlayerController?.dispose();
     _videoPlayerController = VideoPlayerController.network(url)
-      ..initialize()
-      ..seekTo(Duration(milliseconds: widget.watchedDuration))
+      ..initialize().then((value) {
+        _videoPlayerController?.seekTo(Duration(milliseconds: widget.watchedDuration));
+      })
       ..addListener(() {
         position = _videoPlayerController?.value.position ?? Duration(milliseconds: widget.watchedDuration);
         duration = _videoPlayerController?.value.duration ?? Duration.zero;
@@ -101,13 +102,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      position = Duration(milliseconds: widget.watchedDuration);
-    });
-    print('widget.watchedDuration: -----${widget.watchedDuration}');
-    print('position: -----$position');
     playByUrl(widget.url);
-   
     DeviceDisplayBrightness.getBrightness()
         .then((value) => currentBrightness = value);
     VolumeController().getVolume().then((volume) => currentVolume = volume);
