@@ -88,7 +88,7 @@ class _TabContentState extends State<TabContent> {
       controller: _refreshController,
       onRefresh: _onRefresh,
       onLoading: _onLoading,
-      child: isLoading
+      child: isLoading && getVideoList.length == 0
           ? CommonHintTextContain(text: '数据加载中..')
           : getVideoList.length > 0
               ? ListView(

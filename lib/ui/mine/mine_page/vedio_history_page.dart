@@ -29,7 +29,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   List<VideoHistoryItem> videoHistoryList = [];
   late DBUtil dbUtil;
   int currentPage = 1;
-  int pageSize = 2;
+  int pageSize = 10;
   double offset = 0;
   bool get _enablePullUp {
     return videoHistoryList.length != total;

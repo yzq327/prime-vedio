@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_display_brightness/device_display_brightness.dart';
 import 'package:flutter/cupertino.dart';
@@ -83,11 +84,15 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     _videoPlayerController?.dispose();
     _videoPlayerController = VideoPlayerController.network(url)
       ..initialize().then((value) {
-        _videoPlayerController?.seekTo(Duration(milliseconds: widget.watchedDuration));
+        _videoPlayerController
+            ?.seekTo(Duration(milliseconds: widget.watchedDuration));
       })
       ..addListener(() {
-        position = _videoPlayerController?.value.position ?? Duration(milliseconds: widget.watchedDuration);
+        position = _videoPlayerController?.value.position ??
+            Duration(milliseconds: widget.watchedDuration);
         duration = _videoPlayerController?.value.duration ?? Duration.zero;
+        widget.onStoreDuration(StoreDuration(
+            position.inMilliseconds, StringsHelper.formatDuration(duration)));
         setState(() {});
       })
       ..play();
@@ -97,7 +102,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
 
-  Size get _window => MediaQuery.of(context).size;
+  Size get _window =>  MediaQueryData.fromWindow(window).size;
 
   @override
   void initState() {
@@ -163,9 +168,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
             [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
       } else {
         SystemChrome.setPreferredOrientations([
-          // DeviceOrientation.portraitUp,
           DeviceOrientation.landscapeRight,
-          DeviceOrientation.landscapeLeft
         ]);
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
       }
@@ -195,8 +198,6 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     if (_isFullScreen) {
       _toggleFullScreen();
     } else {
-      widget.onStoreDuration(StoreDuration(
-          position.inMilliseconds, StringsHelper.formatDuration(duration)));
       Navigator.pop(context);
     }
   }
@@ -296,7 +297,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   Widget _buildOperationIcon(IconData icon, GestureTapCallback onTap) {
     return Padding(
-      padding: EdgeInsets.only(right: UIData.spaceSizeWidth8),
+      padding: EdgeInsets.only(right: (_isFullScreen && icon == IconFont.icon_quanping_) ? UIData.spaceSizeWidth20: UIData.spaceSizeWidth8),
       child: GestureDetector(
         child: Icon(
           icon,
@@ -362,8 +363,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
               : Row(
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: UIData.spaceSizeWidth8),
+                      padding: EdgeInsets.only(
+                        right: UIData.spaceSizeWidth8,
+                          left: _isFullScreen ? UIData.spaceSizeWidth16: UIData.spaceSizeWidth8),
                       child: CommonText.text18(
                           StringsHelper.formatDuration(position)),
                     ),
@@ -544,35 +546,41 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   Widget build(BuildContext context) {
     return widget.url.isEmpty
         ? CommonText.mainTitle('暂无视频资源，尽情期待', color: UIData.hoverThemeBgColor)
-        : Container(
-            width: _isFullScreen ? _window.width : widget.width,
-            height: _isFullScreen ? _window.height : widget.height,
-            child: GestureDetector(
-              onDoubleTap: _playOrPause,
-              onTap: _togglePlayControl,
-              onPanDown: _handleOnPanDown,
-              onPanUpdate: _handleOnPanUpdate,
-              onPanEnd: _handleOnPanEnd,
-              child: Container(
-                color: Colors.transparent,
-                child: Hero(
-                  tag: "player",
-                  child: AspectRatio(
-                    aspectRatio: _videoPlayerController!.value.isInitialized
-                        ? _videoPlayerController!.value.aspectRatio
-                        : defaultAspectRatio,
-                    child: WillPopScope(
-                      child: Stack(
-                        children: [
-                          VideoPlayer(_videoPlayerController!),
-                          _buildShowLoading(),
-                          _buildShowPauseIcon(),
-                          _buildShowTaggingContent(),
-                          _buildShowSpeedContent(),
-                          _buildPanContent(),
-                        ],
+        : SafeArea(
+            top: !_isFullScreen,
+            bottom: !_isFullScreen,
+            left: !_isFullScreen,
+            right: !_isFullScreen,
+            child: Container(
+              width: _isFullScreen ? _window.width : widget.width,
+              height: _isFullScreen ? _window.height : widget.height,
+              child: GestureDetector(
+                onDoubleTap: _playOrPause,
+                onTap: _togglePlayControl,
+                onPanDown: _handleOnPanDown,
+                onPanUpdate: _handleOnPanUpdate,
+                onPanEnd: _handleOnPanEnd,
+                child:  Container(
+                  color: Colors.black,
+                  child: Hero(
+                    tag: "player",
+                    child: AspectRatio(
+                      aspectRatio: _videoPlayerController!.value.isInitialized
+                          ? _videoPlayerController!.value.aspectRatio
+                          : defaultAspectRatio,
+                      child: WillPopScope(
+                        child: Stack(
+                          children: [
+                            VideoPlayer(_videoPlayerController!),
+                            _buildShowLoading(),
+                            _buildShowPauseIcon(),
+                            _buildShowTaggingContent(),
+                            _buildShowSpeedContent(),
+                            _buildPanContent(),
+                          ],
+                        ),
+                        onWillPop: _onWillPop,
                       ),
-                      onWillPop: _onWillPop,
                     ),
                   ),
                 ),

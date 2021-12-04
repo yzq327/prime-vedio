@@ -42,6 +42,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   List<VideoHistoryItem> videoHistoryList = [];
   late DBUtil dbUtil;
   String currentEpo = '';
+  late StoreDuration durations;
 
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
@@ -77,6 +78,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   }
 
   @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
@@ -88,7 +96,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     TablesInit tables = TablesInit();
     tables.init();
     dbUtil = new DBUtil();
-
     queryData();
   }
 
@@ -117,7 +124,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             item.totalDuration,
             widget.videoDetailPageParams.vodId
           ]);
-    } else {
+    } else if (item.totalDuration != '00:00'){
       Map<String, Object> par = Map<String, Object>();
       par['create_time'] = StringsHelper.getCurrentTimeMillis();
       par['vod_id'] =  widget.videoDetailPageParams.vodId;
@@ -135,7 +142,15 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   void dispose() {
     _tabController!.dispose();
+    insertData(durations);
     super.dispose();
+  }
+
+  void setDurations(StoreDuration item) {
+    if (!mounted) return;
+    setState(() {
+      durations = item;
+    });
   }
 
   Widget _buildVideoPlayer() {
@@ -144,7 +159,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       vodName: widget.videoDetailPageParams.vodName,
       vodPic: widget.videoDetailPageParams.vodPic,
       height: UIData.spaceSizeHeight228,
-      onStoreDuration: insertData,
+      onStoreDuration: setDurations,
       watchedDuration: widget.videoDetailPageParams.watchedDuration,
     );
   }
