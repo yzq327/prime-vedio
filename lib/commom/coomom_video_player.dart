@@ -71,12 +71,12 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   List<SpeedText> get getSpeedText {
     return [
+      SpeedText('0.75X', 0.75),
       SpeedText('正常', 1.0),
       SpeedText('1.25X', 1.25),
       SpeedText('1.5X', 1.5),
       SpeedText('1.75X', 1.75),
       SpeedText('2.0X', 2.0),
-      SpeedText('3.0X', 3.0),
     ];
   }
 
