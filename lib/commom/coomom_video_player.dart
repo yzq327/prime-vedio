@@ -102,7 +102,13 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
 
-  Size get _window =>  MediaQueryData.fromWindow(window).size;
+  Size get _window => MediaQueryData.fromWindow(window).size;
+
+  bool get _showLocateText {
+    return widget.watchedDuration > 0 &&
+        position.inMilliseconds - widget.watchedDuration < 3000 &&
+        !showLoading;
+  }
 
   @override
   void initState() {
@@ -177,11 +183,9 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   }
 
   bool get showLoading {
-    // print('_videoPlayerController.value.isInitialized: ${_videoPlayerController!.value.isBuffering}');
-    // print('_videoPlayerController.value.isBuffering: ${_videoPlayerController!.value.isBuffering}');
-    // print('_videoPlayerController.value.isPlaying: ${_videoPlayerController!.value.isPlaying}');
-    // print('currentSpeed-------: $currentSpeed');
-    return !_videoPlayerController!.value.isInitialized;
+    return (_videoPlayerController!.value.isInitialized &&
+            _videoPlayerController!.value.isBuffering) ||
+        !_videoPlayerController!.value.isInitialized;
   }
 
   // 拦截返回键
@@ -256,14 +260,16 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              image: DecorationImage(
-            image:
-                CachedNetworkImageProvider(widget.vodPic!, errorListener: () {
-              print('图片加载错误');
-            }),
-            alignment: Alignment.topLeft,
-            fit: BoxFit.cover,
-          )),
+              image: !_videoPlayerController!.value.isInitialized
+                  ? DecorationImage(
+                      image: CachedNetworkImageProvider(widget.vodPic!,
+                          errorListener: () {
+                        print('图片加载错误');
+                      }),
+                      alignment: Alignment.topLeft,
+                      fit: BoxFit.cover,
+                    )
+                  : null),
           child: Container(
             color: UIData.videoStateBgColor,
             padding: EdgeInsets.all(UIData.spaceSizeWidth8),
@@ -278,7 +284,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
   Widget _buildShowPauseIcon() {
     return Positioned.fill(
       child: AnimatedOpacity(
-        opacity: _videoPlayerController!.value.isPlaying ? 0 : 1,
+        opacity: _videoPlayerController!.value.isPlaying
+            ? 0
+            : showLoading
+                ? 0
+                : 1,
         duration: Duration(milliseconds: 300),
         child: Center(
           child: Container(
@@ -297,7 +307,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   Widget _buildOperationIcon(IconData icon, GestureTapCallback onTap) {
     return Padding(
-      padding: EdgeInsets.only(right: (_isFullScreen && icon == IconFont.icon_quanping_) ? UIData.spaceSizeWidth20: UIData.spaceSizeWidth8),
+      padding: EdgeInsets.only(
+          right: (_isFullScreen && icon == IconFont.icon_quanping_)
+              ? UIData.spaceSizeWidth20
+              : UIData.spaceSizeWidth8),
       child: GestureDetector(
         child: Icon(
           icon,
@@ -364,8 +377,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                        right: UIData.spaceSizeWidth8,
-                          left: _isFullScreen ? UIData.spaceSizeWidth16: UIData.spaceSizeWidth8),
+                          right: UIData.spaceSizeWidth8,
+                          left: _isFullScreen
+                              ? UIData.spaceSizeWidth16
+                              : UIData.spaceSizeWidth8),
                       child: CommonText.text18(
                           StringsHelper.formatDuration(position)),
                     ),
@@ -542,6 +557,25 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         ));
   }
 
+  Widget _buildLocateText() {
+    return Positioned(
+        left: UIData.spaceSizeHeight16,
+        top: UIData.spaceSizeHeight200,
+        child: Offstage(
+            offstage: !_showLocateText,
+            child: AnimatedOpacity(
+                opacity: _showLocateText ? 1 : 0,
+                duration: Duration(milliseconds: 300),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight2, horizontal: UIData.spaceSizeWidth16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(UIData.spaceSizeWidth20),
+                      color: UIData.videoStateBgColor
+                    ),
+                    child: CommonText.text12(
+                        '已为您定位到${StringsHelper.formatDuration(Duration(milliseconds: widget.watchedDuration))}')))));
+  }
+
   @override
   Widget build(BuildContext context) {
     return widget.url.isEmpty
@@ -560,7 +594,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                 onPanDown: _handleOnPanDown,
                 onPanUpdate: _handleOnPanUpdate,
                 onPanEnd: _handleOnPanEnd,
-                child:  Container(
+                child: Container(
                   color: Colors.black,
                   child: Hero(
                     tag: "player",
@@ -577,6 +611,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                             _buildShowTaggingContent(),
                             _buildShowSpeedContent(),
                             _buildPanContent(),
+                            _buildLocateText(),
                           ],
                         ),
                         onWillPop: _onWillPop,

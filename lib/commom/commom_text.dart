@@ -87,6 +87,22 @@ class CommonText {
       maxLines: maxLines,
     );
   }
+
+  //自定义颜色12号字
+  static Widget text12(text,
+      {height,maxLines,
+        textAlign = TextAlign.start,
+        color = UIData.primaryColor,
+        TextDecoration ? textDecoration,
+        TextOverflow overflow = TextOverflow.ellipsis}) {
+    return Text(
+      text,
+      style: TextStyle(color: color, fontSize: UIData.fontSize12, height: height, decoration: textDecoration),
+      textAlign: textAlign,
+      overflow: overflow,
+      maxLines: maxLines,
+    );
+  }
 }
 
 
