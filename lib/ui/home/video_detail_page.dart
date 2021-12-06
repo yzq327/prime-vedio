@@ -124,7 +124,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             item.totalDuration,
             widget.videoDetailPageParams.vodId
           ]);
-    } else if (item.totalDuration != '00:00'){
+    } else if (item.currentPosition > 0){
       Map<String, Object> par = Map<String, Object>();
       par['create_time'] = StringsHelper.getCurrentTimeMillis();
       par['vod_id'] =  widget.videoDetailPageParams.vodId;
