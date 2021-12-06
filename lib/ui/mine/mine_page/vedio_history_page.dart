@@ -6,15 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
-import 'package:primeVedio/commom/common_img_display.dart';
 import 'package:primeVedio/commom/common_smart_refresher.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
-import 'package:primeVedio/ui/home/video_detail_page.dart';
-import 'package:primeVedio/utils/commom_srting_helper.dart';
+import 'package:primeVedio/ui/mine/mine_page/removable_item.dart';
 import 'package:primeVedio/utils/font_icon.dart';
-import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -30,11 +27,11 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   late DBUtil dbUtil;
   int currentPage = 1;
   int pageSize = 10;
-  double offset = 0;
+  static List<GlobalKey<RemovableItemState>> childItemStates = [];
+
   bool get _enablePullUp {
     return videoHistoryList.length != total;
   }
-  double initLocation = 0;
 
   @override
   void initState() {
@@ -45,6 +42,15 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void initChildItemStates() {
+    childItemStates.clear();
+    for (int i = 0; i < videoHistoryList.length; i++) {
+      GlobalKey<RemovableItemState> removeGK = GlobalKey(debugLabel: "$i");
+      childItemStates.add(removeGK);
+    }
+    setState(() {});
   }
 
   void initDB() async {
@@ -67,6 +73,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
     setState(() {
       videoHistoryList = data.map((i) => VideoHistoryItem.fromJson(i)).toList();
     });
+    initChildItemStates();
     await dbUtil.close();
   }
 
@@ -95,6 +102,15 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
     });
     await queryData();
     _refreshController.loadComplete();
+  }
+
+  static void closeItems(
+      List<GlobalKey<RemovableItemState>> childItemStates, int index) {
+    childItemStates.forEach((element) {
+      if (element != childItemStates[index]) {
+        element.currentState?.closeItems();
+      }
+    });
   }
 
   Widget _buildPageHeader() {
@@ -136,102 +152,12 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
             child: CommonText.normalText('没有更多观影历史啦',
                 color: UIData.subThemeBgColor),
           )
-        : GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, Routes.detail,
-                  arguments: VideoDetailPageParams(
-                      vodId: videoHistoryList[index].vodId,
-                      vodName: videoHistoryList[index].vodName,
-                      vodPic: videoHistoryList[index].vodPic,
-                      watchedDuration:
-                          videoHistoryList[index].watchedDuration));
-            },
-            onHorizontalDragDown: (DragDownDetails downDetails) {
-              setState(() {
-                initLocation =downDetails.globalPosition.dx;
-              });
-              //水平方向上按下时触发。
-            },
-            onHorizontalDragUpdate: (DragUpdateDetails updateDetails) {
-              //水平方向上滑动时回调，随着手势滑动一直回调。
-            },
-            onHorizontalDragEnd: (DragEndDetails endDetails) {
-              //水平方向上滑动结束时回调
-            },
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                    onTap: () {},
-                    child: Container(
-                      width: UIData.spaceSizeWidth110,
-                      height: UIData.spaceSizeWidth90,
-                      margin: EdgeInsets.only(
-                        top: UIData.spaceSizeWidth20,
-                        bottom: UIData.spaceSizeHeight16,
-                      ),
-                      alignment: Alignment.center,
-                      color: Colors.red,
-                      child: Icon(
-                        IconFont.icon_shanchutianchong,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top:UIData.spaceSizeHeight16,
-                  left: -offset,
-                  right: offset,
-                  child: Container(
-                    color: UIData.themeBgColor,
-                    width: double.infinity,
-                    margin: EdgeInsets.only(
-                      left: UIData.spaceSizeWidth20,
-                      bottom: UIData.spaceSizeHeight16,
-                    ),
-                    padding: EdgeInsets.only(
-                      right: UIData.spaceSizeHeight16,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                            height: UIData.spaceSizeHeight104,
-                            width: UIData.spaceSizeWidth160,
-                            child: CommonImgDisplay(
-                              vodPic: videoHistoryList[index].vodPic,
-                              vodId: videoHistoryList[index].vodId,
-                              vodName: videoHistoryList[index].vodName,
-                            )),
-                        SizedBox(width: UIData.spaceSizeWidth18),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CommonText.text18(
-                                  videoHistoryList[index].vodName),
-                              SizedBox(
-                                height: UIData.spaceSizeHeight8,
-                              ),
-                              CommonText.text18(videoHistoryList[index].vodEpo,
-                                  color: UIData.subTextColor),
-                              SizedBox(
-                                height: UIData.spaceSizeHeight8,
-                              ),
-                              CommonText.text14(
-                                  "${StringsHelper.formatDuration(Duration(milliseconds: videoHistoryList[index].watchedDuration))} / ${videoHistoryList[index].totalDuration} ",
-                                  color: UIData.hoverThemeBgColor),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        : RemovableItem(
+            videoHistoryList: videoHistoryList,
+            onActionDown: () => closeItems(childItemStates, index),
+            index: index,
+            moveItemKey: childItemStates[index],
+            onDeleteItem: delete,
           );
   }
 
