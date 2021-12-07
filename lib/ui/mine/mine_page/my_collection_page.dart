@@ -22,15 +22,19 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   late DBUtil dbUtil;
   List<MyCollectionItem> myCollectionsList = [];
   static List<GlobalKey<CommonRemovableItemState>> childItemStates = [];
-
+  TextEditingController _userEtController = TextEditingController();
   @override
   void initState() {
     super.initState();
+    _userEtController.addListener(() {
+      setState(() {});
+    });
     initDB();
   }
 
   @override
   void dispose() {
+    _userEtController.dispose();
     super.dispose();
   }
 
@@ -80,7 +84,44 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
           GestureDetector(
             onTap: () {
               CommonDialog.showAlertDialog(context,
-                  title: '提示', content: '确定要新建收藏夹吗？', onConfirm: () {});
+                  title: '提示',
+                  content: Container(
+                    margin: EdgeInsets.only(
+                      top: UIData.spaceSizeHeight16,
+                      left: UIData.spaceSizeWidth32,
+                      right: UIData.spaceSizeWidth32,
+                    ),
+                    child: TextField(
+                      controller: _userEtController,
+                      maxLength: 30,
+                      textInputAction: TextInputAction.next,
+                      onSubmitted: (value) {
+                        _userEtController.text = '';
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth8, vertical: UIData.spaceSizeWidth4),
+                        hintStyle: TextStyle(color: UIData.textDefaultColor),
+                        filled: true,
+                        fillColor: UIData.inputBgColor,
+                        hintText: "请输入收藏夹名称",
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(UIData.spaceSizeHeight6), //边角为30
+                          ),
+                        ),
+                        suffixIcon: _userEtController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(IconFont.icon_closefill,
+                                    color: UIData.subTextColor,
+                                    size: UIData.spaceSizeWidth20),
+                                onPressed: () => _userEtController.text = '',
+                              )
+                            : SizedBox(),
+                      ),
+                    ),
+                  ),
+                  onConfirm: () {});
             },
             child: Icon(IconFont.icon_jia, color: UIData.primaryColor),
           )

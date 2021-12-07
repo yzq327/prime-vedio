@@ -41,6 +41,7 @@ class UIData {
   static const myPageBgColor = const Color(0xFF0D1821);
   static const lightBlockColor = const Color(0xFF081923);
   static const shadowColor =  const Color.fromRGBO(210, 234, 242, 0.25);
+  static const inputBgColor =  const Color(0xFFEDEDED);
 
 
 
