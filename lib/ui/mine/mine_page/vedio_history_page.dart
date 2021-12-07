@@ -61,10 +61,10 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   }
 
   queryAllData() async {
-    List<Map> allData =
-        await dbUtil.queryList("SELECT * FROM video_play_record");
+    var allData =
+        await dbUtil.queryList("SELECT count(vod_id) as count FROM video_play_record");
     setState(() {
-      total = allData.length;
+      total = allData[0]['count'];
     });
   }
 
@@ -95,7 +95,9 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
     } else {
       dbUtil.delete('DELETE FROM video_play_record WHERE vod_id = ?', [vodId]);
       videoHistoryList.removeWhere((item) => item.vodId == vodId);
-      queryAllData();
+      setState(() {
+        total -= 1;
+      });
       initChildItemStates();
       if (videoHistoryList.length == 0) {
         queryData();

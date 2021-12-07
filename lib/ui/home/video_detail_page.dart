@@ -147,10 +147,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   }
 
   void setDurations(StoreDuration item) {
-    if (!mounted) return;
-    setState(() {
-      durations = item;
-    });
+    durations = item;
   }
 
   Widget _buildVideoPlayer() {
