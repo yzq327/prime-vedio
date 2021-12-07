@@ -7,6 +7,7 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/commom/common_img_display.dart';
+import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/commom/common_removableItem.dart';
 import 'package:primeVedio/commom/common_smart_refresher.dart';
 import 'package:primeVedio/models/common/common_model.dart';
@@ -137,33 +138,15 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   }
 
   Widget _buildPageHeader() {
-    return Padding(
-      padding: EdgeInsets.only(
-          top: UIData.spaceSizeHeight50,
-          bottom: UIData.spaceSizeWidth16,
-          left: UIData.spaceSizeWidth16,
-          right: UIData.spaceSizeWidth16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios, color: UIData.primaryColor),
-          ),
-          CommonText.text18('我看过的'),
-          GestureDetector(
-            onTap: () {
-              CommonDialog.showAlertDialog(context,
-                  title: '提示',
-                  content: '确定要清空观影历史吗？',
-                  onConfirm: () => delete(null));
-            },
-            child: Icon(IconFont.icon_clear_l, color: UIData.primaryColor),
-          )
-        ],
-      ),
+    return CommonPageHeader(
+      pageTitle: '我看过的',
+      rightIcon: IconFont.icon_clear_l,
+      onRightTop: () {
+        CommonDialog.showAlertDialog(context,
+            title: '提示',
+            content: '确定要清空观影历史吗？',
+            onConfirm: () => delete(null));
+      },
     );
   }
 

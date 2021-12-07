@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
+import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/commom/common_removableItem.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
@@ -65,68 +66,52 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   }
 
   Widget _buildPageHeader() {
-    return Padding(
-      padding: EdgeInsets.only(
-          top: UIData.spaceSizeHeight50,
-          bottom: UIData.spaceSizeWidth16,
-          left: UIData.spaceSizeWidth16,
-          right: UIData.spaceSizeWidth16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios, color: UIData.primaryColor),
-          ),
-          CommonText.text18('我看过的'),
-          GestureDetector(
-            onTap: () {
-              CommonDialog.showAlertDialog(context,
-                  title: '提示',
-                  content: Container(
-                    margin: EdgeInsets.only(
-                      top: UIData.spaceSizeHeight16,
-                      left: UIData.spaceSizeWidth32,
-                      right: UIData.spaceSizeWidth32,
-                    ),
-                    child: TextField(
-                      controller: _userEtController,
-                      maxLength: 30,
-                      textInputAction: TextInputAction.next,
-                      onSubmitted: (value) {
-                        _userEtController.text = '';
-                      },
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth8, vertical: UIData.spaceSizeWidth4),
-                        hintStyle: TextStyle(color: UIData.textDefaultColor),
-                        filled: true,
-                        fillColor: UIData.inputBgColor,
-                        hintText: "请输入收藏夹名称",
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(UIData.spaceSizeHeight6), //边角为30
-                          ),
-                        ),
-                        suffixIcon: _userEtController.text.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(IconFont.icon_closefill,
-                                    color: UIData.subTextColor,
-                                    size: UIData.spaceSizeWidth20),
-                                onPressed: () => _userEtController.text = '',
-                              )
-                            : SizedBox(),
-                      ),
+    return CommonPageHeader(
+      pageTitle: '我收藏的',
+      rightIcon: IconFont.icon_jia,
+      onRightTop: () {
+        CommonDialog.showAlertDialog(context,
+            title: '新建收藏夹',
+            content: Container(
+              margin: EdgeInsets.only(
+                top: UIData.spaceSizeHeight16,
+                left: UIData.spaceSizeWidth32,
+                right: UIData.spaceSizeWidth32,
+              ),
+              child: TextField(
+                controller: _userEtController,
+                maxLength: 20,
+                textInputAction: TextInputAction.next,
+                onSubmitted: (value) {
+                  _userEtController.text = '';
+                },
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                      horizontal: UIData.spaceSizeWidth8,
+                      vertical: UIData.spaceSizeWidth4),
+                  hintStyle: TextStyle(color: UIData.textDefaultColor),
+                  filled: true,
+                  fillColor: UIData.inputBgColor,
+                  hintText: "请输入收藏夹名称",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none, //
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(UIData.spaceSizeHeight6), //边角为30
                     ),
                   ),
-                  onConfirm: () {});
-            },
-            child: Icon(IconFont.icon_jia, color: UIData.primaryColor),
-          )
-        ],
-      ),
+                  suffixIcon: _userEtController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(IconFont.icon_closefill,
+                              color: UIData.subTextColor,
+                              size: UIData.spaceSizeWidth20),
+                          onPressed: () => _userEtController.text = '',
+                        )
+                      : null,
+                ),
+              ),
+            ),
+            onConfirm: () {});
+      },
     );
   }
 
@@ -166,9 +151,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonText.text18(myCollectionsList[index].collectName),
-                  CommonText.text18(
-                      "共 ${myCollectionsList[index].totalVideos} 部",
-                      color: UIData.subTextColor),
+                  CommonText.text18("共 x 部", color: UIData.subTextColor),
                 ],
               ),
             ),
