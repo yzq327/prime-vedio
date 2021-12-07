@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_img_display.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/ui/home/video_detail_page.dart';
@@ -111,7 +112,15 @@ class RemovableItemState extends State<RemovableItem>
             alignment: Alignment.centerRight,
             child: InkWell(
               onTap: () {
-                widget.onDeleteItem(videoHistoryList[index].vodId);
+                slideController.animateTo(maxDis);
+                CommonDialog.showAlertDialog(context,
+                    title: '提示',
+                    content: '确定要删除${videoHistoryList[index].vodName}吗？',
+                    onCancel: () {
+                  closeItems();
+                }, onConfirm: () {
+                  widget.onDeleteItem(videoHistoryList[index].vodId);
+                });
               },
               child: Container(
                 alignment: Alignment.center,
