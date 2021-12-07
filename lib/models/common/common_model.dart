@@ -53,3 +53,31 @@ class MyCollectionItem {
 }
 
 
+class CollectVideoDetail {
+  String createTime;
+  int collectId;
+  int vodId;
+  String vodPic;
+  String vodName;
+
+  CollectVideoDetail(
+      {required this.createTime,
+        required this.collectId,
+        required this.vodId,
+        required this.vodPic,
+        required this.vodName,
+      });
+
+  factory CollectVideoDetail.fromJson(Map<dynamic, dynamic> parsedJson) {
+    return CollectVideoDetail(
+      createTime: parsedJson['create_time'],
+      collectId: parsedJson['collect_id'],
+      vodId: parsedJson['vod_id'],
+      vodPic: parsedJson['vod_pic'],
+      vodName: parsedJson['vod_name'],
+    );
+  }
+}
+
+
+
