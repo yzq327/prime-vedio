@@ -134,7 +134,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   Widget _buildPageHeader() {
     return Padding(
       padding: EdgeInsets.only(
-          top: UIData.spaceSizeWidth40,
+          top: UIData.spaceSizeHeight50,
           bottom: UIData.spaceSizeWidth16,
           left: UIData.spaceSizeWidth16,
           right: UIData.spaceSizeWidth16),

@@ -94,7 +94,9 @@ class _MinePageState extends State<MinePage> {
                     _buildIconInfo(IconFont.icon_lishijilu_copy, '我看过的', () {
                       Navigator.pushNamed(context, Routes.mineVideoHistory);
                     }),
-                    _buildIconInfo(IconFont.icon_shoucangjia, '我收藏的', () {}),
+                    _buildIconInfo(IconFont.icon_shoucangjia, '我收藏的', () {
+                      Navigator.pushNamed(context, Routes.mineCollection);
+                    }),
                   ],
                 ),
               ),

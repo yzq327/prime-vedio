@@ -29,3 +29,30 @@ class VideoHistoryItem {
   }
 }
 
+
+class MyCollectionItem {
+  String createTime;
+  int collectId;
+  String collectName;
+  String img;
+  int totalVideos;
+  MyCollectionItem(
+      {required this.createTime,
+        required this.collectId,
+        required this.collectName,
+        required this.img,
+        required this.totalVideos,
+      });
+
+  factory MyCollectionItem.fromJson(Map<dynamic, dynamic> parsedJson) {
+    return MyCollectionItem(
+      createTime: parsedJson['create_time'],
+      collectId: parsedJson['collect_id'],
+      collectName: parsedJson['collect_name'],
+      img: parsedJson['img'],
+      totalVideos: parsedJson['total_videos'],
+    );
+  }
+}
+
+
