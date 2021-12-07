@@ -6,12 +6,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
+import 'package:primeVedio/commom/common_img_display.dart';
+import 'package:primeVedio/commom/common_removableItem.dart';
 import 'package:primeVedio/commom/common_smart_refresher.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
-import 'package:primeVedio/ui/mine/mine_page/removable_item.dart';
+import 'package:primeVedio/ui/home/video_detail_page.dart';
+import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
+import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -27,7 +31,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   late DBUtil dbUtil;
   int currentPage = 1;
   int pageSize = 10;
-  static List<GlobalKey<RemovableItemState>> childItemStates = [];
+  static List<GlobalKey<CommonRemovableItemState>> childItemStates = [];
 
   bool get _enablePullUp {
     return videoHistoryList.length != total;
@@ -47,7 +51,8 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   void initChildItemStates() {
     childItemStates.clear();
     for (int i = 0; i < videoHistoryList.length; i++) {
-      GlobalKey<RemovableItemState> removeGK = GlobalKey(debugLabel: "$i");
+      GlobalKey<CommonRemovableItemState> removeGK =
+          GlobalKey(debugLabel: "$i");
       childItemStates.add(removeGK);
     }
     setState(() {});
@@ -61,8 +66,8 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   }
 
   queryAllData() async {
-    var allData =
-        await dbUtil.queryList("SELECT count(vod_id) as count FROM video_play_record");
+    var allData = await dbUtil
+        .queryList("SELECT count(vod_id) as count FROM video_play_record");
     setState(() {
       total = allData[0]['count'];
     });
@@ -123,7 +128,7 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
   }
 
   static void closeItems(
-      List<GlobalKey<RemovableItemState>> childItemStates, int index) {
+      List<GlobalKey<CommonRemovableItemState>> childItemStates, int index) {
     childItemStates.forEach((element) {
       if (element != childItemStates[index]) {
         element.currentState?.closeItems();
@@ -170,12 +175,71 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
             child: CommonText.normalText('没有更多观影历史啦',
                 color: UIData.subThemeBgColor),
           )
-        : RemovableItem(
-            videoHistoryList: videoHistoryList,
-            onActionDown: () => closeItems(childItemStates, index),
-            index: index,
+        : CommonRemovableItem(
             moveItemKey: childItemStates[index],
-            onDeleteItem: delete,
+            onActionDown: () => closeItems(childItemStates, index),
+            onNavigator: () {
+              Navigator.pushNamed(context, Routes.detail,
+                  arguments: VideoDetailPageParams(
+                      vodId: videoHistoryList[index].vodId,
+                      vodName: videoHistoryList[index].vodName,
+                      vodPic: videoHistoryList[index].vodPic,
+                      watchedDuration: videoHistoryList[index].watchedDuration));
+            },
+            onDelete: () {
+              CommonDialog.showAlertDialog(context,
+                  title: '提示',
+                  content: '确定要删除${videoHistoryList[index].vodName}吗？',
+                  onCancel: () {
+                childItemStates[index].currentState?.closeItems();
+              }, onConfirm: () {
+                delete(videoHistoryList[index].vodId);
+              });
+            },
+            child: Container(
+              color: UIData.themeBgColor,
+              width: double.infinity,
+              margin: EdgeInsets.only(
+                left: UIData.spaceSizeWidth20,
+                bottom: UIData.spaceSizeHeight16,
+              ),
+              padding: EdgeInsets.only(
+                right: UIData.spaceSizeHeight16,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                      height: UIData.spaceSizeHeight104,
+                      width: UIData.spaceSizeWidth160,
+                      child: CommonImgDisplay(
+                        vodPic: videoHistoryList[index].vodPic,
+                        vodId: videoHistoryList[index].vodId,
+                        vodName: videoHistoryList[index].vodName,
+                      )),
+                  SizedBox(width: UIData.spaceSizeWidth18),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText.text18(videoHistoryList[index].vodName),
+                        SizedBox(
+                          height: UIData.spaceSizeHeight8,
+                        ),
+                        CommonText.text18(videoHistoryList[index].vodEpo,
+                            color: UIData.subTextColor),
+                        SizedBox(
+                          height: UIData.spaceSizeHeight8,
+                        ),
+                        CommonText.text14(
+                            "${StringsHelper.formatDuration(Duration(milliseconds: videoHistoryList[index].watchedDuration))} / ${videoHistoryList[index].totalDuration} ",
+                            color: UIData.hoverThemeBgColor),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           );
   }
 

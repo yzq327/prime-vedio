@@ -10,7 +10,6 @@ import 'package:primeVedio/commom/common_removableItem.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
-import 'package:primeVedio/ui/mine/mine_page/removable_item.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -22,7 +21,7 @@ class MyCollectionPage extends StatefulWidget {
 class _MyCollectionPageState extends State<MyCollectionPage> {
   late DBUtil dbUtil;
   List<MyCollectionItem> myCollectionsList = [];
-  static List<GlobalKey<RemovableItemState>> childItemStates = [];
+  static List<GlobalKey<CommonRemovableItemState>> childItemStates = [];
 
   @override
   void initState() {
@@ -42,11 +41,6 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     queryData();
   }
 
-  // queryAllData() async {
-  //   var allData =
-  //   await dbUtil.queryList("SELECT count(vod_id) as count FROM video_play_record");
-  // }
-
   queryData() async {
     await dbUtil.open();
     await dbUtil.close();
@@ -55,6 +49,15 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   void delete(int collectId) async {
     await dbUtil.open();
     await dbUtil.close();
+  }
+
+  static void closeItems(
+      List<GlobalKey<CommonRemovableItemState>> childItemStates, int index) {
+    childItemStates.forEach((element) {
+      if (element != childItemStates[index]) {
+        element.currentState?.closeItems();
+      }
+    });
   }
 
   Widget _buildPageHeader() {
@@ -89,79 +92,49 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   Widget _buildCollectionDetail(int index) {
     return CommonRemovableItem(
       moveItemKey: childItemStates[index],
-      onActionDown: () {},
-        onNavigator: (){},
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.centerRight,
-              child: InkWell(
-                onTap: () {
-                  // slideController.animateTo(maxDis);
-                  CommonDialog.showAlertDialog(context,
-                      title: '提示',
-                      content: '确定要删除${myCollectionsList[index].collectName}吗？',
-                      onCancel: () {
-                        // closeItems();
-                      }, onConfirm: () {
-                        delete(myCollectionsList[index].collectId);
-                      });
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  width: UIData.spaceSizeWidth110,
-                  height: UIData.spaceSizeWidth90,
-                  margin: EdgeInsets.only(
-                    top: UIData.spaceSizeWidth20,
-                    bottom: UIData.spaceSizeHeight16,
-                    right: UIData.spaceSizeWidth20,
-                  ),
-                  color: Colors.red,
-                  child: Icon(
-                    IconFont.icon_shanchutianchong,
-                    color: Colors.white,
-                  ),
-                ),
+      onActionDown: () => closeItems(childItemStates, index),
+      onNavigator: () {
+        // Navigator.pushNamed(context, Routes.detail,
+        //     arguments: VideoDetailPageParams(
+        //         vodId: videoHistoryList[index].vodId,
+        //         vodName: videoHistoryList[index].vodName,
+        //         vodPic: videoHistoryList[index].vodPic,
+        //         watchedDuration: videoHistoryList[index].watchedDuration));
+      },
+      onDelete: () {},
+      child: Container(
+        color: UIData.themeBgColor,
+        width: double.infinity,
+        margin: EdgeInsets.only(
+          left: UIData.spaceSizeWidth20,
+          bottom: UIData.spaceSizeHeight16,
+        ),
+        padding: EdgeInsets.only(
+          right: UIData.spaceSizeHeight16,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+                height: UIData.spaceSizeHeight80,
+                width: UIData.spaceSizeWidth100,
+                child: Image.asset(myCollectionsList[index].img)),
+            SizedBox(width: UIData.spaceSizeWidth18),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CommonText.text18(myCollectionsList[index].collectName),
+                  CommonText.text18(
+                      "共 ${myCollectionsList[index].totalVideos} 部",
+                      color: UIData.subTextColor),
+                ],
               ),
             ),
-            Positioned(
-              top: UIData.spaceSizeHeight16,
-              // left: -offset,
-              // right: offset,
-              child:  Container(
-                color: UIData.themeBgColor,
-                width: double.infinity,
-                margin: EdgeInsets.only(
-                  left: UIData.spaceSizeWidth20,
-                  bottom: UIData.spaceSizeHeight16,
-                ),
-                padding: EdgeInsets.only(
-                  right: UIData.spaceSizeHeight16,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                        height: UIData.spaceSizeHeight80,
-                        width: UIData.spaceSizeWidth100,
-                        child: Image.asset(myCollectionsList[index].img)),
-                    SizedBox(width: UIData.spaceSizeWidth18),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CommonText.text18(myCollectionsList[index].collectName),
-                          CommonText.text18("共 ${myCollectionsList[index].totalVideos} 部", color: UIData.subTextColor),
-                        ],
-                      ),
-                    ),
-                    Icon(IconFont.icon_you, color: UIData.primaryColor)
-                  ],
-                ),
-              ),
-            ),
+            Icon(IconFont.icon_you, color: UIData.primaryColor)
           ],
         ),
+      ),
     );
   }
 

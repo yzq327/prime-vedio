@@ -1,17 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class CommonRemovableItem extends StatefulWidget {
-  final Key? moveItemKey;
+  final GlobalKey<CommonRemovableItemState> moveItemKey;
   final VoidCallback onActionDown;
   final VoidCallback onNavigator;
-  final Widget? child;
+  final VoidCallback onDelete;
+  final Widget child;
   CommonRemovableItem({
     Key? key,
-    this.moveItemKey,
+    required this.moveItemKey,
     required this.onActionDown,
     required this.onNavigator,
+    required this.onDelete,
     required this.child,
   }) : super(key: moveItemKey);
 
@@ -27,7 +30,6 @@ class CommonRemovableItemState extends State<CommonRemovableItem>
   double maxDis = UIData.spaceSizeWidth120;
   bool opened = false;
   double moveDis = 0.0;
-
 
   @override
   void initState() {
@@ -59,9 +61,7 @@ class CommonRemovableItemState extends State<CommonRemovableItem>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-       widget.onNavigator();
-      },
+      onTap: () => widget.onNavigator(),
       onHorizontalDragDown: (DragDownDetails dragDownDetails) {
         closeItems();
         return widget.onActionDown();
@@ -82,14 +82,46 @@ class CommonRemovableItemState extends State<CommonRemovableItem>
         if (offset >= maxDis) {
           opened = true;
         } else if (offset > maxDis / 2) {
-          //滑动到最大距离一半时，执行动画，至打开item
           opened = true;
           slideController.animateTo(maxDis);
         } else {
           closeItems();
         }
       },
-      child: widget.child,
+      child: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerRight,
+            child: InkWell(
+              onTap: () {
+                slideController.animateTo(maxDis);
+                widget.onDelete();
+              },
+              child: Container(
+                alignment: Alignment.center,
+                width: UIData.spaceSizeWidth110,
+                height: UIData.spaceSizeWidth90,
+                margin: EdgeInsets.only(
+                  top: UIData.spaceSizeWidth20,
+                  bottom: UIData.spaceSizeHeight16,
+                  right: UIData.spaceSizeWidth20,
+                ),
+                color: Colors.red,
+                child: Icon(
+                  IconFont.icon_shanchutianchong,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: UIData.spaceSizeHeight16,
+            left: -offset,
+            right: offset,
+            child: widget.child,
+          ),
+        ],
+      ),
     );
   }
 }
