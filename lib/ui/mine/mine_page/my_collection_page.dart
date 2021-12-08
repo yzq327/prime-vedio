@@ -82,7 +82,11 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
       await dbUtil.update(
           'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
           [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
-      CommonToast.show(context: context, message: "创建失败，文件夹名已存在", color: UIData.failBgColor, icon: IconFont.icon_shibai);
+      CommonToast.show(
+          context: context,
+          message: "创建失败，文件夹名已存在",
+          color: UIData.failBgColor,
+          icon: IconFont.icon_shibai);
     } else {
       Map<String, Object> par = Map<String, Object>();
       par['create_time'] = StringsHelper.getCurrentTimeMillis();
@@ -123,7 +127,6 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
           title: '新建收藏夹',
           onConfirm: () {
             insertData();
-
           },
           onCancel: () {
             _userEtController.text = '';
@@ -184,7 +187,10 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
         //         watchedDuration: videoHistoryList[index].watchedDuration));
       },
       onDelete: () {
-        delete( myCollectionsList[index].collectId);
+        CommonDialog.showAlertDialog(context,
+            title: '提示',
+            content: '确定要删除《${myCollectionsList[index].collectName}》吗？',
+            onConfirm: () => delete(myCollectionsList[index].collectId));
       },
       height: UIData.spaceSizeHeight80,
       child: Container(
