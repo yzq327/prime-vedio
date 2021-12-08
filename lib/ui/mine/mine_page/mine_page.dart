@@ -87,7 +87,8 @@ class _MinePageState extends State<MinePage> {
                 padding: EdgeInsets.only(
                     left: UIData.spaceSizeWidth24,
                     bottom: UIData.spaceSizeWidth24,
-                    right: UIData.spaceSizeWidth24, top:UIData.spaceSizeHeight104),
+                    right: UIData.spaceSizeWidth24,
+                    top: UIData.spaceSizeHeight104),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -103,21 +104,20 @@ class _MinePageState extends State<MinePage> {
             )),
         Positioned.fill(
           child: Container(
-            transform:
-                Matrix4.translationValues(0, -UIData.spaceSizeHeight100, 0),
+            transform: Matrix4.translationValues(0, -UIData.spaceSizeHeight90, 0),
             child: Center(
               child: Container(
                 width: UIData.spaceSizeWidth88,
                 height: UIData.spaceSizeWidth88,
                 decoration: BoxDecoration(
                   color: UIData.lightBlockColor,
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(UIData.spaceSizeWidth44)),
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(UIData.spaceSizeWidth44)),
                 ),
                 child: Center(
                   child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(UIData.spaceSizeWidth40)),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(UIData.spaceSizeWidth40)),
                     child: Image.asset(
                       UIData.myImg,
                       fit: BoxFit.fitWidth,
@@ -135,33 +135,37 @@ class _MinePageState extends State<MinePage> {
 
   Widget _buildCommonRow(
       IconData icon, String iconText, GestureTapCallback onTap) {
-    return Container(
-      margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight20),
-      padding: EdgeInsets.all(UIData.spaceSizeWidth20),
-      width: double.infinity,
-      decoration: BoxDecoration(
-          color: UIData.lightBlockColor,
-          borderRadius:
-              BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
-          boxShadow: [
-            BoxShadow(
-                color: UIData.shadowColor,
-                offset: Offset(0.0, 3.5),
-                blurRadius: 30.0,
-                spreadRadius: 3.0)
-          ]),
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(right: UIData.spaceSizeWidth8),
-            child: Icon(
-              icon,
-              color: UIData.primaryColor,
-              size: UIData.spaceSizeWidth24,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: UIData.spaceSizeHeight20),
+        padding: EdgeInsets.all(UIData.spaceSizeWidth20),
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: UIData.lightBlockColor,
+            borderRadius:
+                BorderRadius.all(Radius.circular(UIData.spaceSizeWidth20)),
+            boxShadow: [
+              BoxShadow(
+                  color: UIData.shadowColor,
+                  offset: Offset(0.0, 3.5),
+                  blurRadius: 30.0,
+                  spreadRadius: 3.0)
+            ]),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: UIData.spaceSizeWidth8),
+              child: Icon(
+                icon,
+                color: UIData.primaryColor,
+                size: UIData.spaceSizeWidth24,
+              ),
             ),
-          ),
-          CommonText.text14(iconText),
-        ],
+            CommonText.text14(iconText),
+          ],
+        ),
       ),
     );
   }
@@ -169,8 +173,12 @@ class _MinePageState extends State<MinePage> {
   Widget _buildAboutVideo() {
     return Column(
       children: [
-        _buildCommonRow(IconFont.icon_guanyuwomen, '关于我们', () {}),
-        _buildCommonRow(IconFont.icon_licensexinxi, 'LICENSE', () {}),
+        _buildCommonRow(IconFont.icon_guanyuwomen, '关于我们', () {
+          Navigator.pushNamed(context, Routes.mineAboutUs);
+        }),
+        _buildCommonRow(IconFont.icon_licensexinxi, 'LICENSE', () {
+          Navigator.pushNamed(context, Routes.mineLicense);
+        }),
       ],
     );
   }
@@ -189,20 +197,19 @@ class _MinePageState extends State<MinePage> {
       child: Scaffold(
         backgroundColor: UIData.myPageBgColor,
         body: SingleChildScrollView(
-          child: Stack(
+          child: Column(
             children: [
               _buildMyBgImg(),
-              Transform.translate(
-                offset: Offset(0, UIData.spaceSizeHeight172),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
-                  child: Column(
-                    children: [
-                      _buildMyInfo(),
-                      SizedBox(height: UIData.spaceSizeHeight24,),
-                      _buildAboutVideo(),
-                    ],
-                  ),
+              Container(
+                transform: Matrix4.translationValues(0, -UIData.spaceSizeHeight130, 0),
+                margin:
+                    EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth12),
+                child: Column(
+                  children: [
+                    _buildMyInfo(),
+                    SizedBox(height: UIData.spaceSizeHeight24),
+                    _buildAboutVideo(),
+                  ],
                 ),
               ),
             ],

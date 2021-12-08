@@ -47,6 +47,17 @@ class CommonText {
     );
   }
 
+  //自定义颜色24号字
+  static Widget text24(text, {height, textAlign = TextAlign.start, color = UIData.primaryColor, TextOverflow overflow = TextOverflow.ellipsis}) {
+    return Text(
+      text,
+      style: TextStyle(color: color, fontSize: UIData.fontSize24, height: height),
+      textAlign: textAlign,
+      overflow: overflow,
+    );
+  }
+
+
   //自定义颜色18号字
   static Widget text18(text, {height, textAlign = TextAlign.start, color = UIData.primaryColor, TextOverflow overflow = TextOverflow.ellipsis}) {
     return Text(
