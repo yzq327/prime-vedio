@@ -26,7 +26,6 @@ class Routes {
   static final String mineVideoHistory = '/mine/history';
   static final String mineCollection = '/mine/collection';
   static final String mineAboutUs = '/mine/about';
-  static final String mineLicense = '/mine/license';
 
 }
 
@@ -42,5 +41,4 @@ var routePath = {
   Routes.mineVideoHistory: (BuildContext context) => VideoHistoryPage(),
   Routes.mineCollection: (BuildContext context) => MyCollectionPage(),
   Routes.mineAboutUs: (BuildContext context) => AboutUsPage(),
-  Routes.mineLicense: (BuildContext context) => MyCollectionPage(),
 };

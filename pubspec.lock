@@ -359,6 +359,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.1.4"
+  json_table:
+    dependency: transitive
+    description:
+      name: json_table
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.1"
   logging:
     dependency: transitive
     description:
@@ -555,6 +562,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.0"
+  rive:
+    dependency: "direct main"
+    description:
+      name: rive
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.7.33"
   rxdart:
     dependency: transitive
     description:
@@ -609,6 +623,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.1+1"
+  sqlite_viewer:
+    dependency: "direct main"
+    description:
+      name: sqlite_viewer
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.5"
   stack_trace:
     dependency: transitive
     description:

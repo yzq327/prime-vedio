@@ -177,7 +177,11 @@ class _MinePageState extends State<MinePage> {
           Navigator.pushNamed(context, Routes.mineAboutUs);
         }),
         _buildCommonRow(IconFont.icon_licensexinxi, 'LICENSE', () {
-          Navigator.pushNamed(context, Routes.mineLicense);
+          showLicensePage(
+            context: context,
+            applicationIcon: FlutterLogo(size: UIData.spaceSizeWidth60),
+              applicationName: '',
+          );
         }),
       ],
     );
