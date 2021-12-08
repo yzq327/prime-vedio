@@ -42,6 +42,8 @@ class UIData {
   static const lightBlockColor = const Color(0xFF081923);
   static const shadowColor =  const Color.fromRGBO(210, 234, 242, 0.25);
   static const inputBgColor =  const Color(0xFFEDEDED);
+  static const successBgColor =  const Color(0xFF39A644);
+  static const failBgColor =  const Color(0xFFCB3A4C);
 
 
 

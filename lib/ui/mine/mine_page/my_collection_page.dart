@@ -8,6 +8,7 @@ import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
 import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/commom/common_removableItem.dart';
+import 'package:primeVedio/commom/common_toast.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
@@ -81,13 +82,16 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
       await dbUtil.update(
           'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
           [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
+      CommonToast.show(context: context, message: "创建失败，文件夹名已存在", color: UIData.failBgColor, icon: IconFont.icon_shibai);
     } else {
       Map<String, Object> par = Map<String, Object>();
       par['create_time'] = StringsHelper.getCurrentTimeMillis();
       par['collect_name'] = _userEtController.text;
       par['img'] = UIData.collectionDefaultImg;
       await dbUtil.insertByHelper('my_collections', par);
+      CommonToast.show(context: context, message: "创建成功");
     }
+    _userEtController.text = '';
     await dbUtil.close();
     queryData();
   }
@@ -113,48 +117,55 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
       pageTitle: '我收藏的',
       rightIcon: IconFont.icon_jia,
       onRightTop: () {
-        CommonDialog.showAlertDialog(context,
-            title: '新建收藏夹',
-            content: Container(
-              margin: EdgeInsets.only(
-                top: UIData.spaceSizeHeight16,
-                left: UIData.spaceSizeWidth32,
-                right: UIData.spaceSizeWidth32,
-              ),
-              child: TextField(
-                controller: _userEtController,
-                maxLength: 20,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (value) {
-                  _userEtController.text = '';
-                },
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: UIData.spaceSizeWidth8,
-                      vertical: UIData.spaceSizeWidth4),
-                  hintStyle: TextStyle(color: UIData.textDefaultColor),
-                  filled: true,
-                  fillColor: UIData.inputBgColor,
-                  hintText: "请输入收藏夹名称",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none, //
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(UIData.spaceSizeHeight6), //边角为30
-                    ),
+        CommonDialog.showAlertDialog(
+          context,
+          title: '新建收藏夹',
+          onConfirm: () {
+            insertData();
+
+          },
+          onCancel: () {
+            _userEtController.text = '';
+          },
+          content: Container(
+            margin: EdgeInsets.only(
+              top: UIData.spaceSizeHeight16,
+              left: UIData.spaceSizeWidth32,
+              right: UIData.spaceSizeWidth32,
+            ),
+            child: TextField(
+              controller: _userEtController,
+              maxLength: 20,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (value) {
+                _userEtController.text = '';
+              },
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: UIData.spaceSizeWidth8,
+                    vertical: UIData.spaceSizeWidth4),
+                hintStyle: TextStyle(color: UIData.textDefaultColor),
+                filled: true,
+                fillColor: UIData.inputBgColor,
+                hintText: "请输入收藏夹名称",
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none, //
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(UIData.spaceSizeHeight6), //边角为30
                   ),
-                  suffixIcon: _userEtController.text.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(IconFont.icon_closefill,
-                              color: UIData.subTextColor,
-                              size: UIData.spaceSizeWidth20),
-                          onPressed: () => _userEtController.text = '',
-                        )
-                      : null,
                 ),
+                suffixIcon: _userEtController.text.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(IconFont.icon_closefill,
+                            color: UIData.subTextColor,
+                            size: UIData.spaceSizeWidth20),
+                        onPressed: () => _userEtController.text = '',
+                      )
+                    : null,
               ),
-            ), onConfirm: () {
-          insertData();
-        });
+            ),
+          ),
+        );
       },
     );
   }
@@ -172,7 +183,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
         //         watchedDuration: videoHistoryList[index].watchedDuration));
       },
       onDelete: () {},
-      height:UIData.spaceSizeHeight80,
+      height: UIData.spaceSizeHeight80,
       child: Container(
         color: UIData.themeBgColor,
         width: double.infinity,
