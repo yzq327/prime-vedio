@@ -52,7 +52,7 @@ class CommonToast {
           ));
     });
     Overlay.of(context)!.insert(overlayEntry);
-    new Future.delayed(Duration(seconds: 5)).then((value) {
+    new Future.delayed(Duration(seconds: 2)).then((value) {
       overlayEntry.remove();
     });
   }

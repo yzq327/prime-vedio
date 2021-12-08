@@ -99,6 +99,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   void delete(int collectId) async {
     await dbUtil.open();
     dbUtil.delete('DELETE FROM my_collections WHERE id = ?', [collectId]);
+    CommonToast.show(context: context, message: "删除成功");
     queryData();
     await dbUtil.close();
   }
@@ -182,7 +183,9 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
         //         vodPic: videoHistoryList[index].vodPic,
         //         watchedDuration: videoHistoryList[index].watchedDuration));
       },
-      onDelete: () {},
+      onDelete: () {
+        delete( myCollectionsList[index].collectId);
+      },
       height: UIData.spaceSizeHeight80,
       child: Container(
         color: UIData.themeBgColor,
