@@ -34,7 +34,7 @@ class _CommonPageHeaderState extends State<CommonPageHeader> {
     return Padding(
       padding: EdgeInsets.only(
           top: UIData.spaceSizeHeight50,
-          bottom: UIData.spaceSizeWidth16,
+          bottom: UIData.spaceSizeWidth24,
           left: UIData.spaceSizeWidth16,
           right: UIData.spaceSizeWidth16),
       child: Row(

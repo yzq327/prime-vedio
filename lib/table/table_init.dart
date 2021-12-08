@@ -5,6 +5,7 @@ import 'db_name.dart';
 
 class TablesInit {
   late Database db;
+  int _databaseVersion = 1;
 
   Future init() async {
     String databasePath = await getDatabasesPath();
@@ -26,7 +27,7 @@ class TablesInit {
       db.close();
       db = await openDatabase(
           path,
-          version: 1,
+          version: _databaseVersion,
           onCreate: (Database db, int version) async {
             print('db created version is $version');
           },
@@ -34,6 +35,9 @@ class TablesInit {
             noCreateTables.forEach((sql) async {
               await db.execute(allTableSqls[sql] ?? '');
             });
+          },
+          onConfigure: (Database db) async {
+            await db.execute('PRAGMA foreign_keys = ON');
           });
     } else {
       print("表都存在，db已打开");

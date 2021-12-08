@@ -8,6 +8,7 @@ class CommonRemovableItem extends StatefulWidget {
   final VoidCallback onActionDown;
   final VoidCallback onNavigator;
   final VoidCallback onDelete;
+  final double? height;
   final Widget child;
   CommonRemovableItem({
     Key? key,
@@ -15,6 +16,7 @@ class CommonRemovableItem extends StatefulWidget {
     required this.onActionDown,
     required this.onNavigator,
     required this.onDelete,
+    this.height,
     required this.child,
   }) : super(key: moveItemKey);
 
@@ -100,9 +102,8 @@ class CommonRemovableItemState extends State<CommonRemovableItem>
               child: Container(
                 alignment: Alignment.center,
                 width: UIData.spaceSizeWidth110,
-                height: UIData.spaceSizeWidth90,
+                height: widget.height ?? UIData.spaceSizeWidth104,
                 margin: EdgeInsets.only(
-                  top: UIData.spaceSizeWidth20,
                   bottom: UIData.spaceSizeHeight16,
                   right: UIData.spaceSizeWidth20,
                 ),
@@ -115,7 +116,6 @@ class CommonRemovableItemState extends State<CommonRemovableItem>
             ),
           ),
           Positioned(
-            top: UIData.spaceSizeHeight16,
             left: -offset,
             right: offset,
             child: widget.child,

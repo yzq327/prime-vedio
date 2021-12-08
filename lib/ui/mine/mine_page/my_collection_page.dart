@@ -11,6 +11,7 @@ import 'package:primeVedio/commom/common_removableItem.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
+import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -39,6 +40,16 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     super.dispose();
   }
 
+  void initChildItemStates() {
+    childItemStates.clear();
+    for (int i = 0; i < myCollectionsList.length; i++) {
+      GlobalKey<CommonRemovableItemState> removeGK =
+          GlobalKey(debugLabel: "$i");
+      childItemStates.add(removeGK);
+    }
+    setState(() {});
+  }
+
   void initDB() async {
     TablesInit tables = TablesInit();
     tables.init();
@@ -48,11 +59,43 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
 
   queryData() async {
     await dbUtil.open();
+    List<Map> data = await dbUtil
+        .queryList("SELECT * FROM my_collections ORDER By create_time DESC");
+    print('data-------------: $data');
+    setState(() {
+      myCollectionsList =
+          data.map((i) => MyCollectionItem.fromJson(i)).toList();
+    });
+    initChildItemStates();
     await dbUtil.close();
+  }
+
+  //  List<MyCollectionItem> myCollectionsList = [];
+  void insertData() async {
+    print('_userEtController.text: ${_userEtController.text}');
+    await dbUtil.open();
+    List<MyCollectionItem> searchedList = myCollectionsList
+        .where((element) => element.collectName == _userEtController.text)
+        .toList();
+    if (searchedList.length > 0) {
+      await dbUtil.update(
+          'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
+          [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
+    } else {
+      Map<String, Object> par = Map<String, Object>();
+      par['create_time'] = StringsHelper.getCurrentTimeMillis();
+      par['collect_name'] = _userEtController.text;
+      par['img'] = UIData.collectionDefaultImg;
+      await dbUtil.insertByHelper('my_collections', par);
+    }
+    await dbUtil.close();
+    queryData();
   }
 
   void delete(int collectId) async {
     await dbUtil.open();
+    dbUtil.delete('DELETE FROM my_collections WHERE id = ?', [collectId]);
+    queryData();
     await dbUtil.close();
   }
 
@@ -109,8 +152,9 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
                       : null,
                 ),
               ),
-            ),
-            onConfirm: () {});
+            ), onConfirm: () {
+          insertData();
+        });
       },
     );
   }
@@ -128,15 +172,13 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
         //         watchedDuration: videoHistoryList[index].watchedDuration));
       },
       onDelete: () {},
+      height:UIData.spaceSizeHeight80,
       child: Container(
         color: UIData.themeBgColor,
         width: double.infinity,
-        margin: EdgeInsets.only(
-          left: UIData.spaceSizeWidth20,
-          bottom: UIData.spaceSizeHeight16,
-        ),
-        padding: EdgeInsets.only(
-          right: UIData.spaceSizeHeight16,
+        height: UIData.spaceSizeHeight80,
+        padding: EdgeInsets.symmetric(
+          horizontal: UIData.spaceSizeWidth20,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -144,10 +186,15 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
             Container(
                 height: UIData.spaceSizeHeight80,
                 width: UIData.spaceSizeWidth100,
-                child: Image.asset(myCollectionsList[index].img)),
-            SizedBox(width: UIData.spaceSizeWidth18),
+                child: Image.asset(
+                  myCollectionsList[index].img,
+                  fit: BoxFit.fitWidth,
+                  width: double.infinity,
+                )),
+            SizedBox(width: UIData.spaceSizeWidth16),
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonText.text18(myCollectionsList[index].collectName),
@@ -166,12 +213,16 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     return myCollectionsList.length == 0
         ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
         : Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: myCollectionsList.length,
-              itemBuilder: (context, index) {
-                return _buildCollectionDetail(index);
-              },
+            child: new MediaQuery.removePadding(
+              removeTop: true,
+              context: context,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: myCollectionsList.length,
+                itemBuilder: (context, index) {
+                  return _buildCollectionDetail(index);
+                },
+              ),
             ),
           );
   }

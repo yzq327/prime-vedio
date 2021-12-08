@@ -105,6 +105,7 @@ class UIData {
   static double spaceSizeWidth88 = ScreenUtil().setWidth(88);
   static double spaceSizeWidth90 = ScreenUtil().setWidth(90);
   static double spaceSizeWidth100 = ScreenUtil().setWidth(100);
+  static double spaceSizeWidth104 = ScreenUtil().setWidth(104);
   static double spaceSizeWidth110 = ScreenUtil().setWidth(110);
   static double spaceSizeWidth120 = ScreenUtil().setWidth(120);
   static double spaceSizeWidth130 = ScreenUtil().setWidth(130);
@@ -172,6 +173,7 @@ class UIData {
   static const String imageDir = "assets/images";
   static const String defaultImg = "$imageDir/default_img.png"; //加载失败默认图片
   static const String myImg = "$imageDir/my_img.png"; //我的头像
+  static const String collectionDefaultImg = "$imageDir/my_default_collection_img.png"; //收藏夹默认头像
 
 
   //*******************首页************************//

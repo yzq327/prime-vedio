@@ -13,8 +13,7 @@ class VideoHistoryItem {
       required this.vodName,
       required this.vodEpo,
       required this.watchedDuration,
-      required this.totalDuration
-      });
+      required this.totalDuration});
 
   factory VideoHistoryItem.fromJson(Map<dynamic, dynamic> parsedJson) {
     return VideoHistoryItem(
@@ -29,44 +28,43 @@ class VideoHistoryItem {
   }
 }
 
-
 class MyCollectionItem {
-  String createTime;
   int collectId;
+  String createTime;
   String collectName;
   String img;
-  MyCollectionItem(
-      {required this.createTime,
-        required this.collectId,
-        required this.collectName,
-        required this.img,
-      });
+  MyCollectionItem({
+    required this.collectId,
+    required this.createTime,
+    required this.collectName,
+    required this.img,
+  });
 
   factory MyCollectionItem.fromJson(Map<dynamic, dynamic> parsedJson) {
     return MyCollectionItem(
+      collectId: parsedJson['id'],
       createTime: parsedJson['create_time'],
-      collectId: parsedJson['collect_id'],
       collectName: parsedJson['collect_name'],
       img: parsedJson['img'],
     );
   }
 }
 
-
 class CollectVideoDetail {
   String createTime;
   int collectId;
+  MyCollectionItem? myCollectionItem;
   int vodId;
   String vodPic;
   String vodName;
 
-  CollectVideoDetail(
-      {required this.createTime,
-        required this.collectId,
-        required this.vodId,
-        required this.vodPic,
-        required this.vodName,
-      });
+  CollectVideoDetail({
+    required this.createTime,
+    required this.collectId,
+    required this.vodId,
+    required this.vodPic,
+    required this.vodName,
+  });
 
   factory CollectVideoDetail.fromJson(Map<dynamic, dynamic> parsedJson) {
     return CollectVideoDetail(
@@ -78,6 +76,3 @@ class CollectVideoDetail {
     );
   }
 }
-
-
-
