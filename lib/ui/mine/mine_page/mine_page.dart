@@ -7,6 +7,7 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'package:sqlite_viewer/sqlite_viewer.dart';
 
 import 'arc_clipper.dart';
 
@@ -182,6 +183,9 @@ class _MinePageState extends State<MinePage> {
             applicationIcon: FlutterLogo(size: UIData.spaceSizeWidth60),
               applicationName: '',
           );
+        }),
+        _buildCommonRow(IconFont.icon_licensexinxi, '数据库', () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList()));
         }),
       ],
     );

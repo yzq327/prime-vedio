@@ -100,6 +100,11 @@ class DBUtil {
     return await db.transaction(action);
   }
 
+  ///删除表
+  ///DROP TABLE IF EXISTS my_table
+  Future<void> deleteTable(String sql) async {
+    return db.execute(sql);
+  }
 
   //打开DB
   open() async {
