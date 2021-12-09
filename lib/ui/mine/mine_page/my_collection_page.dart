@@ -16,6 +16,8 @@ import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
+import 'create_collect_dialog.dart';
+
 class MyCollectionPage extends StatefulWidget {
   @override
   _MyCollectionPageState createState() => _MyCollectionPageState();
@@ -125,49 +127,11 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
         CommonDialog.showAlertDialog(
           context,
           title: '新建收藏夹',
-          onConfirm: () {
-            insertData();
-          },
-          onCancel: () {
-            _userEtController.text = '';
-          },
-          content: Container(
-            margin: EdgeInsets.only(
-              top: UIData.spaceSizeHeight16,
-              left: UIData.spaceSizeWidth32,
-              right: UIData.spaceSizeWidth32,
-            ),
-            child: TextField(
-              controller: _userEtController,
-              maxLength: 20,
-              textInputAction: TextInputAction.next,
-              onSubmitted: (value) {
-                _userEtController.text = '';
-              },
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: UIData.spaceSizeWidth8,
-                    vertical: UIData.spaceSizeWidth4),
-                hintStyle: TextStyle(color: UIData.textDefaultColor),
-                filled: true,
-                fillColor: UIData.inputBgColor,
-                hintText: "请输入收藏夹名称",
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none, //
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(UIData.spaceSizeHeight6), //边角为30
-                  ),
-                ),
-                suffixIcon: _userEtController.text.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(IconFont.icon_closefill,
-                            color: UIData.subTextColor,
-                            size: UIData.spaceSizeWidth20),
-                        onPressed: () => _userEtController.text = '',
-                      )
-                    : null,
-              ),
-            ),
+          onConfirm: insertData,
+          onCancel: () => _userEtController.text = '',
+          content: CreateCollectDialog(
+            userEtController: _userEtController,
+            handleClear: () => _userEtController.text = '',
           ),
         );
       },
@@ -233,16 +197,13 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     return myCollectionsList.length == 0
         ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
         : Expanded(
-            child: new MediaQuery.removePadding(
-              removeTop: true,
-              context: context,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: myCollectionsList.length,
-                itemBuilder: (context, index) {
-                  return _buildCollectionDetail(index);
-                },
-              ),
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              itemCount: myCollectionsList.length,
+              itemBuilder: (context, index) {
+                return _buildCollectionDetail(index);
+              },
             ),
           );
   }

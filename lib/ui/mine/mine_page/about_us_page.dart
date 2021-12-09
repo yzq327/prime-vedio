@@ -26,7 +26,6 @@ class _AboutUsPageState extends State<AboutUsPage> {
 
   @override
   void initState() {
-    print('进来了吗？');
     super.initState();
     getPackageInfo();
   }
