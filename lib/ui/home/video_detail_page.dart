@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
-import 'package:primeVedio/commom/common_removableItem.dart';
 import 'package:primeVedio/commom/common_toast.dart';
 import 'package:primeVedio/commom/coomom_video_player.dart';
 import 'package:primeVedio/http/http_options.dart';
@@ -56,7 +55,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   List<MyCollectionItem> myCollectionsList = [];
   TextEditingController _userEtController = TextEditingController();
   List<bool> checkBoxStates = [];
-  late int currentSelectCollection;
+  int currentSelectCollection = 0;
   late bool isCollected = false;
 
   bool get _isFullScreen =>
@@ -120,10 +119,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   void queryData() async {
     await dbUtil.open();
     List<Map> collectedDate = await dbUtil.queryListByHelper(
-        'collection_detail',
-        ['id', 'vod_id'],
-        'vod_id=?',
-        [widget.videoDetailPageParams.vodId]);
+        'collection_detail', ['vod_id'], 'vod_id=?', [widget.videoDetailPageParams.vodId]);
     List<Map> data = await dbUtil
         .queryList("SELECT * FROM video_play_record ORDER By create_time DESC");
     setState(() {
@@ -175,11 +171,11 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     durations = item;
   }
 
-  void initCheckBoxStates({int? index}) {
+  void initCheckBoxStates({int? index, bool? value}) {
     checkBoxStates.clear();
     for (int i = 0; i < myCollectionsList.length; i++) {
       if (index == i) {
-        checkBoxStates.add(true);
+        checkBoxStates.add(value!);
       } else {
         checkBoxStates.add(false);
       }
@@ -240,6 +236,31 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       isCollected = true;
     });
     await dbUtil.close();
+  }
+
+  void cancelCollection() async {
+    await dbUtil.open();
+    await dbUtil.delete('DELETE FROM collection_detail WHERE vod_id = ?',
+        [widget.videoDetailPageParams.vodId]);
+    CommonToast.show(context: context, message: "取消收藏成功");
+    setState(() {
+      isCollected = false;
+    });
+    await dbUtil.close();
+  }
+
+  void handleOnCollect(bool value) {
+    if (value) {
+      setState(() {
+        queryCollectionData();
+        showSheet = value;
+      });
+    } else {
+      CommonDialog.showAlertDialog(context,
+          title: '提示',
+          content: '确定要取消收藏吗？',
+          onConfirm: () => cancelCollection());
+    }
   }
 
   Widget _buildVideoPlayer() {
@@ -305,16 +326,37 @@ class _VideoDetailPageState extends State<VideoDetailPage>
               ],
             ),
           ),
-          Checkbox(
-            value: checkBoxStates.length > 0 ? checkBoxStates[index] : false,
-            activeColor: Colors.blue, //选中时的颜色
-            onChanged: (value) {
+          GestureDetector(
+            onTap: () {
               setState(() {
                 currentSelectCollection = myCollectionsList[index].collectId;
-                initCheckBoxStates(index: index);
+                initCheckBoxStates(index: index, value: !checkBoxStates[index]);
               });
             },
-          )
+            child: Container(
+              decoration: BoxDecoration(
+                color: checkBoxStates[index]
+                    ? UIData.primaryColor
+                    : UIData.subThemeBgColor,
+                borderRadius: BorderRadius.circular(UIData.spaceSizeWidth12),
+              ),
+              width: UIData.spaceSizeWidth20,
+              height: UIData.spaceSizeWidth20,
+              alignment: Alignment.center,
+              child: !checkBoxStates[index]
+                  ? SizedBox()
+                  : Container(
+                      decoration: BoxDecoration(
+                        color: UIData.hoverThemeBgColor,
+                        borderRadius:
+                            BorderRadius.circular(UIData.spaceSizeWidth12),
+                      ),
+                      width: UIData.spaceSizeWidth12,
+                      height: UIData.spaceSizeWidth12,
+                      child: SizedBox(),
+                    ),
+            ),
+          ),
         ],
       ),
     );
@@ -390,10 +432,14 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                     ),
               GestureDetector(
                 onTap: () {
-                  insertCollectionDetailData();
-                  setState(() {
-                    showSheet = false;
-                  });
+                  if (currentSelectCollection == 0) {
+                    CommonToast.show(context: context, message: "请选择收藏夹");
+                  } else {
+                    insertCollectionDetailData();
+                    setState(() {
+                      showSheet = false;
+                    });
+                  }
                 },
                 child: Container(
                   width: double.infinity,
@@ -440,10 +486,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                           urlInfo: urlInfo,
                           onChanged: _playWithIndex,
                           isCollected: isCollected,
-                          onCollected: (value) => setState(() {
-                            queryCollectionData();
-                            showSheet = value;
-                          }),
+                          onCollected: handleOnCollect,
                         ),
                         SameTypeVideoContent(getVideoDetail: getVideoDetail),
                       ])),

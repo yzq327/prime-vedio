@@ -107,7 +107,7 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
         GestureDetector(
             onTap: () {
               setState(() {
-                widget.onCollected(true);
+                widget.onCollected(!widget.isCollected);
               });
             },
             child: Icon(
