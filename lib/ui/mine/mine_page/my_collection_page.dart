@@ -14,8 +14,10 @@ import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
 import 'package:primeVedio/utils/font_icon.dart';
+import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
+import 'collection_detail_page.dart';
 import 'create_collect_dialog.dart';
 
 class MyCollectionPage extends StatefulWidget {
@@ -127,6 +129,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
         CommonDialog.showAlertDialog(
           context,
           title: '新建收藏夹',
+          positiveBtnText: '创建',
           onConfirm: insertData,
           onCancel: () => _userEtController.text = '',
           content: CreateCollectDialog(
@@ -143,17 +146,16 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
       moveItemKey: childItemStates[index],
       onActionDown: () => closeItems(childItemStates, index),
       onNavigator: () {
-        // Navigator.pushNamed(context, Routes.detail,
-        //     arguments: VideoDetailPageParams(
-        //         vodId: videoHistoryList[index].vodId,
-        //         vodName: videoHistoryList[index].vodName,
-        //         vodPic: videoHistoryList[index].vodPic,
-        //         watchedDuration: videoHistoryList[index].watchedDuration));
+        Navigator.pushNamed(context, Routes.mineCollectionDetail,
+            arguments: CollectionDetailPageParams(
+                collectName: myCollectionsList[index].collectName,
+                collectId: myCollectionsList[index].collectId));
       },
       onDelete: () {
         CommonDialog.showAlertDialog(context,
             title: '提示',
             content: '确定要删除《${myCollectionsList[index].collectName}》吗？',
+            onCancel: () => childItemStates[index].currentState!.closeItems(),
             onConfirm: () => delete(myCollectionsList[index].collectId));
       },
       height: UIData.spaceSizeHeight80,

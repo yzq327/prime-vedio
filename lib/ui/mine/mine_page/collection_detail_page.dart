@@ -3,14 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
+class CollectionDetailPageParams {
+  final int collectId;
+  final String collectName;
+
+  CollectionDetailPageParams({
+    required this.collectId,
+    required this.collectName,
+  });
+}
+
 class CollectionDetailPage extends StatefulWidget {
-  CollectionDetailPage({Key? key}) : super(key: key);
+  final CollectionDetailPageParams collectionDetailPageParams;
+
+  CollectionDetailPage({Key? key, required this.collectionDetailPageParams})
+      : super(key: key);
   @override
   _CollectionDetailPageState createState() => _CollectionDetailPageState();
 }
 
-class _CollectionDetailPageState extends State<CollectionDetailPage> {
-
+class _CollectionDetailPageState extends State<CollectionDetailPage>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -27,11 +40,9 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
       backgroundColor: UIData.themeBgColor,
       appBar: AppBar(
         elevation: 0,
-        title: CommonText.mainTitle('默认收藏夹'),
+        title: CommonText.mainTitle(widget.collectionDetailPageParams.collectName),
       ),
-      body: Container(
-
-      ),
+      body: Container(),
     );
   }
 }
