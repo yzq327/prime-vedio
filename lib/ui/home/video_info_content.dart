@@ -10,12 +10,14 @@ class VideoInfoContent extends StatefulWidget {
   final ValueChanged<int> onChanged;
   final ValueChanged<bool> onCollected;
   final List? urlInfo;
+  final bool isCollected;
   VideoInfoContent(
       {Key? key,
       this.getVideoDetail,
       required this.onChanged,
       required this.urlInfo,
-      required this.onCollected})
+      required this.onCollected,
+      required this.isCollected})
       : super(key: key);
 
   _VideoInfoContentState createState() => _VideoInfoContentState();
@@ -24,7 +26,7 @@ class VideoInfoContent extends StatefulWidget {
 class _VideoInfoContentState extends State<VideoInfoContent> {
   int currentIndex = 0;
   bool _reverse = false;
-  bool isCollected = false;
+
 
   VideoDetail? get getVideoDetail {
     return widget.getVideoDetail;
@@ -105,14 +107,13 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
         GestureDetector(
             onTap: () {
               setState(() {
-                isCollected = !isCollected;
                 widget.onCollected(true);
               });
             },
             child: Icon(
               IconFont.icon_shoucangjia,
               size: UIData.spaceSizeWidth30,
-              color: isCollected
+              color: widget.isCollected
                   ? UIData.collectedBgColor
                   : UIData.primaryColor,
             ))

@@ -56,6 +56,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   List<MyCollectionItem> myCollectionsList = [];
   TextEditingController _userEtController = TextEditingController();
   List<bool> checkBoxStates = [];
+  late int currentSelectCollection;
+  late bool isCollected = false;
 
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
@@ -117,10 +119,16 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   void queryData() async {
     await dbUtil.open();
+    List<Map> collectedDate = await dbUtil.queryListByHelper(
+        'collection_detail',
+        ['id', 'vod_id'],
+        'vod_id=?',
+        [widget.videoDetailPageParams.vodId]);
     List<Map> data = await dbUtil
         .queryList("SELECT * FROM video_play_record ORDER By create_time DESC");
     setState(() {
       videoHistoryList = data.map((i) => VideoHistoryItem.fromJson(i)).toList();
+      isCollected = collectedDate.length > 0;
     });
     await dbUtil.close();
   }
@@ -183,7 +191,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     await dbUtil.open();
     List<Map> data = await dbUtil
         .queryList("SELECT * FROM my_collections ORDER By create_time DESC");
-    print('data-------------: $data');
     setState(() {
       myCollectionsList =
           data.map((i) => MyCollectionItem.fromJson(i)).toList();
@@ -193,7 +200,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   }
 
   void insertCollectionData() async {
-    print('_userEtController.text: ${_userEtController.text}');
     await dbUtil.open();
     List<MyCollectionItem> searchedList = myCollectionsList
         .where((element) => element.collectName == _userEtController.text)
@@ -217,7 +223,23 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     }
     _userEtController.text = '';
     await dbUtil.close();
-    queryData();
+    queryCollectionData();
+  }
+
+  void insertCollectionDetailData() async {
+    await dbUtil.open();
+    Map<String, Object> par = Map<String, Object>();
+    par['create_time'] = StringsHelper.getCurrentTimeMillis();
+    par['collect_id'] = currentSelectCollection;
+    par['vod_id'] = widget.videoDetailPageParams.vodId;
+    par['vod_pic'] = widget.videoDetailPageParams.vodPic;
+    par['vod_name'] = widget.videoDetailPageParams.vodName;
+    await dbUtil.insertByHelper('collection_detail', par);
+    CommonToast.show(context: context, message: "收藏成功");
+    setState(() {
+      isCollected = true;
+    });
+    await dbUtil.close();
   }
 
   Widget _buildVideoPlayer() {
@@ -288,6 +310,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             activeColor: Colors.blue, //选中时的颜色
             onChanged: (value) {
               setState(() {
+                currentSelectCollection = myCollectionsList[index].collectId;
                 initCheckBoxStates(index: index);
               });
             },
@@ -297,96 +320,99 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     );
   }
 
-  Widget _buildBottomSheet(){
-    return  Positioned.fill(
+  Widget _buildBottomSheet() {
+    return Positioned.fill(
         child: Offstage(
-          offstage: !showSheet,
-          child: Container(
-            color: UIData.sheetBgColor,
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            child: Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.4),
-              padding: EdgeInsets.all(UIData.spaceSizeWidth24),
-              decoration: BoxDecoration(
-                color: UIData.sheetContentBgColor,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(UIData.spaceSizeWidth20),
-                    topRight:
-                    Radius.circular(UIData.spaceSizeWidth20)),
-              ),
-              child: Column(
+      offstage: !showSheet,
+      child: Container(
+        color: UIData.sheetBgColor,
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+        child: Container(
+          margin:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.4),
+          padding: EdgeInsets.all(UIData.spaceSizeWidth24),
+          decoration: BoxDecoration(
+            color: UIData.sheetContentBgColor,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(UIData.spaceSizeWidth20),
+                topRight: Radius.circular(UIData.spaceSizeWidth20)),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showSheet = false;
-                            });
-                          },
-                          child: Icon(
-                            IconFont.icon_guanbi,
-                            color: UIData.primaryColor,
-                            size: UIData.spaceSizeWidth20,
-                          )),
-                      GestureDetector(
-                          onTap: () {
-                            CommonDialog.showAlertDialog(
-                              context,
-                              title: '新建收藏夹',
-                              positiveBtnText: '创建',
-                              onConfirm: insertData,
-                              onCancel: () =>
-                              _userEtController.text = '',
-                              content: CreateCollectDialog(
-                                userEtController: _userEtController,
-                                handleClear: () =>
-                                _userEtController.text = '',
-                              ),
-                            );
-                          },
-                          child: Icon(
-                            IconFont.icon_jia,
-                            color: UIData.primaryColor,
-                            size: UIData.spaceSizeWidth20,
-                          )),
-                    ],
-                  ),
-                  SizedBox(height: UIData.spaceSizeHeight24),
-                  myCollectionsList.length == 0
-                      ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
-                      : Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: myCollectionsList.length,
-                      itemBuilder: (context, index) {
-                        return _buildCollectionDetail(index);
-                      },
-                    ),
-                  ),
                   GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight8),
-                      decoration: BoxDecoration(
-                        color: UIData.hoverThemeBgColor,
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(UIData.spaceSizeWidth10)),
-                      ),
-                      child: CommonText.text18('加入收藏夹', color: UIData.blackColor),
-                    ),
-                  )
+                      onTap: () {
+                        setState(() {
+                          showSheet = false;
+                        });
+                      },
+                      child: Icon(
+                        IconFont.icon_guanbi,
+                        color: UIData.primaryColor,
+                        size: UIData.spaceSizeWidth20,
+                      )),
+                  GestureDetector(
+                      onTap: () {
+                        CommonDialog.showAlertDialog(
+                          context,
+                          title: '新建收藏夹',
+                          positiveBtnText: '创建',
+                          onConfirm: insertCollectionData,
+                          onCancel: () => _userEtController.text = '',
+                          content: CreateCollectDialog(
+                            userEtController: _userEtController,
+                            handleClear: () => _userEtController.text = '',
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        IconFont.icon_jia,
+                        color: UIData.primaryColor,
+                        size: UIData.spaceSizeWidth20,
+                      )),
                 ],
               ),
-            ),
+              SizedBox(height: UIData.spaceSizeHeight24),
+              myCollectionsList.length == 0
+                  ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
+                  : Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: myCollectionsList.length,
+                        itemBuilder: (context, index) {
+                          return _buildCollectionDetail(index);
+                        },
+                      ),
+                    ),
+              GestureDetector(
+                onTap: () {
+                  insertCollectionDetailData();
+                  setState(() {
+                    showSheet = false;
+                  });
+                },
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding:
+                      EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight8),
+                  decoration: BoxDecoration(
+                    color: UIData.hoverThemeBgColor,
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(UIData.spaceSizeWidth10)),
+                  ),
+                  child: CommonText.text18('加入收藏夹', color: UIData.blackColor),
+                ),
+              )
+            ],
           ),
-        ));
+        ),
+      ),
+    ));
   }
 
   @override
@@ -410,13 +436,15 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                           child:
                               TabBarView(controller: _tabController, children: [
                         VideoInfoContent(
-                            getVideoDetail: getVideoDetail,
-                            urlInfo: urlInfo,
-                            onChanged: _playWithIndex,
-                            onCollected: (value) => setState(() {
-                                  queryCollectionData();
-                                  showSheet = value;
-                                })),
+                          getVideoDetail: getVideoDetail,
+                          urlInfo: urlInfo,
+                          onChanged: _playWithIndex,
+                          isCollected: isCollected,
+                          onCollected: (value) => setState(() {
+                            queryCollectionData();
+                            showSheet = value;
+                          }),
+                        ),
                         SameTypeVideoContent(getVideoDetail: getVideoDetail),
                       ])),
                     ],

@@ -66,7 +66,6 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     await dbUtil.open();
     List<Map> data = await dbUtil
         .queryList("SELECT * FROM my_collections ORDER By create_time DESC");
-    print('data-------------: $data');
     setState(() {
       myCollectionsList =
           data.map((i) => MyCollectionItem.fromJson(i)).toList();
