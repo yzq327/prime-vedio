@@ -8,12 +8,14 @@ import 'package:primeVedio/utils/ui_data.dart';
 class VideoInfoContent extends StatefulWidget {
   final VideoDetail? getVideoDetail;
   final ValueChanged<int> onChanged;
-  List? urlInfo;
+  final ValueChanged<bool> onCollected;
+  final List? urlInfo;
   VideoInfoContent(
       {Key? key,
       this.getVideoDetail,
       required this.onChanged,
-      required this.urlInfo})
+      required this.urlInfo,
+      required this.onCollected})
       : super(key: key);
 
   _VideoInfoContentState createState() => _VideoInfoContentState();
@@ -22,6 +24,7 @@ class VideoInfoContent extends StatefulWidget {
 class _VideoInfoContentState extends State<VideoInfoContent> {
   int currentIndex = 0;
   bool _reverse = false;
+  bool isCollected = false;
 
   VideoDetail? get getVideoDetail {
     return widget.getVideoDetail;
@@ -40,22 +43,19 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
   Widget _buildSelectVideo() {
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CommonText.mainTitle('选集'),
-              GestureDetector(
-                child: Icon(IconFont.icon_daoxu, color: UIData.primaryColor),
-                onTap: () {
-                  setState(() {
-                    _reverse = !_reverse;
-                  });
-                },
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText.mainTitle('选集'),
+            GestureDetector(
+              child: Icon(IconFont.icon_daoxu, color: UIData.primaryColor),
+              onTap: () {
+                setState(() {
+                  _reverse = !_reverse;
+                });
+              },
+            ),
+          ],
         ),
         SizedBox(height: UIData.spaceSizeHeight18),
         Container(
@@ -97,39 +97,55 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
       ],
     );
   }
+  Widget _buildAddCollection(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CommonText.mainTitle(getVideoDetail!.vodName),
+        GestureDetector(
+            onTap: () {
+              setState(() {
+                isCollected = !isCollected;
+                widget.onCollected(true);
+              });
+            },
+            child: Icon(
+              IconFont.icon_shoucangjia,
+              size: UIData.spaceSizeWidth30,
+              color: isCollected
+                  ? UIData.collectedBgColor
+                  : UIData.primaryColor,
+            ))
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            widget.urlInfo!.length > 0 ? _buildSelectVideo() : Container(),
-            SizedBox(height: UIData.spaceSizeHeight18),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonText.mainTitle('介绍'),
-                  SizedBox(height: UIData.spaceSizeHeight12),
-                  CommonText.normalText('名称：${getVideoDetail!.vodName}'),
-                  CommonText.normalText('导演：${getVideoDetail!.vodDirector}'),
-                  CommonText.normalText('主演：${getVideoDetail!.vodActor}'),
-                  CommonText.normalText('年代：${getVideoDetail!.vodYear}'),
-                  CommonText.normalText('语言：${getVideoDetail!.vodLang}'),
-                  CommonText.normalText('介绍：${getVideoDetail!.vodContent}',
-                      overflow: TextOverflow.visible,
-                      textAlign: TextAlign.left),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth20),
+      child: ListView(
+        children: [
+          _buildAddCollection(),
+          SizedBox(height: UIData.spaceSizeHeight18),
+          widget.urlInfo!.length > 0 ? _buildSelectVideo() : Container(),
+          SizedBox(height: UIData.spaceSizeHeight18),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CommonText.mainTitle('介绍'),
+              SizedBox(height: UIData.spaceSizeHeight12),
+              CommonText.normalText('导演：${getVideoDetail!.vodDirector}'),
+              CommonText.normalText('主演：${getVideoDetail!.vodActor}'),
+              CommonText.normalText('年代：${getVideoDetail!.vodYear}'),
+              CommonText.normalText('语言：${getVideoDetail!.vodLang}'),
+              CommonText.normalText('介绍：${getVideoDetail!.vodContent}',
+                  overflow: TextOverflow.visible,
+                  textAlign: TextAlign.left),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -44,6 +44,9 @@ class UIData {
   static const inputBgColor =  const Color(0xFFEDEDED);
   static const successBgColor =  const Color(0xFF39A644);
   static const failBgColor =  const Color(0xFFCB3A4C);
+  static const collectedBgColor =  const Color(0xFFFF9315);
+  static const sheetBgColor = const Color.fromRGBO(255, 255, 255, 0.3);
+  static const sheetContentBgColor = const Color(0xFF242424);
 
 
 

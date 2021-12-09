@@ -75,7 +75,6 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     await dbUtil.close();
   }
 
-  //  List<MyCollectionItem> myCollectionsList = [];
   void insertData() async {
     print('_userEtController.text: ${_userEtController.text}');
     await dbUtil.open();

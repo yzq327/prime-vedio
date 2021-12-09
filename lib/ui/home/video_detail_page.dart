@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
+import 'package:primeVedio/commom/common_removableItem.dart';
+import 'package:primeVedio/commom/common_toast.dart';
 import 'package:primeVedio/commom/coomom_video_player.dart';
 import 'package:primeVedio/http/http_options.dart';
 import 'package:primeVedio/http/http_util.dart';
@@ -11,7 +15,9 @@ import 'package:primeVedio/table/table_init.dart';
 import 'package:primeVedio/ui/home/same_type_video_content.dart';
 import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
+import 'package:primeVedio/ui/mine/mine_page/create_collect_dialog.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
+import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
@@ -22,7 +28,10 @@ class VideoDetailPageParams {
   final int watchedDuration;
 
   VideoDetailPageParams(
-      {required this.vodId, this.vodName = '', this.vodPic = '', this.watchedDuration = 0});
+      {required this.vodId,
+      this.vodName = '',
+      this.vodPic = '',
+      this.watchedDuration = 0});
 }
 
 class VideoDetailPage extends StatefulWidget {
@@ -43,6 +52,10 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   late DBUtil dbUtil;
   String currentEpo = '';
   late StoreDuration durations;
+  bool showSheet = false;
+  List<MyCollectionItem> myCollectionsList = [];
+  TextEditingController _userEtController = TextEditingController();
+  List<bool> checkBoxStates = [];
 
   bool get _isFullScreen =>
       MediaQuery.of(context).orientation == Orientation.landscape;
@@ -90,6 +103,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     _tabController = TabController(length: 2, vsync: this);
     _getVideoDetailList();
     initDB();
+    _userEtController.addListener(() {
+      setState(() {});
+    });
   }
 
   void initDB() async {
@@ -101,8 +117,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   void queryData() async {
     await dbUtil.open();
-    List<Map> data = await dbUtil.queryList(
-        "SELECT * FROM video_play_record ORDER By create_time DESC");
+    List<Map> data = await dbUtil
+        .queryList("SELECT * FROM video_play_record ORDER By create_time DESC");
     setState(() {
       videoHistoryList = data.map((i) => VideoHistoryItem.fromJson(i)).toList();
     });
@@ -124,12 +140,12 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             item.totalDuration,
             widget.videoDetailPageParams.vodId
           ]);
-    } else if (item.currentPosition > 0){
+    } else if (item.currentPosition > 0) {
       Map<String, Object> par = Map<String, Object>();
       par['create_time'] = StringsHelper.getCurrentTimeMillis();
-      par['vod_id'] =  widget.videoDetailPageParams.vodId;
+      par['vod_id'] = widget.videoDetailPageParams.vodId;
       par['vod_name'] = widget.videoDetailPageParams.vodName;
-      par['vod_pic'] =  widget.videoDetailPageParams.vodPic;
+      par['vod_pic'] = widget.videoDetailPageParams.vodPic;
       par['vod_epo'] = currentEpo;
       par['total'] = item.totalDuration.toString();
       par['watched_duration'] = item.currentPosition;
@@ -143,11 +159,65 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   void dispose() {
     _tabController!.dispose();
     insertData(durations);
+    _userEtController.dispose();
     super.dispose();
   }
 
   void setDurations(StoreDuration item) {
     durations = item;
+  }
+
+  void initCheckBoxStates({int? index}) {
+    checkBoxStates.clear();
+    for (int i = 0; i < myCollectionsList.length; i++) {
+      if (index == i) {
+        checkBoxStates.add(true);
+      } else {
+        checkBoxStates.add(false);
+      }
+    }
+    setState(() {});
+  }
+
+  queryCollectionData() async {
+    await dbUtil.open();
+    List<Map> data = await dbUtil
+        .queryList("SELECT * FROM my_collections ORDER By create_time DESC");
+    print('data-------------: $data');
+    setState(() {
+      myCollectionsList =
+          data.map((i) => MyCollectionItem.fromJson(i)).toList();
+    });
+    initCheckBoxStates();
+    await dbUtil.close();
+  }
+
+  void insertCollectionData() async {
+    print('_userEtController.text: ${_userEtController.text}');
+    await dbUtil.open();
+    List<MyCollectionItem> searchedList = myCollectionsList
+        .where((element) => element.collectName == _userEtController.text)
+        .toList();
+    if (searchedList.length > 0) {
+      await dbUtil.update(
+          'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
+          [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
+      CommonToast.show(
+          context: context,
+          message: "创建失败，文件夹名已存在",
+          color: UIData.failBgColor,
+          icon: IconFont.icon_shibai);
+    } else {
+      Map<String, Object> par = Map<String, Object>();
+      par['create_time'] = StringsHelper.getCurrentTimeMillis();
+      par['collect_name'] = _userEtController.text;
+      par['img'] = UIData.collectionDefaultImg;
+      await dbUtil.insertByHelper('my_collections', par);
+      CommonToast.show(context: context, message: "创建成功");
+    }
+    _userEtController.text = '';
+    await dbUtil.close();
+    queryData();
   }
 
   Widget _buildVideoPlayer() {
@@ -168,7 +238,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             controller: _tabController,
             labelStyle: TextStyle(fontSize: UIData.fontSize20),
             padding: EdgeInsets.only(
-              top: UIData.spaceSizeHeight16,
+              bottom: UIData.spaceSizeHeight16,
               left: UIData.spaceSizeWidth50,
             ),
             unselectedLabelStyle: TextStyle(fontSize: UIData.fontSize20),
@@ -183,6 +253,142 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           );
   }
 
+  Widget _buildCollectionDetail(int index) {
+    return Container(
+      color: Colors.transparent,
+      width: double.infinity,
+      height: UIData.spaceSizeHeight80,
+      margin: EdgeInsets.only(
+        bottom: UIData.spaceSizeWidth10,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+              height: UIData.spaceSizeHeight80,
+              width: UIData.spaceSizeWidth100,
+              child: Image.asset(
+                myCollectionsList[index].img,
+                fit: BoxFit.fitWidth,
+                width: double.infinity,
+              )),
+          SizedBox(width: UIData.spaceSizeWidth16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CommonText.text18(myCollectionsList[index].collectName),
+                CommonText.text18("共 x 部", color: UIData.subTextColor),
+              ],
+            ),
+          ),
+          Checkbox(
+            value: checkBoxStates.length > 0 ? checkBoxStates[index] : false,
+            activeColor: Colors.blue, //选中时的颜色
+            onChanged: (value) {
+              setState(() {
+                initCheckBoxStates(index: index);
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomSheet(){
+    return  Positioned.fill(
+        child: Offstage(
+          offstage: !showSheet,
+          child: Container(
+            color: UIData.sheetBgColor,
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.4),
+              padding: EdgeInsets.all(UIData.spaceSizeWidth24),
+              decoration: BoxDecoration(
+                color: UIData.sheetContentBgColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(UIData.spaceSizeWidth20),
+                    topRight:
+                    Radius.circular(UIData.spaceSizeWidth20)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showSheet = false;
+                            });
+                          },
+                          child: Icon(
+                            IconFont.icon_guanbi,
+                            color: UIData.primaryColor,
+                            size: UIData.spaceSizeWidth20,
+                          )),
+                      GestureDetector(
+                          onTap: () {
+                            CommonDialog.showAlertDialog(
+                              context,
+                              title: '新建收藏夹',
+                              positiveBtnText: '创建',
+                              onConfirm: insertData,
+                              onCancel: () =>
+                              _userEtController.text = '',
+                              content: CreateCollectDialog(
+                                userEtController: _userEtController,
+                                handleClear: () =>
+                                _userEtController.text = '',
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            IconFont.icon_jia,
+                            color: UIData.primaryColor,
+                            size: UIData.spaceSizeWidth20,
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: UIData.spaceSizeHeight24),
+                  myCollectionsList.length == 0
+                      ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
+                      : Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: myCollectionsList.length,
+                      itemBuilder: (context, index) {
+                        return _buildCollectionDetail(index);
+                      },
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: UIData.spaceSizeHeight8),
+                      decoration: BoxDecoration(
+                        color: UIData.hoverThemeBgColor,
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(UIData.spaceSizeWidth10)),
+                      ),
+                      child: CommonText.text18('加入收藏夹', color: UIData.blackColor),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,19 +400,28 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             preferredSize: Size.fromHeight(0)),
         body: getVideoDetail == null
             ? CommonHintTextContain(text: '数据加载中...')
-            : Column(
+            : Stack(
                 children: [
-                  _buildVideoPlayer(),
-                  _buildVideoTabBar(),
-                  Expanded(
-                      child: TabBarView(controller: _tabController, children: [
-                    VideoInfoContent(
-                      getVideoDetail: getVideoDetail,
-                      urlInfo: urlInfo,
-                      onChanged: _playWithIndex,
-                    ),
-                    SameTypeVideoContent(getVideoDetail: getVideoDetail),
-                  ])),
+                  Column(
+                    children: [
+                      _buildVideoPlayer(),
+                      _buildVideoTabBar(),
+                      Expanded(
+                          child:
+                              TabBarView(controller: _tabController, children: [
+                        VideoInfoContent(
+                            getVideoDetail: getVideoDetail,
+                            urlInfo: urlInfo,
+                            onChanged: _playWithIndex,
+                            onCollected: (value) => setState(() {
+                                  queryCollectionData();
+                                  showSheet = value;
+                                })),
+                        SameTypeVideoContent(getVideoDetail: getVideoDetail),
+                      ])),
+                    ],
+                  ),
+                  _buildBottomSheet(),
                 ],
               ));
   }
