@@ -29,6 +29,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   late DBUtil dbUtil;
   List<MyCollectionItem> myCollectionsList = [];
   static List<GlobalKey<CommonRemovableItemState>> childItemStates = [];
+  List<int> collectedVideoNumbers = [];
   TextEditingController _userEtController = TextEditingController();
   @override
   void initState() {
@@ -55,6 +56,18 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     setState(() {});
   }
 
+  void initVideoNumbers() async {
+    await dbUtil.open();
+    collectedVideoNumbers.clear();
+    for (int i = 0; i < myCollectionsList.length; i++) {
+      var allData = await dbUtil.queryList(
+          "SELECT count(vod_id) as count FROM collection_detail where collect_id = ${myCollectionsList[i].collectId}");
+      collectedVideoNumbers.add(allData[0]['count']);
+    }
+    setState(() {});
+    await dbUtil.close();
+  }
+
   void initDB() async {
     TablesInit tables = TablesInit();
     tables.init();
@@ -70,36 +83,44 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
       myCollectionsList =
           data.map((i) => MyCollectionItem.fromJson(i)).toList();
     });
+    initVideoNumbers();
     initChildItemStates();
     await dbUtil.close();
   }
 
   void insertData() async {
-    print('_userEtController.text: ${_userEtController.text}');
-    await dbUtil.open();
-    List<MyCollectionItem> searchedList = myCollectionsList
-        .where((element) => element.collectName == _userEtController.text)
-        .toList();
-    if (searchedList.length > 0) {
-      await dbUtil.update(
-          'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
-          [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
+    if(_userEtController.text.trim() == '') {
       CommonToast.show(
           context: context,
-          message: "创建失败，文件夹名已存在",
+          message: "创建失败，不能输入空的文件夹名",
           color: UIData.failBgColor,
           icon: IconFont.icon_shibai);
     } else {
-      Map<String, Object> par = Map<String, Object>();
-      par['create_time'] = StringsHelper.getCurrentTimeMillis();
-      par['collect_name'] = _userEtController.text;
-      par['img'] = UIData.collectionDefaultImg;
-      await dbUtil.insertByHelper('my_collections', par);
-      CommonToast.show(context: context, message: "创建成功");
+      await dbUtil.open();
+      List<MyCollectionItem> searchedList = myCollectionsList
+          .where((element) => element.collectName == _userEtController.text)
+          .toList();
+      if (searchedList.length > 0) {
+        await dbUtil.update(
+            'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
+            [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
+        CommonToast.show(
+            context: context,
+            message: "创建失败，文件夹名已存在",
+            color: UIData.failBgColor,
+            icon: IconFont.icon_shibai);
+      } else {
+        Map<String, Object> par = Map<String, Object>();
+        par['create_time'] = StringsHelper.getCurrentTimeMillis();
+        par['collect_name'] = _userEtController.text;
+        par['img'] = UIData.collectionDefaultImg;
+        await dbUtil.insertByHelper('my_collections', par);
+        CommonToast.show(context: context, message: "创建成功");
+      }
+      _userEtController.text = '';
+      await dbUtil.close();
+      queryData();
     }
-    _userEtController.text = '';
-    await dbUtil.close();
-    queryData();
   }
 
   void delete(int collectId) async {
@@ -182,7 +203,8 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonText.text18(myCollectionsList[index].collectName),
-                  CommonText.text18("共 x 部", color: UIData.subTextColor),
+                  CommonText.text18("共 ${collectedVideoNumbers[index]} 部",
+                      color: UIData.subTextColor),
                 ],
               ),
             ),
