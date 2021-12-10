@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/models/video_detail_list_model.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'package:rive/rive.dart';
 
 class VideoInfoContent extends StatefulWidget {
   final VideoDetail? getVideoDetail;
@@ -26,19 +28,65 @@ class VideoInfoContent extends StatefulWidget {
 class _VideoInfoContentState extends State<VideoInfoContent> {
   int currentIndex = 0;
   bool _reverse = false;
-
-
+  RiveAnimationController? _controller1;
+  RiveAnimationController? _controller2;
+  Artboard? _artboard;
   VideoDetail? get getVideoDetail {
     return widget.getVideoDetail;
   }
 
+  void _togglePlay() {
+    setState(() {
+      if (widget.isCollected) {
+        doSelect();
+      } else {
+        doUnSelect();
+      }
+    });
+  }
+
+  void doSelect() {
+    if (_controller1 != null) {
+      _artboard?.removeController(_controller1!);
+    }
+    _controller1 = SimpleAnimation('selected');
+    _artboard?.addController(_controller1!);
+  }
+
+  void doUnSelect() {
+    if (_controller2 != null) {
+      _artboard?.removeController(_controller2!);
+    }
+    _controller2 = SimpleAnimation('unselected');
+    _artboard?.addController(_controller2!);
+  }
+
   @override
   void initState() {
+    rootBundle.load('assets/riv/collect.riv').then((data) {
+      final file = RiveFile.import(data);
+      final artboard = file.mainArtboard;
+      artboard.addController(SimpleAnimation(
+          widget.isCollected ? 'idle_selected' : 'idle_unselected'));
+      setState(() {
+        _artboard = artboard;
+      });
+    });
     super.initState();
   }
 
   @override
+  void didUpdateWidget(covariant VideoInfoContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isCollected != oldWidget.isCollected) {
+      _togglePlay();
+    }
+  }
+
+  @override
   void dispose() {
+    _controller1?.dispose();
+    _controller2?.dispose();
     super.dispose();
   }
 
@@ -99,24 +147,21 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
       ],
     );
   }
-  Widget _buildAddCollection(){
+
+  Widget _buildAddCollection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CommonText.mainTitle(getVideoDetail!.vodName),
         GestureDetector(
-            onTap: () {
-              setState(() {
-                widget.onCollected(!widget.isCollected);
-              });
-            },
-            child: Icon(
-              IconFont.icon_shoucangjia,
-              size: UIData.spaceSizeWidth30,
-              color: widget.isCollected
-                  ? UIData.collectedBgColor
-                  : UIData.primaryColor,
-            ))
+          onTap: () => widget.onCollected(!widget.isCollected),
+          child: Container(
+            width: UIData.spaceSizeWidth36,
+            height: UIData.spaceSizeWidth36,
+            child: _artboard != null ? Rive(artboard: _artboard!) : Container(),
+          ),
+        ),
+        // ),
       ],
     );
   }
@@ -141,8 +186,7 @@ class _VideoInfoContentState extends State<VideoInfoContent> {
               CommonText.normalText('年代：${getVideoDetail!.vodYear}'),
               CommonText.normalText('语言：${getVideoDetail!.vodLang}'),
               CommonText.normalText('介绍：${getVideoDetail!.vodContent}',
-                  overflow: TextOverflow.visible,
-                  textAlign: TextAlign.left),
+                  overflow: TextOverflow.visible, textAlign: TextAlign.left),
             ],
           ),
         ],

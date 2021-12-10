@@ -165,11 +165,12 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     return CommonRemovableItem(
       moveItemKey: childItemStates[index],
       onActionDown: () => closeItems(childItemStates, index),
-      onNavigator: () {
-        Navigator.pushNamed(context, Routes.mineCollectionDetail,
+      onNavigator: () async {
+        await Navigator.pushNamed(context, Routes.mineCollectionDetail,
             arguments: CollectionDetailPageParams(
                 collectName: myCollectionsList[index].collectName,
                 collectId: myCollectionsList[index].collectId));
+        queryData();
       },
       onDelete: () {
         CommonDialog.showAlertDialog(context,
