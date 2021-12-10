@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:primeVedio/commom/commom_image.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
@@ -89,7 +90,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   }
 
   void insertData() async {
-    if(_userEtController.text.trim() == '') {
+    if (_userEtController.text.trim() == '') {
       CommonToast.show(
           context: context,
           message: "创建失败，不能输入空的文件夹名",
@@ -191,11 +192,17 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
             Container(
                 height: UIData.spaceSizeHeight80,
                 width: UIData.spaceSizeWidth100,
-                child: Image.asset(
-                  myCollectionsList[index].img,
-                  fit: BoxFit.fitWidth,
-                  width: double.infinity,
-                )),
+                child: myCollectionsList[index].img.startsWith('http')
+                    ? ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(UIData.spaceSizeWidth12),
+                        child: CommonImg(vodPic: myCollectionsList[index].img),
+                      )
+                    : Image.asset(
+                        myCollectionsList[index].img,
+                        fit: BoxFit.fitWidth,
+                        width: double.infinity,
+                      )),
             SizedBox(width: UIData.spaceSizeWidth16),
             Expanded(
               child: Column(
