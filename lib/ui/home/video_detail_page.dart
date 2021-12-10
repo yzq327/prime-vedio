@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:primeVedio/commom/commom_image.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_dialog.dart';
 import 'package:primeVedio/commom/common_hint_text_contain.dart';
@@ -267,6 +268,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     CommonToast.show(context: context, message: "取消收藏成功");
     setState(() {
       isCollected = false;
+      currentSelectCollection = 0;
     });
     await dbUtil.close();
   }
@@ -332,7 +334,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           Container(
               height: UIData.spaceSizeHeight80,
               width: UIData.spaceSizeWidth100,
-              child: Image.asset(
+              child: myCollectionsList[index].img.startsWith('http')
+                  ? ClipRRect(
+                borderRadius:
+                BorderRadius.circular(UIData.spaceSizeWidth12),
+                child: CommonImg(vodPic: myCollectionsList[index].img),
+              )
+                  : Image.asset(
                 myCollectionsList[index].img,
                 fit: BoxFit.fitWidth,
                 width: double.infinity,
@@ -351,7 +359,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
           GestureDetector(
             onTap: () {
               setState(() {
-                currentSelectCollection = myCollectionsList[index].collectId;
+                currentSelectCollection = checkBoxStates[index]? 0: myCollectionsList[index].collectId;
                 initCheckBoxStates(index: index, value: !checkBoxStates[index]);
               });
             },
