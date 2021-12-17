@@ -174,6 +174,9 @@ class _MinePageState extends State<MinePage> {
   Widget _buildAboutVideo() {
     return Column(
       children: [
+        _buildCommonRow(IconFont.icon_huodong, '最新活动', () {
+          Navigator.pushNamed(context, Routes.mineNewActivities);
+        }),
         _buildCommonRow(IconFont.icon_guanyuwomen, '关于我们', () {
           Navigator.pushNamed(context, Routes.mineAboutUs);
         }),

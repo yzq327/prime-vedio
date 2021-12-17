@@ -5,6 +5,7 @@ import 'package:primeVedio/ui/mine/mine_page/about_us_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/collection_detail_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/mine_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/my_collection_page.dart';
+import 'package:primeVedio/ui/mine/mine_page/new_activities.dart';
 import 'package:primeVedio/ui/mine/mine_page/vedio_history_page.dart';
 import 'package:primeVedio/ui/search/search_page.dart';
 import 'package:primeVedio/ui/search/search_result_page.dart';
@@ -28,6 +29,7 @@ class Routes {
   static final String mineCollection = '/mine/collection';
   static final String mineAboutUs = '/mine/about';
   static final String mineCollectionDetail = '/mine/Collection/detail';
+  static final String mineNewActivities = '/mine/activities';
 
 }
 
@@ -44,4 +46,5 @@ var routePath = {
   Routes.mineCollection: (BuildContext context) => MyCollectionPage(),
   Routes.mineAboutUs: (BuildContext context) => AboutUsPage(),
   Routes.mineCollectionDetail: (BuildContext context) => CollectionDetailPage(collectionDetailPageParams: NavigateOption.getParams(context)),
+  Routes.mineNewActivities: (BuildContext context) => NewActivities(),
 };
