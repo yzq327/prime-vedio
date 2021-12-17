@@ -47,6 +47,7 @@ class UIData {
   static const collectedBgColor =  const Color(0xFFFF9315);
   static const sheetBgColor = const Color.fromRGBO(255, 255, 255, 0.3);
   static const sheetContentBgColor = const Color(0xFF242424);
+  static const webTextColor = const Color(0xFFDDDDDD);
 
 
 
@@ -105,6 +106,7 @@ class UIData {
   static double spaceSizeWidth50 = ScreenUtil().setWidth(50);
   static double spaceSizeWidth56 = ScreenUtil().setWidth(56);
   static double spaceSizeWidth60 = ScreenUtil().setWidth(60);
+  static double spaceSizeWidth64 = ScreenUtil().setWidth(64);
   static double spaceSizeWidth70 = ScreenUtil().setWidth(70);
   static double spaceSizeWidth80 = ScreenUtil().setWidth(80);
   static double spaceSizeWidth88 = ScreenUtil().setWidth(88);

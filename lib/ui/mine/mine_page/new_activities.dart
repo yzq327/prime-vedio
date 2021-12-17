@@ -1,8 +1,10 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -14,10 +16,12 @@ class NewActivities extends StatefulWidget {
 }
 
 class NewActivitiesState extends State<NewActivities> {
+  bool showOperations = false;
+  String webUrl = 'https://www.baidu.com/';
+
   @override
   void initState() {
     super.initState();
-    // Enable virtual display.
     if (Platform.isAndroid) WebView.platform = AndroidWebView();
   }
 
@@ -25,7 +29,109 @@ class NewActivitiesState extends State<NewActivities> {
     return CommonPageHeader(
       pageTitle: '百度一下，你就知道',
       rightIcon: IconFont.icon_gengduo,
-      onRightTop: () {},
+      onRightTop: () => setState(() {
+        showOperations = !showOperations;
+      }),
+    );
+  }
+
+  Widget _buildOperateInfo(
+      GestureTapCallback onTap, IconData icon, String iconName) {
+    return SizedBox(
+      width: UIData.spaceSizeWidth64,
+      child: Column(
+        children: [
+          GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: EdgeInsets.all(UIData.spaceSizeWidth12),
+                decoration: BoxDecoration(
+                  color: UIData.blackColor,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(UIData.spaceSizeWidth4),
+                      topRight: Radius.circular(UIData.spaceSizeWidth4)),
+                ),
+                child: Icon(
+                  icon,
+                  color: UIData.primaryColor,
+                  size: UIData.spaceSizeWidth40,
+                ),
+              )),
+          SizedBox(height: UIData.spaceSizeHeight6),
+          CommonText.text12(iconName,
+              color: UIData.webTextColor, overflow: TextOverflow.visible),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageOperation() {
+    return Positioned(
+        top: MediaQuery.of(context).size.height * 0.6,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: Offstage(
+          offstage: !showOperations,
+          child: Container(
+            padding: EdgeInsets.all(UIData.spaceSizeWidth16),
+            decoration: BoxDecoration(
+              color: UIData.sheetContentBgColor,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(UIData.spaceSizeWidth20),
+                  topRight: Radius.circular(UIData.spaceSizeWidth20)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                    onTap: () => setState(() {
+                          showOperations = false;
+                        }),
+                    child: Icon(
+                      IconFont.icon_guanbi,
+                      color: UIData.primaryColor,
+                      size: UIData.spaceSizeWidth20,
+                    )),
+                SizedBox(height: UIData.spaceSizeHeight8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CommonText.text14('该网页由 $webUrl 提供',
+                        color: UIData.webTextColor),
+                  ],
+                ),
+                SizedBox(height: UIData.spaceSizeHeight24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildOperateInfo(() {}, IconFont.icon_icon_refresh, '刷新'),
+                    _buildOperateInfo(
+                        () {}, IconFont.icon_lianjiewangzhiwangzhan, '复制链接'),
+                    _buildOperateInfo(() {}, IconFont.icon_browser, '在默认浏览器打开'),
+                    _buildOperateInfo(
+                        () {}, IconFont.icon_fenxiangfangshi, '分享'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+
+  Widget _buildPageContent() {
+    return Expanded(
+      child: Stack(
+        children: [
+          WebView(
+            initialUrl: webUrl,
+            //JS执行模式 是否允许JS执行
+            javascriptMode: JavascriptMode.unrestricted,
+          ),
+          _buildPageOperation(),
+        ],
+      ),
     );
   }
 
@@ -43,13 +149,7 @@ class NewActivitiesState extends State<NewActivities> {
       body: Column(
         children: [
           _buildPageHeader(),
-          Expanded(
-            child: WebView(
-              initialUrl: 'https://www.baidu.com/',
-              //JS执行模式 是否允许JS执行
-              javascriptMode: JavascriptMode.unrestricted,
-            ),
-          ),
+          _buildPageContent(),
         ],
       ),
     );
