@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -141,6 +140,7 @@ class NewActivitiesState extends State<NewActivities> {
               sliderValue = onProgressParam / 100;
             }),
           ),
+          _buildSlider(),
           _buildPageOperation(),
         ],
       ),
@@ -148,21 +148,28 @@ class NewActivitiesState extends State<NewActivities> {
   }
 
   Widget _buildSlider() {
-    return Container(
-      height: UIData.spaceSizeHeight1,
-      width: double.infinity,
-      color: UIData.themeBgColor,
-      child: isWebLoading ? CommonBasicSlider(
-        currentValue: sliderValue,
-        activeColor: UIData.webSliderColor,
-        inactiveColor: UIData.themeBgColor,
-        quarterTurns: 4,
-        enabledThumbRadius: 1,
-        overlayRadius: 1,
-        trackHeight: 1,
-        onChange: (double value) {},
-      ) : SizedBox(),
-      // SizedBox())
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: MediaQuery.of(context).size.height -  UIData.spaceSizeHeight50,
+      child: Container(
+        height: UIData.spaceSizeHeight1,
+        width: double.infinity,
+        color: UIData.themeBgColor,
+        child: isWebLoading
+            ? CommonBasicSlider(
+                currentValue: sliderValue,
+                activeColor: UIData.webSliderColor,
+                inactiveColor: UIData.themeBgColor,
+                quarterTurns: 4,
+                enabledThumbRadius: 1,
+                overlayRadius: 1,
+                trackHeight: 1,
+                onChange: (double value) {},
+              )
+            : SizedBox(),
+      ),
     );
   }
 
@@ -180,7 +187,6 @@ class NewActivitiesState extends State<NewActivities> {
       body: Column(
         children: [
           _buildPageHeader(),
-          _buildSlider(),
           _buildPageContent(),
         ],
       ),
