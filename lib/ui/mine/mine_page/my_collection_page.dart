@@ -127,6 +127,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   void delete(int collectId) async {
     await dbUtil.open();
     dbUtil.delete('DELETE FROM my_collections WHERE id = ?', [collectId]);
+    await dbUtil.delete('DELETE FROM collection_detail WHERE collect_id = ?', [collectId]);
     CommonToast.show(context: context, message: "删除成功");
     queryData();
     await dbUtil.close();
@@ -211,7 +212,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonText.text18(myCollectionsList[index].collectName),
-                  CommonText.text18("共 ${collectedVideoNumbers[index]} 部",
+                  CommonText.text18("共 ${collectedVideoNumbers.length > 0 ? collectedVideoNumbers[index]: 0} 部",
                       color: UIData.subTextColor),
                 ],
               ),
@@ -225,7 +226,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
 
   Widget _buildCollections() {
     return myCollectionsList.length == 0
-        ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
+        ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧', height: UIData.spaceSizeHeight340,)
         : Expanded(
             child: ListView.builder(
               padding: EdgeInsets.zero,

@@ -166,8 +166,8 @@ class UIData {
   static double spaceSizeHeight228 = ScreenUtil().setHeight(228);
   static double spaceSizeHeight240 = ScreenUtil().setHeight(240);
   static double spaceSizeHeight264 = ScreenUtil().setHeight(264);
-
   static double spaceSizeHeight300 = ScreenUtil().setHeight(300);
+  static double spaceSizeHeight340 = ScreenUtil().setHeight(340);
   static double spaceSizeHeight400 = ScreenUtil().setHeight(400);
   static double spaceSizeHeight580 = ScreenUtil().setHeight(580);
   static double spaceSizeHeight700 = ScreenUtil().setHeight(700);

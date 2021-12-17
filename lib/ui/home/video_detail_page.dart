@@ -199,8 +199,18 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   queryCollectionData() async {
     await dbUtil.open();
-    List<Map> data = await dbUtil
+    List<Map> data;
+    data = await dbUtil
         .queryList("SELECT * FROM my_collections ORDER By create_time DESC");
+    if(data.isEmpty) {
+      Map<String, Object> par = Map<String, Object>();
+      par['create_time'] = StringsHelper.getCurrentTimeMillis();
+      par['collect_name'] = '默认收藏夹';
+      par['img'] = UIData.collectionDefaultImg;
+      await dbUtil.insertByHelper('my_collections', par);
+      data = await dbUtil
+          .queryList("SELECT * FROM my_collections ORDER By create_time DESC");
+    }
     setState(() {
       myCollectionsList =
           data.map((i) => MyCollectionItem.fromJson(i)).toList();
@@ -352,7 +362,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CommonText.text18(myCollectionsList[index].collectName),
-                CommonText.text18("共 ${collectedVideoNumbers[index]} 部", color: UIData.subTextColor),
+                CommonText.text18("共 ${collectedVideoNumbers.length > 0 ? collectedVideoNumbers[index] : 0} 部", color: UIData.subTextColor),
               ],
             ),
           ),
@@ -448,18 +458,16 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                 ],
               ),
               SizedBox(height: UIData.spaceSizeHeight24),
-              myCollectionsList.length == 0
-                  ? CommonHintTextContain(text: '暂无收藏夹哦，创建一个吧')
-                  : Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: myCollectionsList.length,
-                        itemBuilder: (context, index) {
-                          return _buildCollectionDetail(index);
-                        },
-                      ),
-                    ),
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  itemCount: myCollectionsList.length,
+                  itemBuilder: (context, index) {
+                    return _buildCollectionDetail(index);
+                  },
+                ),
+              ),
               GestureDetector(
                 onTap: () {
                   if (currentSelectCollection == 0) {

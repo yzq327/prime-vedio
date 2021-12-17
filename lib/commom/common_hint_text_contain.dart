@@ -6,14 +6,15 @@ import 'commom_text.dart';
 
 class CommonHintTextContain extends StatelessWidget{
   final String? text;
+  final double? height;
 
-  CommonHintTextContain({this.text = '暂无数据'});
+  CommonHintTextContain({this.text = '暂无数据', this.height});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: UIData.themeBgColor,
-      height: UIData.spaceSizeHeight580,
+      height: height ?? UIData.spaceSizeHeight580,
       alignment: Alignment.center,
       child: CommonText.mainTitle(text,
           color: UIData.hoverThemeBgColor, overflow: TextOverflow.visible),
