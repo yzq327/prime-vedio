@@ -7,8 +7,23 @@ import 'commom_slider.dart';
 class CommonBasicSlider extends StatefulWidget {
   final double currentValue;
   final ValueChanged<double> onChange;
+  final Color? activeColor;
+  final Color? inactiveColor;
+  final double overlayRadius;
+  final double enabledThumbRadius;
+  final double trackHeight;
+  final int quarterTurns;
 
-  CommonBasicSlider({Key? key, required this.currentValue, required this.onChange})
+  CommonBasicSlider(
+      {Key? key,
+      required this.currentValue,
+      required this.onChange,
+      this.activeColor,
+      this.inactiveColor,
+      this.overlayRadius = 4,
+      this.enabledThumbRadius = 4,
+      this.trackHeight = 4,
+      this.quarterTurns = 3})
       : super(key: key);
 
   _CommonBasicSliderState createState() => _CommonBasicSliderState();
@@ -36,27 +51,24 @@ class _CommonBasicSliderState extends State<CommonBasicSlider> {
   @override
   Widget build(BuildContext context) {
     return RotatedBox(
-        quarterTurns: 3,
-        child: SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            trackHeight: UIData.spaceSizeHeight4,
-            trackShape:
-            FullWidthTrackShape(), // 轨道形状，可以自定义
-            thumbShape: RoundSliderThumbShape(
-                enabledThumbRadius:
-                UIData.spaceSizeWidth4),
-            overlayShape: RoundSliderOverlayShape(
-              overlayRadius: UIData.spaceSizeWidth4,
-            ),
-          ),
-          child: Slider(
-            value: widget.currentValue,
-            activeColor: UIData.primaryColor,
-            inactiveColor: UIData.videoStateDefaultColor,
-            onChanged: widget.onChange,
+      quarterTurns: widget.quarterTurns,
+      child: SliderTheme(
+        data: SliderTheme.of(context).copyWith(
+          trackHeight: widget.trackHeight,
+          trackShape: FullWidthTrackShape(), // 轨道形状，可以自定义
+          thumbShape: RoundSliderThumbShape(
+              enabledThumbRadius: widget.enabledThumbRadius),
+          overlayShape: RoundSliderOverlayShape(
+            overlayRadius: widget.overlayRadius,
           ),
         ),
-      );
-
+        child: Slider(
+          value: widget.currentValue,
+          activeColor: widget.activeColor ?? UIData.primaryColor,
+          inactiveColor: widget.inactiveColor ?? UIData.videoStateDefaultColor,
+          onChanged: widget.onChange,
+        ),
+      ),
+    );
   }
 }

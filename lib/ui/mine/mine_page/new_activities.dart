@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
+import 'package:primeVedio/commom/common_basic_slider.dart';
 import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -18,6 +19,8 @@ class NewActivities extends StatefulWidget {
 class NewActivitiesState extends State<NewActivities> {
   bool showOperations = false;
   String webUrl = 'https://www.baidu.com/';
+  bool isWebLoading = false;
+  double sliderValue = 0.0;
 
   @override
   void initState() {
@@ -27,7 +30,7 @@ class NewActivitiesState extends State<NewActivities> {
 
   Widget _buildPageHeader() {
     return CommonPageHeader(
-      pageTitle: '百度一下，你就知道',
+      pageTitle: isWebLoading ? '加载中...' : '百度一下，你就知道',
       rightIcon: IconFont.icon_gengduo,
       onRightTop: () => setState(() {
         showOperations = !showOperations;
@@ -128,10 +131,38 @@ class NewActivitiesState extends State<NewActivities> {
             initialUrl: webUrl,
             //JS执行模式 是否允许JS执行
             javascriptMode: JavascriptMode.unrestricted,
+            onPageStarted: (webUrl) => setState(() {
+              isWebLoading = true;
+            }),
+            onPageFinished: (webUrl) => setState(() {
+              isWebLoading = false;
+            }),
+            onProgress: (onProgressParam) => setState(() {
+              sliderValue = onProgressParam / 100;
+            }),
           ),
           _buildPageOperation(),
         ],
       ),
+    );
+  }
+
+  Widget _buildSlider() {
+    return Container(
+      height: UIData.spaceSizeHeight1,
+      width: double.infinity,
+      color: UIData.themeBgColor,
+      child: isWebLoading ? CommonBasicSlider(
+        currentValue: sliderValue,
+        activeColor: UIData.webSliderColor,
+        inactiveColor: UIData.themeBgColor,
+        quarterTurns: 4,
+        enabledThumbRadius: 1,
+        overlayRadius: 1,
+        trackHeight: 1,
+        onChange: (double value) {},
+      ) : SizedBox(),
+      // SizedBox())
     );
   }
 
@@ -149,6 +180,7 @@ class NewActivitiesState extends State<NewActivities> {
       body: Column(
         children: [
           _buildPageHeader(),
+          _buildSlider(),
           _buildPageContent(),
         ],
       ),
