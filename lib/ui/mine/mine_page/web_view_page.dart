@@ -116,6 +116,15 @@ class WebViewPageState extends State<WebViewPage> {
                     },
                     child: Text("点击Flutter调用JS无返回值"),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_webViewController != null) {
+                        _webViewController.runJavascript(
+                            "callMe()");
+                      }
+                    },
+                    child: Text("CallMe"),
+                  ),
                 ],
               ))
         ],
