@@ -54,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void initDB() async {
     TablesInit tables = TablesInit();
-    tables.init();
+    await tables.init();
     dbUtil = new DBUtil();
     queryData();
   }

@@ -2,12 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_basic_slider.dart';
 import 'package:primeVedio/commom/common_page_header.dart';
+import 'package:primeVedio/commom/common_toast.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class NewActivities extends StatefulWidget {
@@ -18,8 +22,10 @@ class NewActivities extends StatefulWidget {
 class NewActivitiesState extends State<NewActivities> {
   bool showOperations = false;
   String webUrl = 'https://www.baidu.com/';
+  String webTitle = '';
   bool isWebLoading = false;
   double sliderValue = 0.0;
+  late WebViewController _webViewController;
 
   @override
   void initState() {
@@ -29,7 +35,7 @@ class NewActivitiesState extends State<NewActivities> {
 
   Widget _buildPageHeader() {
     return CommonPageHeader(
-      pageTitle: isWebLoading ? '加载中...' : '百度一下，你就知道',
+      pageTitle: isWebLoading ? '加载中...' : webTitle,
       rightIcon: IconFont.icon_gengduo,
       onRightTop: () => setState(() {
         showOperations = !showOperations;
@@ -44,7 +50,12 @@ class NewActivitiesState extends State<NewActivities> {
       child: Column(
         children: [
           GestureDetector(
-              onTap: onTap,
+              onTap: () {
+                setState(() {
+                  showOperations = false;
+                });
+                onTap();
+              },
               child: Container(
                 padding: EdgeInsets.all(UIData.spaceSizeWidth12),
                 decoration: BoxDecoration(
@@ -108,12 +119,22 @@ class NewActivitiesState extends State<NewActivities> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildOperateInfo(() {}, IconFont.icon_icon_refresh, '刷新'),
-                    _buildOperateInfo(
-                        () {}, IconFont.icon_lianjiewangzhiwangzhan, '复制链接'),
-                    _buildOperateInfo(() {}, IconFont.icon_browser, '在默认浏览器打开'),
-                    _buildOperateInfo(
-                        () {}, IconFont.icon_fenxiangfangshi, '分享'),
+                    _buildOperateInfo(() {
+                      _webViewController.reload();
+                    }, IconFont.icon_icon_refresh, '刷新'),
+                    _buildOperateInfo(() {
+                      Clipboard.setData(ClipboardData(text: webUrl));
+                      CommonToast.show(
+                        context: context,
+                        message: "复制成功",
+                      );
+                    }, IconFont.icon_lianjiewangzhiwangzhan, '复制链接'),
+                    _buildOperateInfo(() async {
+                      if (!await launch(webUrl)) throw '无法打开 $webUrl';
+                    }, IconFont.icon_browser, '在默认浏览器打开'),
+                    _buildOperateInfo(() {
+                      Share.share(webUrl, subject: '快来参加我们的新活动吧！');
+                    }, IconFont.icon_fenxiangfangshi, '分享'),
                   ],
                 ),
               ],
@@ -127,6 +148,9 @@ class NewActivitiesState extends State<NewActivities> {
       child: Stack(
         children: [
           WebView(
+            onWebViewCreated: (controller) {
+              _webViewController = controller;
+            },
             initialUrl: webUrl,
             //JS执行模式 是否允许JS执行
             javascriptMode: JavascriptMode.unrestricted,
@@ -134,6 +158,18 @@ class NewActivitiesState extends State<NewActivities> {
               isWebLoading = true;
             }),
             onPageFinished: (webUrl) => setState(() {
+              _webViewController
+                  .runJavascriptReturningResult("document.title")
+                  .then((result) {
+                setState(() {
+                  webTitle = result;
+                });
+              });
+              _webViewController.currentUrl().then((value) {
+                setState(() {
+                  webUrl = value!;
+                });
+              });
               isWebLoading = false;
             }),
             onProgress: (onProgressParam) => setState(() {
@@ -152,7 +188,7 @@ class NewActivitiesState extends State<NewActivities> {
       top: 0,
       left: 0,
       right: 0,
-      bottom: MediaQuery.of(context).size.height -  UIData.spaceSizeHeight50,
+      bottom: MediaQuery.of(context).size.height - UIData.spaceSizeHeight50,
       child: Container(
         height: UIData.spaceSizeHeight1,
         width: double.infinity,
