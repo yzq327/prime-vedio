@@ -152,22 +152,19 @@ class NewActivitiesState extends State<NewActivities> {
               _webViewController = controller;
             },
             initialUrl: webUrl,
-            //JS执行模式 是否允许JS执行
             javascriptMode: JavascriptMode.unrestricted,
             onPageStarted: (webUrl) => setState(() {
               isWebLoading = true;
             }),
             onPageFinished: (webUrl) => setState(() {
-              _webViewController
-                  .runJavascriptReturningResult("document.title")
-                  .then((result) {
-                setState(() {
-                  webTitle = result;
-                });
-              });
               _webViewController.currentUrl().then((value) {
                 setState(() {
                   webUrl = value!;
+                });
+              });
+              _webViewController.getTitle().then((value){
+                setState(() {
+                  webTitle = value!;
                 });
               });
               isWebLoading = false;
