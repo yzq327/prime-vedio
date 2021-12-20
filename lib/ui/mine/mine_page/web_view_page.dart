@@ -17,7 +17,7 @@ class WebViewPage extends StatefulWidget {
 
 class WebViewPageState extends State<WebViewPage> {
   bool showOperations = false;
-  String webUrl = 'https://daa9-202-66-38-130.ngrok.io/webView';
+  String webUrl = 'https://test-services1.vercel.app/';
   String webTitle = 'WebView Html';
   bool isWebLoading = false;
   double sliderValue = 0.0;
@@ -53,6 +53,11 @@ class WebViewPageState extends State<WebViewPage> {
           name: "jscomm",
           onMessageReceived: (message) {
             Navigator.pop(context);
+          }),
+      JavascriptChannel(
+          name: "__PRIME_VIDEO",
+          onMessageReceived: (message) {
+          print('------${message.message}');
           }),
     };
   }
