@@ -1,3 +1,8 @@
+import 'package:flutter/cupertino.dart';
+import 'package:primeVedio/utils/ui_data.dart';
+
+import 'font_icon.dart';
+
 class CommonConstant {
   static Map<String, double> speedMap = {
   '正常': 1.0,
@@ -8,3 +13,18 @@ class CommonConstant {
   '3.0X': 3.0,
   };
 }
+
+class ToastType {
+  static final String success = 'success';
+  static final String fail = 'fail';
+}
+
+const Map<String, Color> ToastTypeColor = {
+  'success': UIData.successBgColor,
+  'fail': UIData.failBgColor,
+};
+
+const Map<String, IconData> ToastTypeIcon = {
+  'success': IconFont.icon_chenggong,
+  'fail': IconFont.icon_shibai,
+};

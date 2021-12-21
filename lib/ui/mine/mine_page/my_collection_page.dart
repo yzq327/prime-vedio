@@ -14,6 +14,7 @@ import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
+import 'package:primeVedio/utils/constants.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -92,10 +93,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
   void insertData() async {
     if (_userEtController.text.trim() == '') {
       CommonToast.show(
-          context: context,
-          message: "创建失败，不能输入空的文件夹名",
-          color: UIData.failBgColor,
-          icon: IconFont.icon_shibai);
+          context: context, message: "创建失败，不能输入空的文件夹名", type: ToastType.fail);
     } else {
       await dbUtil.open();
       List<MyCollectionItem> searchedList = myCollectionsList
@@ -106,10 +104,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
             'UPDATE my_collections SET create_time = ? WHERE collect_name = ?',
             [StringsHelper.getCurrentTimeMillis(), _userEtController.text]);
         CommonToast.show(
-            context: context,
-            message: "创建失败，文件夹名已存在",
-            color: UIData.failBgColor,
-            icon: IconFont.icon_shibai);
+            context: context, message: "创建失败，文件夹名已存在", type: ToastType.fail);
       } else {
         Map<String, Object> par = Map<String, Object>();
         par['create_time'] = StringsHelper.getCurrentTimeMillis();
@@ -129,7 +124,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     try {
       await dbUtil.transaction((txn) async {
         dbUtil.delete('DELETE FROM my_collections WHERE id = ?', [collectId]);
-        await dbUtil.delete(
+        dbUtil.delete(
             'DELETE FROM collection_detail WHERE collect_id = ?', [collectId]);
       });
       CommonToast.show(context: context, message: "删除成功");
@@ -138,6 +133,7 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
       print('删除收藏夹异常:$e');
     }
     await dbUtil.close();
+    queryData();
   }
 
   static void closeItems(

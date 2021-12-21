@@ -17,6 +17,7 @@ import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/video_info_content.dart';
 import 'package:primeVedio/ui/mine/mine_page/create_collect_dialog.dart';
 import 'package:primeVedio/utils/commom_srting_helper.dart';
+import 'package:primeVedio/utils/constants.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
@@ -131,7 +132,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     await dbUtil.close();
   }
 
-  void insertData(StoreDuration item) async {
+  Future<void> insertData(StoreDuration item) async {
     await dbUtil.open();
     List<VideoHistoryItem> searchedList = videoHistoryList
         .where((element) => element.vodId == getVideoDetail!.vodId)
@@ -225,8 +226,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       CommonToast.show(
           context: context,
           message: "创建失败，不能输入空的文件夹名",
-          color: UIData.failBgColor,
-          icon: IconFont.icon_shibai);
+          type: ToastType.fail
+          );
     } else {
       await dbUtil.open();
       List<MyCollectionItem> searchedList = myCollectionsList
@@ -239,8 +240,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         CommonToast.show(
             context: context,
             message: "创建失败，文件夹名已存在",
-            color: UIData.failBgColor,
-            icon: IconFont.icon_shibai);
+            type: ToastType.fail);
       } else {
         Map<String, Object> par = Map<String, Object>();
         par['create_time'] = StringsHelper.getCurrentTimeMillis();

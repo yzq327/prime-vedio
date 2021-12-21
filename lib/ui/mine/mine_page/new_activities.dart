@@ -8,6 +8,7 @@ import 'package:primeVedio/commom/commom_text.dart';
 import 'package:primeVedio/commom/common_basic_slider.dart';
 import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/commom/common_toast.dart';
+import 'package:primeVedio/utils/constants.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:share/share.dart';
@@ -20,7 +21,6 @@ class NewActivities extends StatefulWidget {
 }
 
 class NewActivitiesState extends State<NewActivities> {
-  bool showOperations = false;
   String webUrl = 'https://www.baidu.com/';
   String webTitle = '';
   bool isWebLoading = false;
@@ -37,9 +37,7 @@ class NewActivitiesState extends State<NewActivities> {
     return CommonPageHeader(
       pageTitle: isWebLoading ? '加载中...' : webTitle,
       rightIcon: IconFont.icon_gengduo,
-      onRightTop: () => setState(() {
-        showOperations = !showOperations;
-      }),
+      onRightTop: () => showButtonSheet(),
     );
   }
 
@@ -51,9 +49,7 @@ class NewActivitiesState extends State<NewActivities> {
         children: [
           GestureDetector(
               onTap: () {
-                setState(() {
-                  showOperations = false;
-                });
+                Navigator.pop(context);
                 onTap();
               },
               child: Container(
@@ -78,15 +74,13 @@ class NewActivitiesState extends State<NewActivities> {
     );
   }
 
-  Widget _buildPageOperation() {
-    return Positioned(
-        top: MediaQuery.of(context).size.height * 0.6,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        child: Offstage(
-          offstage: !showOperations,
-          child: Container(
+  void showButtonSheet() {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            height: UIData.spaceSizeHeight240,
             padding: EdgeInsets.all(UIData.spaceSizeWidth16),
             decoration: BoxDecoration(
               color: UIData.sheetContentBgColor,
@@ -98,9 +92,7 @@ class NewActivitiesState extends State<NewActivities> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                    onTap: () => setState(() {
-                          showOperations = false;
-                        }),
+                    onTap: () => Navigator.pop(context),
                     child: Icon(
                       IconFont.icon_guanbi,
                       color: UIData.primaryColor,
@@ -110,7 +102,7 @@ class NewActivitiesState extends State<NewActivities> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CommonText.text14('该网页由 $webUrl 提供',
+                    CommonText.text14('该网页由 ${Uri.parse(webUrl).host} 提供',
                         color: UIData.webTextColor),
                   ],
                 ),
@@ -130,7 +122,12 @@ class NewActivitiesState extends State<NewActivities> {
                       );
                     }, IconFont.icon_lianjiewangzhiwangzhan, '复制链接'),
                     _buildOperateInfo(() async {
-                      if (!await launch(webUrl)) throw '无法打开 $webUrl';
+                      if (!await launch(webUrl)) {
+                        CommonToast.show(
+                            context: context,
+                            message: "无法打开该网址",
+                            type: ToastType.fail);
+                      }
                     }, IconFont.icon_browser, '在默认浏览器打开'),
                     _buildOperateInfo(() {
                       Share.share(webUrl, subject: '快来参加我们的新活动吧！');
@@ -139,8 +136,8 @@ class NewActivitiesState extends State<NewActivities> {
                 ),
               ],
             ),
-          ),
-        ));
+          );
+        });
   }
 
   Widget _buildPageContent() {
@@ -153,28 +150,25 @@ class NewActivitiesState extends State<NewActivities> {
             },
             initialUrl: webUrl,
             javascriptMode: JavascriptMode.unrestricted,
-            onPageStarted: (webUrl) => setState(() {
+            onPageStarted: (url) => setState(() {
               isWebLoading = true;
             }),
-            onPageFinished: (webUrl) => setState(() {
-              _webViewController.currentUrl().then((value) {
-                setState(() {
-                  webUrl = value!;
-                });
-              });
-              _webViewController.getTitle().then((value){
+            onPageFinished: (url) {
+              _webViewController.currentUrl().then((value) => setState(() {
+                    webUrl = value!;
+                  }));
+              _webViewController.getTitle().then((value) {
                 setState(() {
                   webTitle = value!;
                 });
               });
               isWebLoading = false;
-            }),
+            },
             onProgress: (onProgressParam) => setState(() {
               sliderValue = onProgressParam / 100;
             }),
           ),
           _buildSlider(),
-          _buildPageOperation(),
         ],
       ),
     );

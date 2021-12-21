@@ -9,6 +9,7 @@ import 'package:primeVedio/commom/common_toast.dart';
 import 'package:primeVedio/models/common/common_model.dart';
 import 'package:primeVedio/table/db_util.dart';
 import 'package:primeVedio/table/table_init.dart';
+import 'package:primeVedio/utils/constants.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
 class CollectionDetailPageParams {
@@ -72,6 +73,7 @@ class _CollectionDetailPageState extends State<CollectionDetailPage>
     CommonToast.show(
       context: context,
       message: "设置成功",
+      type: ToastType.success,
     );
     await dbUtil.close();
   }

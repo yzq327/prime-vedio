@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:primeVedio/commom/common_basic_slider.dart';
 import 'package:primeVedio/commom/common_page_header.dart';
 import 'package:primeVedio/commom/common_toast.dart';
+import 'package:primeVedio/utils/constants.dart';
 import 'package:primeVedio/utils/font_icon.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -124,8 +125,7 @@ class WebViewPageState extends State<WebViewPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (_webViewController != null) {
-                        _webViewController.runJavascript(
-                            "callMe()");
+                        _webViewController.runJavascript("callMe()");
                       }
                     },
                     child: Text("CallMe"),

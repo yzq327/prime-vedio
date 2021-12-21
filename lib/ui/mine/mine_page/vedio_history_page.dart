@@ -161,13 +161,15 @@ class _VideoHistoryPageState extends State<VideoHistoryPage> {
         : CommonRemovableItem(
             moveItemKey: childItemStates[index],
             onActionDown: () => closeItems(childItemStates, index),
-            onNavigator: () {
-              Navigator.pushNamed(context, Routes.detail,
+            onNavigator: () async {
+              await Navigator.pushNamed(context, Routes.detail,
                   arguments: VideoDetailPageParams(
                       vodId: videoHistoryList[index].vodId,
                       vodName: videoHistoryList[index].vodName,
                       vodPic: videoHistoryList[index].vodPic,
                       watchedDuration: videoHistoryList[index].watchedDuration));
+              await Future.delayed(Duration(milliseconds: 1000));
+              await queryData();
             },
             onDelete: () {
               CommonDialog.showAlertDialog(context,
