@@ -123,8 +123,9 @@ class _MyCollectionPageState extends State<MyCollectionPage> {
     await dbUtil.open();
     try {
       await dbUtil.transaction((txn) async {
-        dbUtil.delete('DELETE FROM my_collections WHERE id = ?', [collectId]);
-        dbUtil.delete(
+        await txn
+            .rawDelete('DELETE FROM my_collections WHERE id = ?', [collectId]);
+        await txn.rawDelete(
             'DELETE FROM collection_detail WHERE collect_id = ?', [collectId]);
       });
       CommonToast.show(context: context, message: "删除成功");
