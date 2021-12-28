@@ -26,6 +26,7 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
   List<VideoInfo> getVideoList = [];
   int total = 0;
   int currentPage = 1;
+  bool isLoading = false;
 
   RefreshController _refreshController = RefreshController();
 
@@ -35,6 +36,9 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
       't': widget.getVideoDetail!.typeId,
       'pg': currentPage,
     };
+    setState(() {
+      isLoading = true;
+    });
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET, params: params)
         .then((value) {
       VideoListModel model = VideoListModel.fromJson(value);
@@ -54,7 +58,9 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
       } else {
         LogUtils.printLog('数据为空！');
       }
-    });
+    }).whenComplete(() => setState(() {
+      isLoading = false;
+    }));
   }
 
   bool get _enablePullUp {
@@ -150,7 +156,7 @@ class _SameTypeVideoContentState extends State<SameTypeVideoContent> {
 
   @override
   Widget build(BuildContext context) {
-    return getVideoList.length == 0
+    return isLoading && getVideoList.isEmpty ? CommonHintTextContain(text: '加载中...') : getVideoList.length == 0
         ? CommonHintTextContain(text: '暂无同类型影片，看看其他的吧')
         : CommonSmartRefresher(
             enablePullUp: _enablePullUp,

@@ -35,7 +35,6 @@ class _CollectionDetailPageState extends State<CollectionDetailPage>
     with TickerProviderStateMixin {
   List<CollectVideoDetail> collectVideoDetailList = [];
   late DBUtil dbUtil;
-  bool setCoverPlot = false;
 
   @override
   void initState() {
@@ -84,10 +83,6 @@ class _CollectionDetailPageState extends State<CollectionDetailPage>
       children: [
         GestureDetector(
           onLongPress: () {
-            print('长按');
-            // setState(() {
-            //   setCoverPlot = true;
-            // });
             CommonDialog.showAlertDialog(
               context,
               title: '设为封面',
@@ -140,18 +135,21 @@ class _CollectionDetailPageState extends State<CollectionDetailPage>
       ),
       body: collectVideoDetailList.length == 0
           ? CommonHintTextContain(text: '收藏夹暂无内容哦，去收藏影片吧')
-          : GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.72,
-                mainAxisSpacing: UIData.spaceSizeHeight8,
-                crossAxisSpacing: UIData.spaceSizeWidth16,
+          : Padding(
+            padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth16),
+            child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.72,
+                  mainAxisSpacing: UIData.spaceSizeHeight8,
+                  crossAxisSpacing: UIData.spaceSizeWidth16,
+                ),
+                itemCount: collectVideoDetailList.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    _buildVideoInfo(index),
               ),
-              itemCount: collectVideoDetailList.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  _buildVideoInfo(index),
-            ),
+          ),
     );
   }
 }

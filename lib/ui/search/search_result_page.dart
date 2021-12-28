@@ -30,6 +30,7 @@ class _SearchResultPageState extends State<SearchResultPage>
   int total = 0;
   int currentPage = 1;
   RefreshController _refreshController = RefreshController();
+  bool isLoading = false;
 
   _getVideoListByName() async {
     Map<String, Object> params = {
@@ -37,6 +38,9 @@ class _SearchResultPageState extends State<SearchResultPage>
       'wd': widget.searchResultPageParams.vodName,
       'pg': currentPage,
     };
+    setState(() {
+      isLoading= true;
+    });
     HttpUtil.request(HttpOptions.baseUrl, HttpUtil.GET, params: params)
         .then((value) {
       VideoListModel model = VideoListModel.fromJson(value);
@@ -50,7 +54,7 @@ class _SearchResultPageState extends State<SearchResultPage>
       } else {
         LogUtils.printLog('数据为空！');
       }
-    });
+    }).whenComplete(() => setState((){   isLoading= false;}));
   }
 
   bool get _enablePullUp {
@@ -117,41 +121,41 @@ class _SearchResultPageState extends State<SearchResultPage>
           child: CommonText.normalText('搜索结果页'),
         ),
       ),
-      body: getVideoList.length > 0
+      body: isLoading && getVideoList.isEmpty  ? CommonHintTextContain(text: '加载中...') :  getVideoList.length > 0
           ? Container(
-            padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth16),
-            child: CommonSmartRefresher(
-              enablePullUp: _enablePullUp,
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              child: ListView(
-                children: [
-                  GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.7,
-                      mainAxisSpacing: UIData.spaceSizeHeight8,
-                      crossAxisSpacing: UIData.spaceSizeWidth8,
-                    ),
-                    itemCount: getVideoList.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        _buildSearchedVideo(index),
-                  ),
-                  Container(
-                    height: UIData.spaceSizeHeight60,
-                    alignment: Alignment.center,
-                    child: CommonText.normalText(
-                        _enablePullUp ? '' : '没有更多影片啦!',
-                        color: UIData.subThemeBgColor),
-                  ),
-                ],
+        padding: EdgeInsets.symmetric(horizontal: UIData.spaceSizeWidth16),
+        child: CommonSmartRefresher(
+          enablePullUp: _enablePullUp,
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+          child: ListView(
+            children: [
+              GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.7,
+                  mainAxisSpacing: UIData.spaceSizeHeight8,
+                  crossAxisSpacing: UIData.spaceSizeWidth8,
+                ),
+                itemCount: getVideoList.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    _buildSearchedVideo(index),
               ),
-            ),
-          )
+              Container(
+                height: UIData.spaceSizeHeight60,
+                alignment: Alignment.center,
+                child: CommonText.normalText(
+                    _enablePullUp ? '' : '没有更多影片啦!',
+                    color: UIData.subThemeBgColor),
+              ),
+            ],
+          ),
+        ),
+      )
           : CommonHintTextContain(text: '暂未搜索到您想看的影片，换个关键词试试吧'),
     );
   }
