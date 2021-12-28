@@ -12,6 +12,8 @@ class CommonConstant {
   '2.0X': 2.0,
   '3.0X': 3.0,
   };
+
+  static final int splashSeconds = 4;
 }
 
 class ToastType {

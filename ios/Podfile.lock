@@ -1,4 +1,6 @@
 PODS:
+  - app_installer (1.1.0):
+    - Flutter
   - device_display_brightness (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -28,6 +30,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_installer (from `.symlinks/plugins/app_installer/ios`)
   - device_display_brightness (from `.symlinks/plugins/device_display_brightness/ios`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
@@ -46,6 +49,8 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  app_installer:
+    :path: ".symlinks/plugins/app_installer/ios"
   device_display_brightness:
     :path: ".symlinks/plugins/device_display_brightness/ios"
   Flutter:
@@ -70,6 +75,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  app_installer: 4301996bd8f3c6f75776416b8885a6d92928306f
   device_display_brightness: 1510e72c567a1f6ce6ffe393dcd9afd1426034f7
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58

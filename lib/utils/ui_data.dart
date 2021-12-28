@@ -49,6 +49,7 @@ class UIData {
   static const sheetContentBgColor = const Color(0xFF242424);
   static const webTextColor = const Color(0xFFDDDDDD);
   static const webSliderColor = const Color(0xFFFF5C00);
+  static const slashLintC0lor = const Color(0xFF06B8F0);
 
 
 

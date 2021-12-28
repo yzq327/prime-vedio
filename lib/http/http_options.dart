@@ -28,4 +28,5 @@ class HttpOptions {
   static const int pageSize = 23;
 
   static String baseUrl = "https://m3u8.apibdzy.com/api.php/provide/vod";
+  static String slashUrl = "https://webview-html-test.vercel.app/ad.json";
 }

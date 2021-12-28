@@ -24,7 +24,10 @@ class HttpUtil {
           LogUtils.printLog('errorMsg: $errorMsg');
           return null;
         }
-        return json.decode(response.data);
+        if (response.data is String) {
+          response.data = json.decode(response.data);
+        }
+        return response.data;
       }
     } on DioError catch (e) {
       LogUtils.printLog(e.message);
