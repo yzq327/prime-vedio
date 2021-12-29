@@ -84,7 +84,7 @@ class _SplashState extends State<Splash> {
           ? Container(
               width: size.width,
               height: size.height,
-              color: lightMode ? UIData.primaryColor : UIData.blackColor,
+              color: lightMode ?  UIData.blackColor : UIData.primaryColor ,
               child: Center(
                   child: Image.asset(
                 'assets/images/splash.png',

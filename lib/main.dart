@@ -4,7 +4,9 @@ import 'package:primeVedio/ui/splash_page.dart';
 import 'package:primeVedio/utils/routes.dart';
 import 'package:primeVedio/utils/ui_data.dart';
 
-void main() {
+void main() async {
+
+  //在这里做启动页
   runApp(MyApp());
 }
 
