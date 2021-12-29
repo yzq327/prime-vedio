@@ -6,6 +6,7 @@ import 'http_options.dart';
 
 class HttpUtil {
   static const String GET = 'get';
+  static const String DOWNLOAD = 'download';
   static Future request(String url, String method, {Map<String, dynamic> ? params, Function ? errorCallBack}) async {
     Dio dio = HttpOptions.dio;
     Response response;
@@ -26,6 +27,17 @@ class HttpUtil {
         }
         if (response.data is String) {
           response.data = json.decode(response.data);
+        }
+        return response.data;
+      }
+      if (method == DOWNLOAD) {
+        response = await dio.download(url, 'assets/apk');
+        int? statusCode = response.statusCode;
+        LogUtils.printLog('status:' + response.statusCode.toString());
+        if (statusCode != 200) {
+          String errorMsg = '网络请求出错，状态码：' + statusCode.toString();
+          LogUtils.printLog('errorMsg: $errorMsg');
+          return null;
         }
         return response.data;
       }

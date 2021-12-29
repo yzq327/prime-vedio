@@ -18,4 +18,3 @@ Map<String, dynamic> _$SlashDataModelToJson(SlashDataModel instance) =>
       'imageUrl': instance.imageUrl,
       'landPageUrl': instance.landPageUrl,
     };
-

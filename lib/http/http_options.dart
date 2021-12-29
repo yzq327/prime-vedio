@@ -29,4 +29,6 @@ class HttpOptions {
 
   static String baseUrl = "https://m3u8.apibdzy.com/api.php/provide/vod";
   static String slashUrl = "https://webview-html-test.vercel.app/ad.json";
+  static String versionUrl = "https://test-services1.vercel.app/version.json";
+  static String apkUrl = "https://test-services1.vercel.app/app-armeabi-v7a-release.apk";
 }
