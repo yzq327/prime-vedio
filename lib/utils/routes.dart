@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:primeVedio/ui/home/home_page.dart';
 import 'package:primeVedio/ui/home/video_detail_page.dart';
+import 'package:primeVedio/ui/mian_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/about_us_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/collection_detail_page.dart';
 import 'package:primeVedio/ui/mine/mine_page/mine_page.dart';
@@ -14,6 +15,9 @@ import 'package:primeVedio/ui/search/search_result_page.dart';
 import 'navigate.dart';
 
 class Routes {
+  //入口页
+  static final String main = '/main';
+
   //首页
   static final String home = '/home';
   //视频详情页
@@ -36,6 +40,8 @@ class Routes {
 }
 
 var routePath = {
+  //入口页
+  Routes.main: (BuildContext context) => MainPage(),
   //首页
   Routes.home: (BuildContext context) => HomePage(),
   Routes.detail: (BuildContext context) => VideoDetailPage(videoDetailPageParams: NavigateOption.getParams(context)),

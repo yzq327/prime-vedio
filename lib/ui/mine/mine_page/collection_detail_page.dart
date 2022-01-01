@@ -141,7 +141,7 @@ class _CollectionDetailPageState extends State<CollectionDetailPage>
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.72,
+                  childAspectRatio: 0.66,
                   mainAxisSpacing: UIData.spaceSizeHeight8,
                   crossAxisSpacing: UIData.spaceSizeWidth16,
                 ),

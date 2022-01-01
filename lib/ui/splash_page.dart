@@ -83,8 +83,16 @@ class _SplashState extends State<Splash> {
                 padding: EdgeInsets.symmetric(
                     vertical: UIData.spaceSizeHeight6,
                     horizontal: UIData.spaceSizeWidth12),
-                child: CommonText.text16("跳过($_countdownTime)",
-                    color: UIData.primaryColor),
+                child: GestureDetector(
+                  onTap: (){
+                    _timer.cancel();
+                    setState(() {
+                      _countdownTime = 0;
+                    });
+                  },
+                  child: CommonText.text16("跳过($_countdownTime)",
+                      color: UIData.primaryColor),
+                ),
               )),
           Positioned(
               bottom: UIData.spaceSizeHeight70,
