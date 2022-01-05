@@ -47,7 +47,7 @@ dependencies:
   share: ^2.0.4
   get: ^4.6.1
   app_installer: ^1.1.0
-
+  path_provider: ^2.0.8
 
 dev_dependencies:
   build_runner: ^2.0.3

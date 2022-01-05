@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_installer/app_installer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:primeVedio/ui/home/stub_tab_indicator.dart';
 import 'package:primeVedio/ui/home/tab_content.dart';
 import 'package:primeVedio/utils/log_utils.dart';
 import 'package:primeVedio/utils/ui_data.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -84,8 +87,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   _getVideoApk()  {
-    HttpUtil.request(HttpOptions.apkUrl, HttpUtil.DOWNLOAD).then((value) {
-      AppInstaller.installApk('assets/app-armeabi-v7a-release.apk');
+    Future<Directory> _tempDirectory = getApplicationDocumentsDirectory();
+    _tempDirectory.then((value) {
+      String apkPath = '${value.path}/levels/app-armeabi-v7a-release.apk';
+      HttpUtil.request(HttpOptions.apkUrl, HttpUtil.DOWNLOAD, locatePath: apkPath).then((value) {
+        AppInstaller.installApk(apkPath);
+      });
     });
   }
 

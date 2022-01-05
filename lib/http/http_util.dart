@@ -7,7 +7,7 @@ import 'http_options.dart';
 class HttpUtil {
   static const String GET = 'get';
   static const String DOWNLOAD = 'download';
-  static Future request(String url, String method, {Map<String, dynamic> ? params, Function ? errorCallBack}) async {
+  static Future request(String url, String method, {Map<String, dynamic> ? params, Function ? errorCallBack, String ? locatePath}) async {
     Dio dio = HttpOptions.dio;
     Response response;
     if (HttpOptions.isInDebugMode) _urlPrint(url, params: params);
@@ -31,7 +31,7 @@ class HttpUtil {
         return response.data;
       }
       if (method == DOWNLOAD) {
-        response = await dio.download(url, 'assets/apk');
+        response = await dio.download(url, locatePath);
         int? statusCode = response.statusCode;
         LogUtils.printLog('status:' + response.statusCode.toString());
         if (statusCode != 200) {
